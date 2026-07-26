@@ -29,3 +29,6 @@
   persistence, safe invalid-value fallback, and an accessible native selector.
 - Added rendered route/filter tests, theme catalog and selection tests, and
   responsive browser coverage for Community and theme controls.
+- Deployed the responsive, Community, and theme release to the existing
+  owner-only GPT Sites URL and smoke-tested the home and filtered Community
+  routes.

@@ -167,7 +167,7 @@
   <commit>chore(site): validate community and theme release</commit>
 </task>
 
-<task id="6" depends="5" type="auto" kind="deployment" status="in_progress">
+<task id="6" depends="5" type="auto" kind="deployment" status="done">
   <name>Publish the exact reviewed target to owner-only Sites</name>
   <files>
     <modify>docs/arc/plans/2026-07-26-bindery-community-theme-responsive-implementation.md</modify>
@@ -198,3 +198,5 @@
 - v1.0 remains the primary authority: the new Community route is not a free-form board. It uses v0.3 only for the event-context accumulation model.
 - The default theme preserves the current three-ink identity. Alternate catalog entries remap roles without changing layout, typography hierarchy, or safety semantics.
 - Browser baseline found no page-level overflow. The concrete regression is avoidable three-line group-buy headings at 768px and 1280px; calendar and event-history overflow remains intentionally owned by their local sheets.
+- Reviewed implementation commit `55a3e475bbe4d02223c1af579f48804fe8e00180` was pushed to the configured Sites source, saved as version 3, and owner-only deployment `appgdep_6a65a8dcf3d48191b2a447bc8993ed58` succeeded. Authenticated production smoke checks returned 200 for home, Community, and its event filter and found both theme labels.
+- Deployment receipt documentation is a docs-only follow-up commit; it introduces no app-source change and is pushed, saved, and deployed as the final source snapshot so local HEAD, Sites source, and production remain aligned.

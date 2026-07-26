@@ -2,10 +2,10 @@
 
 ## Current state
 
-The GPT Sites vinext implementation now includes a responsive text-flow pass,
-an event-context Community route, and a catalog-driven theme selector. The
-implementation is verified locally at 360px, 768px, and 1280px. The existing
-site remains owner-only at
+The GPT Sites vinext implementation includes a responsive text-flow pass, an
+event-context Community route, and a catalog-driven theme selector. The
+implementation is verified at 360px, 768px, and 1280px and is deployed with
+owner-only access at
 <https://bindery-korea-info.eiraworks-9813.chatgpt.site>.
 
 ## Completed
@@ -32,6 +32,9 @@ site remains owner-only at
   transaction, or raw unreviewed feedback flow.
 - Added two catalog-driven themes with complete role tokens, device-local
   selection, invalid-value recovery, and an accessible 44px native selector.
+- Deployed the reviewed responsive, Community, and theme release to the
+  existing owner-only GPT Sites project and confirmed the home and filtered
+  Community routes from production.
 - Replaced example-domain SEO output with request-derived production origins and removed unused auth/database starter surfaces.
 - Added a reproducible Playwright viewport gate for home density, touch targets, and locally owned wide-data scrolling.
 - Saved and deployed the exact validated commit as GPT Sites version 1.
