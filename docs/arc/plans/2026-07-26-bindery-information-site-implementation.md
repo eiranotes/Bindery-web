@@ -227,7 +227,7 @@
   <commit>feat(site): wire metadata feeds and verification</commit>
 </task>
 
-<task id="9" depends="8" type="auto" kind="deployment" status="in_progress">
+<task id="9" depends="8" type="auto" kind="deployment" status="done">
   <name>Review, validate, and publish with GPT Sites</name>
   <files>
     <modify>docs/PROJECT_STATUS.md</modify>
@@ -257,9 +257,9 @@
 - none — the untracked starter was created by this task before implementation
 
 **Excluded metadata:** this plan and `docs/arc/plans/INDEX.md`
-**Commit posture:** uncommitted during implementation; one exact validated Sites source commit is authorized by the deployment request
-**Last coherent commit:** none
-**Closeout:** passed — 2026-07-26; attributable target `bd00aca6bf6022318160a77ce53cd8e5867aa7b0d8ccb67ab0c37b287244e575` excluding this plan and `docs/arc/plans/INDEX.md`; `npm run lint`, `npm test`, `npm run build`, and `git diff --cached --check`
+**Commit posture:** exact validated source committed and pushed only to the configured GPT Sites source repository
+**Last coherent commit:** `a6a6db0811ec1d53d17244e3540ff119cf4e45ef`
+**Closeout:** passed — 2026-07-26; attributable target `bd00aca6bf6022318160a77ce53cd8e5867aa7b0d8ccb67ab0c37b287244e575` excluding this plan and `docs/arc/plans/INDEX.md`; `npm run lint`, `npm test`, `npm run build`, and `git diff --cached --check`; Sites version 1 deployment `appgdep_6a6593622f5c81919a4dde7ed7571576` succeeded and its generated production screenshot contains the Bindery home
 
 ## Decision log
 

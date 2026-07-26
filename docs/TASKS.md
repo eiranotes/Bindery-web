@@ -8,7 +8,7 @@
 - [x] Implement Notes, News, Groupbuy information, and My Binder.
 - [x] Implement SEO metadata, structured data, sitemap, and RSS.
 - [x] Verify build, tests, accessibility, responsive behavior, and browser interactions.
-- [ ] Save and deploy a GPT Sites production version.
+- [x] Save and deploy a GPT Sites production version with owner-only access.
 
 ## Deferred by product policy
 

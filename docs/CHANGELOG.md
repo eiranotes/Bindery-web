@@ -18,3 +18,4 @@
 - Added explicit My Binder feedback when browser storage prevents removal.
 - Removed unused authentication, D1, Drizzle, and mutable example API starter surfaces.
 - Added reproducible 360px, 768px, and 1280px browser assertions for page overflow, local table/calendar scrolling, home information density, and 44px primary controls.
+- Deployed the exact validated source as owner-only GPT Sites version 1 at <https://bindery-korea-info.eiraworks-9813.chatgpt.site>.
