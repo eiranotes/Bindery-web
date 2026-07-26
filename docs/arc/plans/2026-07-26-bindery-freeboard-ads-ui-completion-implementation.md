@@ -42,7 +42,7 @@
   </seam>
 </seams>
 
-<task id="1" depends="" type="auto" kind="audit" status="in_progress">
+<task id="1" depends="" type="auto" kind="audit" status="completed">
   <name>Audit current UI, destinations, and information-first product gaps</name>
   <files>
     <create>docs/arc/audits/2026-07-26-bindery-community-ui-audit.md</create>
@@ -54,7 +54,7 @@
   <commit>docs(audit): assess community and ui completion</commit>
 </task>
 
-<task id="2" depends="1" type="auto" kind="behavior" status="pending">
+<task id="2" depends="1" type="auto" kind="behavior" status="completed">
   <name>Build the two-board Community information architecture</name>
   <files>
     <create>app/lib/community.ts</create>
@@ -79,7 +79,7 @@
   <commit>feat(community): split free boards by verification</commit>
 </task>
 
-<task id="3" depends="2" type="auto" kind="integration" status="pending">
+<task id="3" depends="2" type="auto" kind="integration" status="completed">
   <name>Complete Community actions and local draft flow</name>
   <files>
     <create>app/components/CommunityComposer.tsx</create>
@@ -99,7 +99,7 @@
   <commit>feat(community): complete prototype actions</commit>
 </task>
 
-<task id="4" depends="2" type="auto" kind="integration" status="pending">
+<task id="4" depends="2" type="auto" kind="integration" status="completed">
   <name>Reserve policy-safe ad inventory</name>
   <files>
     <create>app/components/AdSlot.tsx</create>
@@ -119,7 +119,7 @@
   <commit>feat(ads): reserve labeled inventory slots</commit>
 </task>
 
-<task id="5" depends="3,4" type="auto" kind="documentation" status="pending">
+<task id="5" depends="3,4" type="auto" kind="documentation" status="completed">
   <name>Reconcile product, design, audit, and progress records</name>
   <files>
     <modify>README.md</modify>
@@ -140,7 +140,7 @@
   <commit>docs(site): record free-board and ad contracts</commit>
 </task>
 
-<task id="6" depends="5" type="auto" kind="artifact" status="pending">
+<task id="6" depends="5" type="auto" kind="artifact" status="completed">
   <name>Review and validate one exact implementation target</name>
   <files>
     <modify>docs/arc/plans/2026-07-26-bindery-freeboard-ads-ui-completion-implementation.md</modify>
@@ -153,7 +153,7 @@
   <commit>chore(site): validate free-board release</commit>
 </task>
 
-<task id="7" depends="6" type="auto" kind="deployment" status="pending">
+<task id="7" depends="6" type="auto" kind="deployment" status="completed">
   <name>Publish the exact reviewed target to owner-only Sites</name>
   <files>
     <modify>docs/PROJECT_STATUS.md</modify>
@@ -178,8 +178,13 @@
 
 **Excluded metadata:** this plan and `docs/arc/plans/INDEX.md`
 **Commit posture:** the existing-site feature request and mandatory Sites workflow authorize exact local commits and pushes only to the configured Sites source repository; no GitHub push or public access change is authorized.
-**Last coherent commit:** `354d7dac996403a5f94b831b5d876ac00ff49712`
-**Closeout:** pending
+**Last coherent commit:** `61171cc3ab9772d3c064d7e1192581cb96204e39`
+**Closeout:** Complete. Spec, standards, and Guarded security reviews approved
+fingerprint `c0b4e42ec362ff49ebc69cb057e486babf66e4a687c83cb2eadaa5ccf793aec7`.
+The unchanged target passed `npm run lint`, `npm test` (28 Node, 14 Vitest,
+11 Playwright), a separate `npm run build`, and staged diff checks. GPT Sites
+saved application version 5 from commit `61171cc3ab9772d3c064d7e1192581cb96204e39`
+and deployed it successfully with the existing owner-only access policy.
 
 ## Decision log
 
@@ -187,3 +192,9 @@
 - The archived v0.3 document supplies the event-context accumulation and unresolved artist-verification concern, but does not authorize fake authentication.
 - Reserved ads use the literal label “광고”, fixed containers, and distance from navigation and primary controls. No live ad script is introduced.
 - A browser-local draft is useful prototype behavior but is not public posting. The UI must state this at the action point.
+- Whole-implementation review removed false sample identity/social-proof signals,
+  added shared-browser storage warnings and two-step draft deletion, kept
+  non-live routes out of search, and preserved focus through confirmation.
+- Production deployment status and the refreshed Sites screenshot passed. The
+  unauthenticated browser correctly reached the owner-only sign-in gate; exact
+  route behavior remains covered by the 11-route local Playwright release gate.

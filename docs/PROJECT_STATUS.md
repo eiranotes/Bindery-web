@@ -5,9 +5,9 @@
 The GPT Sites vinext implementation includes an information-first Community
 prototype split into an artist-verified board and a general board, a
 catalog-driven theme selector, complete Community destination screens, and
-reserved ad inventory. The previous production deployment remains owner-only at
+reserved ad inventory. The production site remains owner-only at
 <https://bindery-korea-info.eiraworks-9813.chatgpt.site>; the current Community
-release is awaiting final review and redeployment.
+release is deployed there as owner-only Sites version 5.
 
 ## Completed
 
@@ -50,6 +50,11 @@ release is awaiting final review and redeployment.
   pattern from the visual event calendar.
 - Added two catalog-driven themes with complete role tokens, device-local
   selection, invalid-value recovery, and an accessible 44px native selector.
+- Completed spec, standards, and Guarded security review, then passed the fresh
+  53-test, lint, production-build, and staged-diff closeout gates.
+- Deployed application commit `61171cc3ab9772d3c064d7e1192581cb96204e39`
+  as owner-only GPT Sites version 5 and confirmed the refreshed production
+  screenshot plus the unauthenticated sign-in boundary.
 - Deployed the reviewed responsive, Community, and theme release to the
   existing owner-only GPT Sites project and confirmed the home and filtered
   Community routes from production.

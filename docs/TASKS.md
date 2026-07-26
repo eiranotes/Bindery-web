@@ -27,6 +27,8 @@
 - [x] Correct repeated touch targets, Notes/News heading levels, and calendar semantics.
 - [x] Remove false sample identity signals, add two-step draft deletion and
   shared-browser warnings, and keep non-live Community routes out of search.
+- [x] Complete whole-implementation review, fresh release verification, and the
+  owner-only Sites deployment for the split-board Community release.
 
 ## Deferred by product policy
 

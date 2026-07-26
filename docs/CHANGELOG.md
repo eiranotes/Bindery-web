@@ -52,3 +52,9 @@
 - Marked every sample author and activity metric as example data, added
   shared-browser draft warnings and two-step deletion, and excluded non-live
   Community operation and example-post screens from search indexing.
+- Preserved keyboard focus through draft-deletion confirmation and added
+  keyboard-order/focus-ring browser coverage for representative Community
+  navigation, post, and composer actions.
+- Deployed the reviewed split-board Community and reserved-ad release as
+  owner-only GPT Sites version 5 at
+  <https://bindery-korea-info.eiraworks-9813.chatgpt.site>.
