@@ -22,7 +22,7 @@ Behance and competitor work are loose inspiration. Bindery keeps its own three-i
 
 ## D-006 — HTML-mockup visual authority with a calm home
 
-The checked-in `bindery/02_디자인/mockup_home.html` and `mockup_event-detail.html` are the visual source of truth. The home page intentionally exposes only the mockup hero, three upcoming deadlines, and four text index links. Filters, calendar, comparison data, news, and Groupbuy status live on their own routes. Diary and stationery character comes from the mockup's stock/sheet surfaces, rules, dates, and typography rather than decorative texture or stacked paper effects.
+The checked-in `bindery/02_디자인/mockup_home.html` and `mockup_event-detail.html` are the visual source of truth. The home page intentionally exposes only the mockup hero, three upcoming deadlines, and five text index links: Events, Notes, Groupbuy, News, and Community. Filters, calendar data, and comparison data live on their own routes. Diary and stationery character comes from the mockup's stock/sheet surfaces, rules, dates, and typography rather than decorative texture or stacked paper effects.
 
 ## D-007 — Local scroll ownership for wide information
 
@@ -37,6 +37,8 @@ Metadata, sitemap, robots, and Article JSON-LD derive their absolute origin from
 The deployed source contains no unused ChatGPT authentication, D1, Drizzle, or mutable example API scaffold. Device-local bookmarks remain the only user state until the product explicitly adopts an authenticated or persistent server-side feature.
 
 ## D-010 — Event-context Community, not a free board
+
+**Superseded by D-013.**
 
 Keep v1.0 as the product authority: do not add a free-form board because its
 management cost exceeds its information value. Borrow only the archived v0.3
@@ -58,3 +60,45 @@ horizontal overflow. Navigation changes to its compact structure before labels
 crowd, multi-column ledgers collapse before headings fragment unnecessarily,
 and long trust or boundary copy receives at least a useful mobile measure.
 Wide comparison tables and calendars continue to own intentional local scroll.
+
+## D-013 — Information-first free boards split by artist verification
+
+The user's corrected direction supersedes D-010's no-board policy. Community is
+now a free-board product with two independent URLs:
+
+- `작가 인증 게시판`: server-verified artists only for both reading and writing.
+- `모두의 게시판`: readable regardless of artist-verification status.
+
+“Information first” no longer means forbidding a board. It means practical
+categories precede casual chat, questions expose resolution state, factual posts
+can carry source and confirmation dates, and durable answers can later graduate
+to operator Notes. Artist verification signals activity eligibility only and
+must not look like factual verification.
+
+Until a real session and authorization layer exists, the artist board fails
+closed and exposes no post titles, bodies, or authors. Query values, URL changes,
+visual badges, and browser storage never grant artist access.
+
+## D-014 — Complete prototype destinations without fake live service
+
+Every visible Community action must resolve to a real screen or an observable
+device-local action. The prototype therefore includes board, post, write,
+verification, rules, reporting-boundary, and recovery screens. The write screen
+stores one versioned draft in the current browser; it does not claim to publish
+or submit. The draft is not encrypted or automatically expired, so the write
+screen warns about shared browser profiles and extensions, requires a second
+action before deletion, and tells users to clear it after work. The report
+screen explains scope but sends nothing until durable intake, moderation
+history, and operator notification exist. Locked, write, verification, report,
+and example-post routes stay out of the sitemap and carry `noindex` metadata
+until their real service boundaries exist.
+
+## D-015 — Catalog-driven reserved ad inventory
+
+Reserve future ad inventory with one `AD_PLACEMENTS` catalog and one `AdSlot`
+component. Slots use the literal label `광고`, stable minimum heights, theme
+roles, and non-interactive placeholder copy. Place them only on Home, the
+Community hub, and within the general-board feed, away from navigation and
+primary actions. Do not place ads on writing, verification, lock, error, or
+official deadline decision screens. No live provider script or tracking is
+included.

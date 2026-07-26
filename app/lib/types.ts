@@ -124,17 +124,3 @@ export interface NewsItem {
   publishedAt: string;
   category: string;
 }
-
-export type CommunityRecordKind = "준비 질문" | "현장 팁" | "후기 집계";
-
-export interface CommunityRecord {
-  id: string;
-  eventId: string;
-  kind: CommunityRecordKind;
-  title: string;
-  summary: string;
-  answer: string;
-  updatedAt: string;
-  tags: string[];
-  moderation: "운영자 검수";
-}

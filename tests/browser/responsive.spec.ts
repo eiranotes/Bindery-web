@@ -16,6 +16,14 @@ const primaryRoutes = [
   "/groupbuy",
   "/news",
   "/community",
+  "/community/artists",
+  "/community/general",
+  "/community/general/first-booth-card-reader-checklist",
+  "/community/write?board=general",
+  "/community/write?board=artists",
+  "/community/verify",
+  "/community/rules",
+  "/community/report",
   "/me",
 ];
 

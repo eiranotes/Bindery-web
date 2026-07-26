@@ -99,16 +99,17 @@ export default async function CalendarPage({
           <span className="calendar-legend__deadline">신청 마감</span>
           <span className="calendar-legend__event">행사 시작</span>
         </div>
-        <div className="calendar-grid" role="grid" aria-label={`${title} 달력`}>
+        <div className="calendar-grid" role="group" aria-label={`${title} 달력`}>
           {["일", "월", "화", "수", "목", "금", "토"].map((weekday) => (
-            <div className="calendar-weekday" role="columnheader" key={weekday}>
+            <div className="calendar-weekday" aria-hidden="true" key={weekday}>
               {weekday}
             </div>
           ))}
           {cells.map((day, index) => (
             <div
               className={`calendar-day${day ? "" : " calendar-day--empty"}`}
-              role="gridcell"
+              aria-label={day ? `${monthIndex + 1}월 ${day}일` : undefined}
+              aria-hidden={day ? undefined : true}
               key={`${day ?? "empty"}-${index}`}
             >
               {day && (

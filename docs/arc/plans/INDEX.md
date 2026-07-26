@@ -4,3 +4,4 @@
 |---|---|---:|---:|---|---|---|---|
 | `2026-07-26-bindery-information-site-implementation.md` | Build and deploy the Bindery information site | P1 | L | — | DONE | 2026-07-26 | Reviews, fresh closeout, and owner-only Sites production deployment passed |
 | `2026-07-26-bindery-community-theme-responsive-implementation.md` | Add responsive text fixes, Community, and theme catalog | P1 | M | `2026-07-26-bindery-information-site-implementation.md` | DONE | 2026-07-26 | Three review axes, fresh closeout, and owner-only production smoke passed |
+| `2026-07-26-bindery-freeboard-ads-ui-completion-implementation.md` | Split Community free boards, reserve ads, and close UI destinations | P1 | L | `2026-07-26-bindery-community-theme-responsive-implementation.md` | IN PROGRESS | 2026-07-26 | Baseline audit and implementation in progress |

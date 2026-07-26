@@ -30,6 +30,22 @@ test("sitemap and robots expose public routes", async () => {
     sitemapText,
     /http:\/\/localhost:3000\/notes\/simple-tax-start/,
   );
+  assert.match(
+    sitemapText,
+    /http:\/\/localhost:3000\/community\/general/,
+  );
+  assert.doesNotMatch(
+    sitemapText,
+    /http:\/\/localhost:3000\/community\/artists/,
+  );
+  assert.doesNotMatch(
+    sitemapText,
+    /http:\/\/localhost:3000\/community\/general\/first-booth-card-reader-checklist/,
+  );
+  assert.doesNotMatch(
+    sitemapText,
+    /http:\/\/localhost:3000\/community\/(?:write|verify|report)/,
+  );
   assert.doesNotMatch(sitemapText, /bindery\.example/);
 
   const robots = await render("/robots.txt");

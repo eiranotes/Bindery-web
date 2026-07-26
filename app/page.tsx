@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AdSlot } from "./components/AdSlot";
 import { DDay } from "./components/DDay";
 import { events } from "./lib/data.ts";
 import { daysUntilDeadline } from "./lib/events.ts";
@@ -58,7 +59,7 @@ export default function Home() {
       number: "05",
       href: "/community",
       title: "커뮤니티",
-      copy: "행사별 질문과 현장 팁을 검수 기록으로 모아요.",
+      copy: "작가 게시판과 모두의 게시판에서 정보를 나눠요.",
     },
   ];
 
@@ -121,6 +122,8 @@ export default function Home() {
           </Link>
         ))}
       </nav>
+
+      <AdSlot placement="home-lower" />
 
       <div className="home-binder-link">
         <Link className="text-action" href="/me">

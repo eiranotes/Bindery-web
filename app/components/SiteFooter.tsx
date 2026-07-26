@@ -10,6 +10,7 @@ export function SiteFooter() {
         </p>
         <nav aria-label="보조 탐색">
           <Link href="/events/calendar">일정 달력</Link>
+          <Link href="/community/rules">커뮤니티 운영 기준</Link>
           <Link href="/rss.xml">RSS</Link>
         </nav>
         <p className="site-footer__note">

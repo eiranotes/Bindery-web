@@ -54,7 +54,7 @@ export default function NewsPage() {
                 </div>
                 <div className="news-copy">
                   <p className="eyebrow">{item.category}</p>
-                  <h2>{item.title}</h2>
+                  <h3>{item.title}</h3>
                   <p>{item.summary}</p>
                 </div>
                 <a

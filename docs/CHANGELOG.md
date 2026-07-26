@@ -32,3 +32,23 @@
 - Deployed the responsive, Community, and theme release to the existing
   owner-only GPT Sites URL and smoke-tested the home and filtered Community
   routes.
+- Audited 10 primary routes at 360px, 768px, and 1280px plus all 20 existing
+  internal destinations; confirmed no baseline 404 link or page-level overflow.
+- Superseded the previous no-board Community decision with two information-first
+  free boards split by artist-verification status.
+- Added a fail-closed artist-board screen and a public general board with
+  category/order filters, example post details, source context, and related Notes.
+- Added complete Community write, verification, rules, report-boundary, and
+  product-specific 404 screens.
+- Added a versioned device-local Community draft with restore, clear, malformed
+  value recovery, storage-failure feedback, and explicit non-publishing copy.
+- Added labeled fixed-height ad inventory on Home, the Community hub, and the
+  general-board feed through one placement catalog, without live ad scripts.
+- Enlarged repeated navigation and row targets, corrected Notes/News heading
+  hierarchy, and replaced incomplete calendar grid semantics with a simpler
+  labeled group.
+- Added rendered Community contracts, client draft tests, internal-destination
+  crawling, ad reservation checks, and new-route responsive coverage.
+- Marked every sample author and activity metric as example data, added
+  shared-browser draft warnings and two-step deletion, and excluded non-live
+  Community operation and example-post screens from search indexing.

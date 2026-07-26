@@ -53,9 +53,9 @@ export default function NotesPage() {
                     </span>
                     <span>{note.readMinutes}분</span>
                   </div>
-                  <h2>
+                  <h3>
                     <Link href={`/notes/${note.slug}`}>{note.title}</Link>
-                  </h2>
+                  </h3>
                   <p>{note.summary}</p>
                   <ul className="tag-list" aria-label="주제">
                     {note.tags.map((tag) => (

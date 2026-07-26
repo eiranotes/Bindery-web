@@ -1,5 +1,4 @@
 import type {
-  CommunityRecord,
   EventEdition,
   Groupbuy,
   NewsItem,
@@ -558,87 +557,6 @@ export const newsItems: NewsItem[] = [
     sourceUrl: "https://creator.tumblbug.com/",
     publishedAt: "2026-07-11",
     category: "실무 노트",
-  },
-];
-
-export const communityRecords: CommunityRecord[] = [
-  {
-    id: "community-illustar-cart",
-    eventId: "illustar-2026-winter",
-    kind: "현장 팁",
-    title: "코엑스 D홀 반입 때 대차를 어디서 빌리나요",
-    summary:
-      "하역장에서 전시장까지 상자를 옮길 때 확인해야 할 대차와 화물 엘리베이터 동선입니다.",
-    answer:
-      "행사 참가자 안내의 지정 하역장과 반입 시간부터 확인하세요. 대차 제공 여부는 회차마다 달라 개인 대차를 준비하는 편이 안전하며, 운영사무국이 공지한 화물 엘리베이터 동선을 우선합니다.",
-    updatedAt: "2026-07-24",
-    tags: ["반입", "대차", "코엑스"],
-    moderation: "운영자 검수",
-  },
-  {
-    id: "community-illustar-payment",
-    eventId: "illustar-2026-winter",
-    kind: "준비 질문",
-    title: "선착순 신청은 폼 제출과 결제 중 어느 시점에 확정되나요",
-    summary:
-      "신청 완료로 오해하기 쉬운 접수 단계와 결제 완료 시점을 구분합니다.",
-    answer:
-      "현재 예시 기록에서는 결제 완료 순서가 확정 기준입니다. 실제 신청 전에는 해당 회차의 공식 참가자 안내에서 접수 완료 조건과 미결제 취소 시간을 다시 확인하세요.",
-    updatedAt: "2026-07-24",
-    tags: ["신청", "결제", "선착순"],
-    moderation: "운영자 검수",
-  },
-  {
-    id: "community-seoul-first-booth",
-    eventId: "seoul-illustration-2026-v20",
-    kind: "준비 질문",
-    title: "첫 부스 신청 전에 사업자가 꼭 필요한가요",
-    summary:
-      "참가 신청 서류에 사업자등록증이 포함된 행사에서 준비 순서를 정리합니다.",
-    answer:
-      "서울일러스트레이션페어 V.20 예시 정보에는 사업자등록증이 필수 서류로 표시돼 있습니다. 발급 일정과 포트폴리오 검토 기간을 함께 계산하고, 최종 요건은 공식 모집 원문을 기준으로 판단하세요.",
-    updatedAt: "2026-07-23",
-    tags: ["사업자", "첫 부스", "신청 서류"],
-    moderation: "운영자 검수",
-  },
-  {
-    id: "community-seoul-review",
-    eventId: "seoul-illustration-2026-v20",
-    kind: "후기 집계",
-    title: "지난 회차에서 반복된 부스비 대비 만족도 기록",
-    summary:
-      "개별 후기를 그대로 노출하지 않고 비용 만족도와 재참가 의향의 반복 신호만 묶었습니다.",
-    answer:
-      "검증용 표본 7건에서 비용 대비 만족도는 5점 만점 3.8점, 재참가 의향은 82%로 집계됐습니다. 표본이 작고 회차별 조건이 달라 참가 결정의 보증으로 사용할 수 없습니다.",
-    updatedAt: "2026-07-23",
-    tags: ["후기 집계", "부스비", "재참가"],
-    moderation: "운영자 검수",
-  },
-  {
-    id: "community-mungu-delivery",
-    eventId: "mungu-box-2026-8",
-    kind: "현장 팁",
-    title: "벡스코 2전시장 택배 반입 기준",
-    summary:
-      "택배를 행사장으로 바로 보낼 때 필요한 수령 주체와 도착 시간 확인 항목입니다.",
-    answer:
-      "행사명, 부스명, 참가자 연락처를 상자에 표시하고 운영사무국이 지정한 도착 가능 일자를 지켜야 합니다. 수령 대행 여부가 확인되지 않았다면 전시장 주소만으로 먼저 발송하지 마세요.",
-    updatedAt: "2026-07-22",
-    tags: ["택배", "반입", "벡스코"],
-    moderation: "운영자 검수",
-  },
-  {
-    id: "community-daegu-prep",
-    eventId: "daegu-illustration-2026",
-    kind: "준비 질문",
-    title: "접수 시작 전 포트폴리오를 어디까지 정리해야 하나요",
-    summary:
-      "심사형 행사에 제출할 대표 작업과 판매 예정 품목의 최소 구성입니다.",
-    answer:
-      "대표 작업, 실제 판매 예정 품목, 작업자 소개가 서로 연결되도록 한 화면에 정리하세요. 파일 형식과 작품 수 제한은 접수 시작 뒤 공개되는 공식 모집 안내에서 다시 확인해야 합니다.",
-    updatedAt: "2026-07-20",
-    tags: ["포트폴리오", "심사", "접수 준비"],
-    moderation: "운영자 검수",
   },
 ];
 
