@@ -57,3 +57,46 @@ test("news timeline summarizes and links each named source", async () => {
   assert.match(html, /원문을 옮겨 싣지 않고/);
   assert.match(html, /최종 판단은 연결된 공식 원문에서 확인/);
 });
+
+test("community renders moderated event-context records and safety boundaries", async () => {
+  const response = await render("/community");
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+
+  const html = await response.text();
+  assert.match(html, /행사 커뮤니티/);
+  assert.match(html, /자유게시판이 아닙니다/);
+  assert.match(html, /운영자 검수/);
+  assert.match(html, /직접 게시·DM·거래/);
+  assert.match(html, /코엑스 D홀 반입 때 대차를 어디서 빌리나요/);
+});
+
+test("community filters records and falls back safely for unknown query values", async () => {
+  const eventResponse = await render(
+    "/community?event=illustar-2026-winter",
+  );
+  assert.equal(eventResponse.status, 200);
+  const eventHtml = await eventResponse.text();
+  assert.match(eventHtml, /일러스타페어 2026 겨울/);
+  assert.match(eventHtml, /코엑스 D홀 반입 때 대차를 어디서 빌리나요/);
+  assert.doesNotMatch(eventHtml, /벡스코 2전시장 택배 반입 기준/);
+
+  const kindResponse = await render(
+    `/community?kind=${encodeURIComponent("현장 팁")}`,
+  );
+  assert.equal(kindResponse.status, 200);
+  const kindHtml = await kindResponse.text();
+  assert.match(kindHtml, /현장 팁/);
+  assert.match(kindHtml, /코엑스 D홀 반입 때 대차를 어디서 빌리나요/);
+  assert.doesNotMatch(kindHtml, /첫 부스 신청 전에 사업자가 꼭 필요한가요/);
+
+  const fallbackResponse = await render(
+    "/community?event=unknown&kind=unknown",
+  );
+  assert.equal(fallbackResponse.status, 200);
+  const fallbackHtml = await fallbackResponse.text();
+  assert.match(fallbackHtml, /전체 행사/);
+  assert.match(fallbackHtml, /코엑스 D홀 반입 때 대차를 어디서 빌리나요/);
+  assert.match(fallbackHtml, /벡스코 2전시장 택배 반입 기준/);
+});

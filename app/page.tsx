@@ -54,6 +54,12 @@ export default function Home() {
       title: "소식",
       copy: "새로운 공지와 변화를 원문으로 전해요.",
     },
+    {
+      number: "05",
+      href: "/community",
+      title: "커뮤니티",
+      copy: "행사별 질문과 현장 팁을 검수 기록으로 모아요.",
+    },
   ];
 
   return (

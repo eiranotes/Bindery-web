@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/notes",
     "/groupbuy",
     "/news",
+    "/community",
     "/me",
     ...events.map(eventPath),
     ...notes.map((note) => `/notes/${note.slug}`),

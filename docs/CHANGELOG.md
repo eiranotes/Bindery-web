@@ -19,3 +19,13 @@
 - Removed unused authentication, D1, Drizzle, and mutable example API starter surfaces.
 - Added reproducible 360px, 768px, and 1280px browser assertions for page overflow, local table/calendar scrolling, home information density, and 44px primary controls.
 - Deployed the exact validated source as owner-only GPT Sites version 1 at <https://bindery-korea-info.eiraworks-9813.chatgpt.site>.
+- Audited all primary routes at 360px, 768px, and 1280px; removed avoidable
+  Groupbuy title wrapping, widened mobile boundary copy, and moved the compact
+  header breakpoint before navigation crowding.
+- Added an event-context Community tab with reviewed preparation questions,
+  field tips, aggregate records, shareable event/kind filters, and explicit
+  no-posting/no-DM/no-transaction boundaries.
+- Added a typed theme catalog with `리소 원색` and `먹지 교정`, device-local
+  persistence, safe invalid-value fallback, and an accessible native selector.
+- Added rendered route/filter tests, theme catalog and selection tests, and
+  responsive browser coverage for Community and theme controls.

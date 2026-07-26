@@ -14,7 +14,8 @@ test("home follows the checked-in HTML mockup language at reduced density", asyn
   assert.match(html, /신청 마감 임박/);
   assert.match(html, /class="colorbar"/);
   assert.equal((html.match(/class="d-day"/g) ?? []).length, 3);
-  assert.equal((html.match(/class="list-number"/g) ?? []).length, 4);
+  assert.equal((html.match(/class="list-number"/g) ?? []).length, 5);
+  assert.match(html, /href="\/community"/);
   assert.doesNotMatch(html, /calendar-grid|groupbuy-progress|news-timeline/);
 });
 

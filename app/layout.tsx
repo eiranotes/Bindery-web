@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { getSiteUrl, SITE_DESCRIPTION } from "./lib/site.ts";
+import {
+  createThemeBootstrapScript,
+  createThemeStylesheet,
+  DEFAULT_THEME_ID,
+} from "./lib/themes.ts";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,7 +41,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html
+      data-theme={DEFAULT_THEME_ID}
+      lang="ko"
+      suppressHydrationWarning
+    >
+      <head>
+        <style
+          data-bindery-theme-catalog
+          dangerouslySetInnerHTML={{ __html: createThemeStylesheet() }}
+        />
+        <script
+          dangerouslySetInnerHTML={{ __html: createThemeBootstrapScript() }}
+        />
+      </head>
       <body>
         <a className="skip-link" href="#main-content">
           본문으로 건너뛰기

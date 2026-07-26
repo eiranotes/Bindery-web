@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { ThemeControl } from "./ThemeControl";
 
 const navigation = [
   { href: "/events", label: "행사" },
   { href: "/notes", label: "노트" },
   { href: "/groupbuy", label: "공동구매" },
   { href: "/news", label: "소식" },
+  { href: "/community", label: "커뮤니티" },
 ];
 
 export function SiteHeader() {
@@ -30,6 +32,7 @@ export function SiteHeader() {
           <Link className="binder-link" href="/me">
             내 바인더
           </Link>
+          <ThemeControl className="theme-control--desktop" />
         </nav>
 
         <details className="mobile-nav">
@@ -41,6 +44,9 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link href="/me">내 바인더</Link>
+            <div className="mobile-nav__theme">
+              <ThemeControl className="theme-control--mobile" />
+            </div>
           </nav>
         </details>
       </div>

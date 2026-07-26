@@ -35,3 +35,26 @@ Metadata, sitemap, robots, and Article JSON-LD derive their absolute origin from
 ## D-009 — Accountless source boundary
 
 The deployed source contains no unused ChatGPT authentication, D1, Drizzle, or mutable example API scaffold. Device-local bookmarks remain the only user state until the product explicitly adopts an authenticated or persistent server-side feature.
+
+## D-010 — Event-context Community, not a free board
+
+Keep v1.0 as the product authority: do not add a free-form board because its
+management cost exceeds its information value. Borrow only the archived v0.3
+event-room principle, so `/community` accumulates operator-reviewed preparation
+questions, field tips, and aggregate records under a named event. Direct
+posting, DM, transactions, and raw unreviewed feedback remain out of scope.
+
+## D-011 — Typed theme catalog as the visual-token authority
+
+Keep the current three-ink identity as the default `리소 원색` theme and offer
+`먹지 교정` as a restrained alternative. `app/lib/themes.ts` is the only
+source for visual color and font-role values. Components consume generated CSS
+variables; the selector stores only a validated theme ID on the device.
+
+## D-012 — Responsive structure changes before text is squeezed
+
+At 360px, 768px, and 1280px, primary routes must not create page-level
+horizontal overflow. Navigation changes to its compact structure before labels
+crowd, multi-column ledgers collapse before headings fragment unnecessarily,
+and long trust or boundary copy receives at least a useful mobile measure.
+Wide comparison tables and calendars continue to own intentional local scroll.

@@ -6,6 +6,19 @@ const viewports = [
   { width: 1280, height: 900 },
 ];
 
+const primaryRoutes = [
+  "/",
+  "/events",
+  "/events/calendar",
+  "/events/illustar-fair/2026-winter",
+  "/notes",
+  "/notes/first-booth-checklist",
+  "/groupbuy",
+  "/news",
+  "/community",
+  "/me",
+];
+
 test("home preserves its information contract without page overflow", async ({
   page,
 }) => {
@@ -24,7 +37,7 @@ test("home preserves its information contract without page overflow", async ({
 
     expect(metrics.pageOverflow, `${viewport.width}px page overflow`).toBe(0);
     expect(metrics.deadlineRows).toBe(3);
-    expect(metrics.indexLinks).toBe(4);
+    expect(metrics.indexLinks).toBe(5);
     expect(metrics.today).toContain("오늘 ·");
   }
 });
@@ -90,4 +103,136 @@ test("wide event and calendar data scroll inside their own sheets", async ({
 
   expect(calendar.pageOverflow).toBe(0);
   expect(calendar.sheetScrollWidth).toBeGreaterThan(calendar.sheetClientWidth);
+});
+
+test("primary routes keep text out of avoidably narrow columns", async ({
+  page,
+}) => {
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+
+    for (const route of primaryRoutes) {
+      await page.goto(route);
+      const overflow = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth,
+      );
+
+      expect(overflow, `${route} at ${viewport.width}px`).toBe(0);
+    }
+  }
+
+  for (const viewport of viewports.filter(({ width }) => width >= 768)) {
+    await page.setViewportSize(viewport);
+    await page.goto("/groupbuy");
+
+    const titleLines = await page.evaluate(() =>
+      [...document.querySelectorAll(".groupbuy-entry h3")].map((heading) => {
+        const style = getComputedStyle(heading);
+        const lineHeight = Number.parseFloat(style.lineHeight);
+        const height = heading.getBoundingClientRect().height;
+        return Number.isFinite(lineHeight) && lineHeight > 0
+          ? Math.max(1, Math.round(height / lineHeight))
+          : 1;
+      }),
+    );
+
+    expect(
+      titleLines.filter((lineCount) => lineCount > 2),
+      `${viewport.width}px group-buy title wrapping`,
+    ).toEqual([]);
+  }
+
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto("/");
+  const tabletNavigation = await page.evaluate(() => ({
+    desktop: getComputedStyle(
+      document.querySelector(".desktop-nav") as HTMLElement,
+    ).display,
+    mobile: getComputedStyle(
+      document.querySelector(".mobile-nav") as HTMLElement,
+    ).display,
+  }));
+  expect(tabletNavigation.desktop).toBe("none");
+  expect(tabletNavigation.mobile).not.toBe("none");
+
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const route of ["/notes", "/groupbuy"]) {
+    await page.goto(route);
+    const noticeWidths = await page.evaluate(() =>
+      [
+        ...document.querySelectorAll(
+          ".trust-notice > p:last-child, .boundary-note > div > p",
+        ),
+      ].map((paragraph) =>
+        Math.round(paragraph.getBoundingClientRect().width),
+      ),
+    );
+
+    expect(noticeWidths.length, `${route} notice coverage`).toBeGreaterThan(0);
+    expect(
+      noticeWidths.filter((width) => width < 300),
+      `${route} notice text measure`,
+    ).toEqual([]);
+  }
+});
+
+test("theme selection is reachable, legible, and touch sized", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+
+  const selector = page
+    .locator(".theme-control--desktop")
+    .getByRole("combobox", { name: "인쇄 테마" });
+  await expect(selector).toHaveCount(1);
+  await selector.focus();
+
+  const desktopMetrics = await selector.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      height: Math.round(rect.height),
+      width: Math.round(rect.width),
+      outlineStyle: style.outlineStyle,
+      outlineWidth: Number.parseFloat(style.outlineWidth),
+    };
+  });
+
+  expect(desktopMetrics.height).toBeGreaterThanOrEqual(44);
+  expect(desktopMetrics.width).toBeGreaterThanOrEqual(44);
+  expect(desktopMetrics.outlineStyle).not.toBe("none");
+  expect(desktopMetrics.outlineWidth).toBeGreaterThanOrEqual(3);
+
+  await page.goto("/events/calendar?month=2026-08");
+  const emptyCalendarCell = page.locator(".calendar-day--empty").first();
+  const defaultEmptyFill = await emptyCalendarCell.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+  const calendarSelector = page
+    .locator(".theme-control--desktop")
+    .getByRole("combobox", { name: "인쇄 테마" });
+  await calendarSelector.selectOption("carbon-proof");
+  await expect
+    .poll(() =>
+      emptyCalendarCell.evaluate(
+        (element) => getComputedStyle(element).backgroundColor,
+      ),
+    )
+    .not.toBe(defaultEmptyFill);
+
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto("/");
+  await page.getByText("메뉴", { exact: true }).click();
+
+  const mobileSelector = page
+    .locator(".theme-control--mobile")
+    .getByRole("combobox", { name: "인쇄 테마" });
+  await expect(mobileSelector).toBeVisible();
+  const mobileHeight = await mobileSelector.evaluate((element) =>
+    Math.round(element.getBoundingClientRect().height),
+  );
+  expect(mobileHeight).toBeGreaterThanOrEqual(44);
 });
