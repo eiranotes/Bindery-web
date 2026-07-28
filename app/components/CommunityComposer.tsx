@@ -76,10 +76,15 @@ function setFormValue(form: HTMLFormElement, name: string, value: string) {
   }
 }
 
-export function CommunityComposer() {
+export function CommunityComposer({
+  liveBoard,
+}: {
+  liveBoard?: "general" | "artists";
+} = {}) {
   const formRef = useRef<HTMLFormElement>(null);
   const feedbackRef = useRef<HTMLParagraphElement>(null);
   const [clearRequested, setClearRequested] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function setFeedback(message: string) {
     if (feedbackRef.current) {
@@ -113,10 +118,7 @@ export function CommunityComposer() {
     }
   }, []);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setClearRequested(false);
-    const form = event.currentTarget;
+  function saveLocalDraft(form: HTMLFormElement) {
     const formData = new FormData(form);
     const category = formData.get("category");
     const title = formData.get("title");
@@ -155,6 +157,59 @@ export function CommunityComposer() {
     }
   }
 
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setClearRequested(false);
+    const form = event.currentTarget;
+
+    if (!liveBoard) {
+      saveLocalDraft(form);
+      return;
+    }
+
+    const formData = new FormData(form);
+    setSubmitting(true);
+    setFeedback("게시 권한과 입력값을 확인하고 있습니다.");
+    try {
+      const response = await fetch("/api/community/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          boardId: liveBoard,
+          categoryId: formData.get("category"),
+          kind: formData.get("kind"),
+          title: formData.get("title"),
+          body: formData.get("body"),
+          sourceLabel: formData.get("sourceLabel"),
+          sourceUrl: formData.get("sourceUrl"),
+          sourceCheckedAt: formData.get("sourceCheckedAt"),
+        }),
+      });
+      const result = (await response.json()) as {
+        ok?: boolean;
+        message?: string;
+        post?: { id?: string };
+      };
+      if (!response.ok || !result.ok || !result.post?.id) {
+        setFeedback(result.message ?? "게시하지 못했습니다. 입력 내용을 유지했습니다.");
+        return;
+      }
+
+      try {
+        window.localStorage.removeItem(COMMUNITY_DRAFT_KEY);
+      } catch {
+        // Publishing succeeded; a blocked local cleanup must not misreport it.
+      }
+      setFeedback("게시했습니다. 게시글로 이동합니다.");
+      const boardPath = liveBoard === "artists" ? "artists" : "general";
+      window.location.assign(`/community/${boardPath}/${result.post.id}`);
+    } catch {
+      setFeedback("연결 문제로 게시하지 못했습니다. 입력 내용을 유지했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   function handleClear() {
     try {
       window.localStorage.removeItem(COMMUNITY_DRAFT_KEY);
@@ -187,13 +242,24 @@ export function CommunityComposer() {
       aria-describedby="community-composer-boundary"
     >
       <div className="community-composer__boundary" id="community-composer-boundary">
-        <strong>공개 게시 기능은 아직 연결되지 않았습니다.</strong>
-        <p>
-          아래 내용은 이 브라우저에만 임시저장됩니다. 계정, 서버, 운영 검수
-          체계가 연결되기 전에는 다른 사람에게 보이지 않습니다. 암호화되거나
-          자동 삭제되지 않으므로 공용 기기·공유 브라우저 프로필에서는 다른
-          사용자나 확장 프로그램이 읽을 수 있습니다. 작업 후 직접 지워 주세요.
-        </p>
+        <strong>
+          {liveBoard
+            ? "로그인 세션과 게시 권한을 서버에서 다시 확인합니다."
+            : "공개 게시 기능은 아직 연결되지 않았습니다."}
+        </strong>
+        {liveBoard ? (
+          <p>
+            게시하면 다른 이용자가 읽을 수 있습니다. 개인 연락처, 주문 정보,
+            계좌번호를 적지 말고 사실 정보에는 확인한 공개 출처를 남겨 주세요.
+          </p>
+        ) : (
+          <p>
+            아래 내용은 이 브라우저에만 임시저장됩니다. 계정, 서버, 운영 검수
+            체계가 연결되기 전에는 다른 사람에게 보이지 않습니다. 암호화되거나
+            자동 삭제되지 않으므로 공용 기기·공유 브라우저 프로필에서는 다른
+            사용자나 확장 프로그램이 읽을 수 있습니다. 작업 후 직접 지워 주세요.
+          </p>
+        )}
       </div>
 
       <label>
@@ -206,6 +272,16 @@ export function CommunityComposer() {
           ))}
         </select>
         <small>사실 정보와 자유 대화를 구분해 다음 사람이 찾기 쉽게 합니다.</small>
+      </label>
+
+      <label>
+        글 성격
+        <select name="kind" defaultValue="question" required>
+          <option value="question">질문</option>
+          <option value="experience">경험 공유</option>
+          <option value="fact">사실·안내</option>
+        </select>
+        <small>경험과 사실을 구분하면 다음 사람이 판단하기 쉽습니다.</small>
       </label>
 
       <label>
@@ -244,10 +320,47 @@ export function CommunityComposer() {
         <small>행사·업체·제도 정보라면 원문 주소와 확인 날짜를 함께 남깁니다.</small>
       </label>
 
+      <label>
+        출처 이름 <span>(URL을 적은 경우)</span>
+        <input
+          name="sourceLabel"
+          type="text"
+          maxLength={120}
+          defaultValue="참고 원문"
+        />
+      </label>
+
+      <label>
+        출처 확인 날짜 <span>(URL을 적은 경우)</span>
+        <input
+          name="sourceCheckedAt"
+          type="date"
+          defaultValue={new Date().toISOString().slice(0, 10)}
+        />
+      </label>
+
       <div className="community-composer__actions">
-        <button className="button button--primary" type="submit">
-          이 기기에 임시저장
+        <button
+          className="button button--primary"
+          disabled={submitting}
+          type="submit"
+        >
+          {liveBoard
+            ? submitting
+              ? "게시 중"
+              : "게시하기"
+            : "이 기기에 임시저장"}
         </button>
+        {liveBoard ? (
+          <button
+            className="button"
+            disabled={submitting}
+            type="button"
+            onClick={() => formRef.current && saveLocalDraft(formRef.current)}
+          >
+            이 기기에 임시저장
+          </button>
+        ) : null}
         <button
           className="button"
           type="button"

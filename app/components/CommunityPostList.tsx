@@ -13,17 +13,21 @@ const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
 });
 
 function formatDate(value: string) {
-  return dateFormatter.format(new Date(`${value}T12:00:00+09:00`));
+  return dateFormatter.format(
+    new Date(value.length === 10 ? `${value}T12:00:00+09:00` : value),
+  );
 }
 
 type CommunityPostListProps = {
   posts: CommunityPost[];
   startIndex?: number;
+  mode?: "example" | "live";
 };
 
 export function CommunityPostList({
   posts,
   startIndex = 0,
+  mode = "example",
 }: CommunityPostListProps) {
   return (
     <ol className="community-post-list">
@@ -50,11 +54,15 @@ export function CommunityPostList({
               <p>{post.excerpt}</p>
               <footer>
                 <span>
-                  예시 작성자 · {post.author} · {post.authorLabel}
+                  {mode === "example" ? "예시 작성자 · " : ""}
+                  {post.author}
+                  {mode === "example" ? ` · ${post.authorLabel}` : ""}
                 </span>
-                <span>
-                  예시 답변 {post.commentCount} · 예시 도움 {post.usefulCount}
-                </span>
+                {mode === "example" ? (
+                  <span>
+                    예시 답변 {post.commentCount} · 예시 도움 {post.usefulCount}
+                  </span>
+                ) : null}
               </footer>
             </article>
           </li>

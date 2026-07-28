@@ -60,7 +60,7 @@ export type CommunityBoard = {
 
 export type CommunityPost = {
   slug: string;
-  boardId: "general";
+  boardId: CommunityBoardId;
   categoryId: CommunityCategoryId;
   title: string;
   excerpt: string;
@@ -252,7 +252,7 @@ export function getCommunityPost(slug: string) {
 }
 
 export function getCommunityPostPath(post: CommunityPost) {
-  return `/community/general/${post.slug}` as const;
+  return `/community/${post.boardId}/${post.slug}` as const;
 }
 
 export function filterCommunityPosts({

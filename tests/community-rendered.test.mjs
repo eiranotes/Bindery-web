@@ -74,6 +74,7 @@ test("general post detail links to real write, report, and related screens", asy
 
 test("write, verification, rules, and report destinations explain their live boundary", async () => {
   const destinations = [
+    ["/auth/sign-in", /아직 로그인을 받을 수 없습니다/],
     ["/community/write?board=general", /이 브라우저에만 임시저장/],
     ["/community/write?board=artists", /작성 잠금/],
     ["/community/verify", /이 화면에서는 파일, 사업자번호, 계정 정보를 받지 않습니다/],

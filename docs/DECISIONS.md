@@ -102,3 +102,101 @@ Community hub, and within the general-board feed, away from navigation and
 primary actions. Do not place ads on writing, verification, lock, error, or
 official deadline decision screens. No live provider script or tracking is
 included.
+
+## D-016 — Automatic provisional artist access with later review
+
+A valid minimum-data artist application receives `provisional` access in the
+same server operation and enters an operator queue. The product-facing label is
+always `임시 승인 · 검수 대기`; it must not look like completed identity or
+information verification. The review target is seven days. Provisional artists
+may read the artist board and, by default, create one post and five comments per
+24 hours until review.
+
+The first release collects a public activity name, one normalized public proof
+URL, activity field, and current policy acceptance. It does not collect identity
+documents, business-registration files, addresses, telephone numbers, or
+private attachments. Rejection, suspension, and revocation remove artist access
+on the next server authorization check.
+
+## D-017 — Separate account role, artist state, and database authorization
+
+Account roles are `member`, `moderator`, and `admin`; artist status is a
+separate `provisional`, `verified`, `rejected`, `suspended`, or `revoked`
+lifecycle. The general board is public to read and requires an active member to
+write, comment, bookmark, or report. The artist board requires an active
+provisional or verified artist for both reading and writing.
+
+Server operations and Postgres Row Level Security both deny by default. Browser
+storage, URL/query values, visual badges, and client-provided roles never grant
+access. Privileged mutations require an actor and reason and append audit
+history. Only admins may finalize artist verification or issue the first
+release's single-use operator invitations.
+
+## D-018 — Moderation and retention precede live UGC
+
+Live posting requires durable report intake, operator notification, reasoned
+hide/lock/restore actions, soft deletion, correction history, appeal state, and
+append-only audit records. Development retention defaults and response targets
+live in `docs/COMMUNITY_OPERATIONS.md`; they remain product-owner and legal
+inputs until the privacy policy is approved. Live ads, DM, transactions,
+identity documents, and file attachments remain out of scope.
+
+## D-019 — Verified Supabase claims and fail-closed runtime configuration
+
+Supabase public URL and publishable key are the only browser-visible backend
+configuration. Both must be present and valid before sign-in is offered. A
+missing, partial, or invalid configuration keeps public information readable
+but leaves every member mutation and artist-board data path closed.
+
+Server authorization validates the access token with `getClaims()` and then
+loads profile, account role, and artist status from protected database rows.
+It never authorizes from `getSession()` user data, JWT role claims supplied by
+the client, URL/query values, or browser storage. Authentication callback
+responses are private/no-store, and service-role credentials never use a
+`NEXT_PUBLIC_*` variable or enter browser code.
+
+## D-020 — Minimum-data provisional approval and revocable invitations
+
+Artist applications accept only a public activity name, activity field, public
+proof URL, optional public URL/note, current policy consent, and a server-checked
+Turnstile token. The server normalizes and deduplicates proof URLs, consumes a
+database rate-limit record, and creates `provisional` access idempotently in one
+database operation. The visible state remains `임시 승인 · 검수 대기` until an
+admin records a reasoned review decision.
+
+Admin invitations use a hashed, seven-day, single-use token bound to the target
+email. The raw acceptance URL is displayed only at issuance. A pending link can
+be cancelled only by an admin with an explicit confirmation and reason; a
+cancelled link cannot be restored, but a replacement invitation may be issued.
+Review, acceptance, and cancellation remain server/RLS enforced and append
+actor, target, time, before/after state, and reason to audit history.
+
+## D-021 — Durable rows only when the community backend is configured
+
+The general board keeps the curated example ledger and device-local composer
+only while Supabase public configuration is absent. Once configured, lists and
+details use authorized Postgres rows exclusively; an empty database renders an
+empty state, and a read failure renders an error instead of silently mixing in
+examples. Member mutations pass through same-origin no-store server routes and
+are independently constrained by RLS.
+
+Post creation stores a published post and optional normalized source in one
+database operation. Comments, account Binder saves, and reports are recipient
+or actor scoped. Soft deletion preserves a reasoned revision while removing the
+post from public reads. Repeated active reports by the same member, target, and
+reason return the existing intake rather than creating parallel work.
+
+## D-022 — Protected artist rows and scoped moderation are database contracts
+
+Artist-board authorization applies to list, detail, post, comment, source,
+bookmark, report, and author-update paths. Losing provisional/verified status
+removes access even to the former artist author's own protected rows. For
+provisional artists, a rolling 24-hour limit of one post and five comments is
+shown in the UI, checked by the service, and enforced again by serialized
+database triggers so parallel requests cannot bypass it.
+
+Moderators may triage, dismiss, hide, lock, and restore reported content with a
+reason. Account suspension and appeal resolution require an admin. Report and
+post transitions happen in one database operation; every action adds a new
+`moderation_actions` row, while report changes also append immutable audit
+events. Member and signed-out responses contain no queue or audit payload.

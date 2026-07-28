@@ -29,17 +29,33 @@
   shared-browser warnings, and keep non-live Community routes out of search.
 - [x] Complete whole-implementation review, fresh release verification, and the
   owner-only Sites deployment for the split-board Community release.
+- [x] Approve the Supabase Auth/Postgres/RLS backend direction and create a
+  Guarded sequential implementation plan from clean checkpoint `7f4be4a`.
+- [x] Define automatic provisional approval, later operator review, operator
+  invitations, access roles, minimum-data evidence, moderation, deletion,
+  appeal, audit, and development retention policy.
+- [x] Implement the typed community authorization and lifecycle domain contract.
+- [x] Create the Supabase schema and pass real local Postgres/RLS tests.
+- [x] Integrate server-validated sessions while preserving unconfigured
+  fail-closed behavior.
+- [x] Implement provisional artist applications, operator review/revocation,
+  and single-use operator invitations with cancellation and audit history.
+- [x] Persist the general board, sources, comments, Binder saves, soft deletion,
+  and report intake with an honest unconfigured fallback.
+- [x] Persist the protected artist board and enforce provisional-artist post and
+  comment limits without leaking rows after revocation.
+- [x] Add the operator moderation console, scoped actions, and append-only audit
+  views.
+- [ ] Add knowledge freshness, search, notifications, and Binder sync.
 
 ## Deferred by product policy
 
 - Payment or settlement mediation.
 - Public Groupbuy posting before terms, approval, and reporting policy review.
 - Raw review publication or aggregate access below N=5.
-- Real authenticated Community posting, replies, DM, transactions, and
-  unmoderated raw feedback.
-- Server-side artist verification and artist-board authorization.
-- Real Community report/submission intake until moderation, correction,
-  deletion/appeal, privacy, and source-verification operations are defined.
+- DM, transactions, and unmoderated raw feedback.
 - Live advertising, consent, tracking, and provider integration.
+- Identity-document and private attachment collection.
+- Member-issued invitations and referral rewards.
 - Automated scraping of event organizers.
 - Final legal terms, privacy policy, and a permanent domain.

@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-28
+
+- Added Supabase public configuration validation, browser/server SSR clients,
+  email sign-in and callback routes, and verified-claims session resolution.
+- Loaded account role and artist status from protected database rows instead
+  of trusting client or session metadata, with explicit unconfigured,
+  signed-out, signed-in, and error states.
+- Connected artist-board and write boundaries to the server session contract
+  while preserving content-free fail-closed behavior before production backend
+  binding.
+- Documented local public environment values, callback URLs, service-role
+  secrecy, and isolated PostgreSQL/RLS verification.
+- Added automatic provisional artist applications with proof-URL normalization,
+  idempotency, Turnstile verification, and database-backed rate limiting.
+- Added admin review/revocation screens and seven-day one-time artist
+  invitations with target-email binding, acceptance, explicit cancellation,
+  and append-only audit history.
+- Kept application, admin, and invitation routes private/no-store and
+  fail-closed without runtime configuration; verified 360px and 1280px layouts.
+- Added durable general-board post/source creation, public list/detail reads,
+  member comments, Binder saves, reasoned soft deletion, and report intake.
+- Switched configured screens to live rows while preserving the existing
+  example board and device-local composer only as an explicit unconfigured
+  fallback; added responsive and fail-closed browser coverage.
+- Added protected artist-board list/detail/write flows and rolling provisional
+  limits enforced at both service and database-trigger boundaries.
+- Closed former-author RLS paths after artist revocation and added content-free
+  lock screens for unauthorized list, detail, and write routes.
+- Added moderator report queues, reasoned content actions, admin-only account
+  suspension and appeal resolution, plus separate action and audit history
+  screens that remain hidden from ordinary members.
+
 ## 2026-07-26
 
 - Initialized the GPT Sites web project.
@@ -58,3 +90,10 @@
 - Deployed the reviewed split-board Community and reserved-ad release as
   owner-only GPT Sites version 5 at
   <https://bindery-korea-info.eiraworks-9813.chatgpt.site>.
+- Recorded the approved community backend architecture and its Guarded,
+  sequential implementation plan from clean checkpoint `7f4be4a`.
+- Defined automatic `임시 승인 · 검수 대기`, seven-day operator review,
+  admin-issued invitations, public-general/member-write access, server/RLS
+  artist access, minimum public-URL evidence, provisional rate controls,
+  moderation, correction, soft deletion, appeal, audit, and development
+  retention defaults.

@@ -9,7 +9,16 @@ import {
   COMMUNITY_CATEGORY_CATALOG,
   filterCommunityPosts,
   getCommunityCategory,
+  type CommunityPost,
 } from "../../lib/community";
+import {
+  createSupabaseCommunityRepository,
+  durableCommunityPostToView,
+} from "../../lib/server/community/posts.ts";
+import { getSupabasePublicConfig } from "../../lib/supabase/config.ts";
+import { createSupabaseServerClient } from "../../lib/supabase/server.ts";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "모두의 게시판",
@@ -31,11 +40,34 @@ export default async function GeneralCommunityPage({
   const query = await searchParams;
   const requestedCategory = singleValue(query.category);
   const selectedCategory = getCommunityCategory(requestedCategory);
-  const order = singleValue(query.order) === "latest" ? "latest" : "helpful";
-  const posts = filterCommunityPosts({
-    categoryId: selectedCategory?.id,
-    order,
-  });
+  const config = getSupabasePublicConfig();
+  const liveMode = config.status === "configured";
+  const order = liveMode
+    ? "latest"
+    : singleValue(query.order) === "latest"
+      ? "latest"
+      : "helpful";
+  let loadError = false;
+  let posts: CommunityPost[];
+
+  if (liveMode) {
+    try {
+      const client = await createSupabaseServerClient(config);
+      const livePosts = await createSupabaseCommunityRepository(client!).listPosts({
+        boardId: "general",
+        categoryId: selectedCategory?.id,
+      });
+      posts = livePosts.map(durableCommunityPostToView);
+    } catch {
+      posts = [];
+      loadError = true;
+    }
+  } else {
+    posts = filterCommunityPosts({
+      categoryId: selectedCategory?.id,
+      order,
+    });
+  }
   const leadingPosts = posts.slice(0, 3);
   const trailingPosts = posts.slice(3);
 
@@ -87,7 +119,7 @@ export default async function GeneralCommunityPage({
           <label>
             정렬
             <select name="order" defaultValue={order}>
-              <option value="helpful">도움 많은 순</option>
+              {!liveMode ? <option value="helpful">도움 많은 순</option> : null}
               <option value="latest">최근 수정 순</option>
             </select>
           </label>
@@ -111,17 +143,25 @@ export default async function GeneralCommunityPage({
             {selectedCategory?.label ?? "전체 정보"} ·{" "}
             {order === "helpful" ? "도움 많은 순" : "최근 수정 순"}
           </h2>
-          <span>EXAMPLE CONTENT</span>
+          <span>{liveMode ? "LIVE POSTS" : "EXAMPLE CONTENT"}</span>
         </div>
-        {posts.length ? (
+        {loadError ? (
+          <div className="empty-state">
+            <p>게시글을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+          </div>
+        ) : posts.length ? (
           <>
-            <CommunityPostList posts={leadingPosts} />
+            <CommunityPostList
+              posts={leadingPosts}
+              mode={liveMode ? "live" : "example"}
+            />
             {trailingPosts.length ? (
               <>
                 <AdSlot placement="community-general-feed" />
                 <CommunityPostList
                   posts={trailingPosts}
                   startIndex={leadingPosts.length}
+                  mode={liveMode ? "live" : "example"}
                 />
               </>
             ) : null}
@@ -137,12 +177,19 @@ export default async function GeneralCommunityPage({
       </section>
 
       <aside className="source-notice">
-        <strong>예시 데이터</strong>
-        <p>
-          현재 글과 작성자 이름은 게시판 구조를 검증하기 위한 예시입니다.
-          공개 게시와 댓글은 아직 연결되지 않았으며, 작성 화면에서는 이
-          기기에 임시저장만 할 수 있습니다.
-        </p>
+        <strong>{liveMode ? "공개 커뮤니티" : "예시 데이터"}</strong>
+        {liveMode ? (
+          <p>
+            게시글은 회원이 작성한 공개 UGC입니다. 작가 인증이나 게시 자체가
+            내용의 사실성을 보증하지 않으므로 출처와 확인 날짜를 함께 살펴보세요.
+          </p>
+        ) : (
+          <p>
+            현재 글과 작성자 이름은 게시판 구조를 검증하기 위한 예시입니다.
+            공개 게시와 댓글은 아직 연결되지 않았으며, 작성 화면에서는 이
+            기기에 임시저장만 할 수 있습니다.
+          </p>
+        )}
       </aside>
     </div>
   );

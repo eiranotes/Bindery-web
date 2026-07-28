@@ -17,9 +17,10 @@
 - `/notes`, `/news` — 날짜와 출처가 명시된 실무 정보
 - `/groupbuy` — 결제·정산을 중개하지 않는 읽기 전용 현황
 - `/community` — 작가 인증 게시판과 모두의 게시판을 나누는 커뮤니티 허브
-- `/community/artists` — 서버 인증 전에는 내용을 노출하지 않는 작가 전용 잠금 화면
+- `/community/artists` — 서버 세션과 작가 상태를 확인하고, 미연결·비회원·비작가 상태에서는 내용을 노출하지 않는 작가 전용 화면
 - `/community/general`, `/community/general/[slug]` — 정보 분류·정렬과 예시 글 상세
 - `/community/write`, `/community/verify`, `/community/rules`, `/community/report` — 기기 임시 글, 인증 기준, 운영·신고 경계
+- `/auth/sign-in`, `/auth/callback` — Supabase 이메일 로그인과 서버 세션 교환 경계
 - `/me` — 계정 없이 이 기기에만 저장되는 개인 바인더
 - `/events/calendar.ics`, `/rss.xml` — 일정과 소식 피드
 
@@ -38,11 +39,32 @@ npm run dev
 npm run lint
 npm test
 npm run build
+npm run test:community-db
 ```
 
 `npm test`는 360×800, 768×1024, 1280×900 브라우저 검증도 포함합니다.
 macOS에서는 설치된 Google Chrome을 사용하고, 다른 환경에서는 먼저
 `npx playwright install chromium`으로 테스트 브라우저를 준비합니다.
+
+### 커뮤니티 백엔드 설정
+
+`cp .env.example .env.local` 후 Supabase 프로젝트의 공개 URL과 publishable
+key, Cloudflare Turnstile의 공개 site key와 서버 전용 secret key를 입력합니다.
+Supabase 공개 값 두 개가 모두 유효할 때만 이메일 로그인과 서버 세션 확인이
+켜지고, Turnstile 값 두 개가 모두 있어야 작가 신청 폼과 서버 검증이 열립니다.
+필수 값이 없거나 잘못되면 공개 정보는 계속 렌더링하되 회원 변경 작업과 작가
+게시판은 실패 폐쇄합니다.
+
+Supabase Auth의 허용 리디렉션에는 로컬 개발용
+`http://127.0.0.1:3000/auth/callback`과 실제 배포 도메인의 `/auth/callback`을
+등록해야 합니다. 호스팅 환경의 값은 Sites 런타임 설정으로 관리하며 소스에
+실제 키를 커밋하지 않습니다. `service_role` 키와 `TURNSTILE_SECRET_KEY`는
+브라우저에 노출하지 않습니다. 특히 `service_role`은 RLS를 우회하므로
+브라우저 환경변수나 `NEXT_PUBLIC_*` 값으로 두지 않습니다.
+
+로컬 RLS 검증은 전역 데이터베이스를 변경하지 않습니다.
+`npm run test:community-db`가 임시 PostgreSQL 17 클러스터를 만들고 production
+마이그레이션과 seed를 그대로 적용해 권한 행렬을 확인한 뒤 정리합니다.
 
 ## 테마 카탈로그
 
@@ -56,7 +78,9 @@ macOS에서는 설치된 Google Chrome을 사용하고, 다른 환경에서는 �
 커뮤니티의 단일 데이터 원본은 `app/lib/community.ts`입니다. 게시판 접근
 정책, 정보 분류, 예시 글, URL 필터와 상세 경로를 이 모듈에서 관리합니다.
 작가 게시판은 `verified-artist`, 모두의 게시판은 `public` 대상으로 분리하며,
-현재 버전은 서버 인증이 없어 작가 게시판을 실패 폐쇄 상태로 둡니다.
+Supabase Auth/Postgres/RLS 기반 권한 경계는 소스와 로컬 DB 테스트까지
+구축됐습니다. 아직 운영 Supabase 프로젝트와 Sites 런타임 값은 연결하지
+않았으므로 현재 배포에서는 작가 게시판이 계속 실패 폐쇄됩니다.
 
 글 작성 화면은 공개 게시를 흉내 내지 않고 이 브라우저에 임시 글 한 건만
 저장합니다. 초안은 암호화·자동 삭제되지 않으므로 공유 브라우저에서는 직접
