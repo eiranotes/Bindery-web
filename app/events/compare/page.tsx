@@ -25,15 +25,24 @@ function valueOf(value: string | string[] | undefined, fallback: string) {
   return typeof value === "string" ? value : fallback;
 }
 
-function selectedEvents(
+function requestedEventIds(
   query: Record<string, string | string[] | undefined>,
-): EventEdition[] {
+): [string, string, string] {
   const defaults = events.slice(0, 3).map((event) => event.id);
-  const requestedIds = [
+  const requested = [
     valueOf(query.event1, defaults[0] ?? ""),
-    valueOf(query.event2, defaults[1] ?? defaults[0] ?? ""),
-    valueOf(query.event3, defaults[2] ?? defaults[0] ?? ""),
-  ];
+    valueOf(query.event2, defaults[1] ?? ""),
+    valueOf(query.event3, defaults[2] ?? ""),
+  ] as const;
+
+  return requested.map((id, index) => {
+    if (index > 0 && id === "") return "";
+    if (events.some((event) => event.id === id)) return id;
+    return defaults[index] ?? (index === 0 ? defaults[0] ?? "" : "");
+  }) as [string, string, string];
+}
+
+function selectedEvents(requestedIds: readonly string[]): EventEdition[] {
   const selected: EventEdition[] = [];
 
   for (const id of requestedIds) {
@@ -50,8 +59,8 @@ export default async function EventComparePage({
   searchParams,
 }: EventComparePageProps) {
   const query = await searchParams;
-  const selected = selectedEvents(query);
-  const defaults = events.slice(0, 3);
+  const requestedIds = requestedEventIds(query);
+  const selected = selectedEvents(requestedIds);
 
   return (
     <div className="page-shell">
@@ -82,12 +91,9 @@ export default async function EventComparePage({
                 {label}
                 <select
                   name={`event${index + 1}`}
-                  defaultValue={
-                    selected[index]?.id ??
-                    defaults[index]?.id ??
-                    defaults[0]?.id
-                  }
+                  defaultValue={requestedIds[index]}
                 >
+                  {index > 0 ? <option value="">선택 안 함</option> : null}
                   {events.map((event) => (
                     <option key={event.id} value={event.id}>
                       {event.shortName} · {event.region}
