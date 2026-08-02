@@ -74,6 +74,12 @@
 - [x] Add comparison and archive routes to the sitemap and repository README.
 - [x] Record the data operating model, metrics, phased roadmap, launch gates,
   monetization boundaries, and AI prerequisites.
+- [x] Complete a source-based UI/UX audit across the design system, primary
+  routes, trust boundaries, responsive contracts, and event decision flows.
+- [x] Add comparison decision summaries, early data-state disclosure,
+  keyboard-focusable table regions, mobile scroll cues, and sticky row labels.
+- [x] Add scalable archive wayfinding, current-edition labels, and UI release
+  gates in `docs/UI_UX_AUDIT_2026-08-02.md`.
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
   runtime binding, backup/restore rehearsal, and authenticated production E2E.
 
