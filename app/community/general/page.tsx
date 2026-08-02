@@ -11,10 +11,15 @@ import {
   getCommunityCategory,
   type CommunityPost,
 } from "../../lib/community";
+import { getCommunitySourceFreshness } from "../../lib/server/community/knowledge.ts";
 import {
-  createSupabaseCommunityRepository,
-  durableCommunityPostToView,
-} from "../../lib/server/community/posts.ts";
+  communitySearchPageHref,
+  communitySearchPostToView,
+  createSupabaseCommunitySearchRepository,
+  searchCommunityPosts,
+  type CommunitySearchFreshness,
+  type CommunitySearchResolution,
+} from "../../lib/server/community/search.ts";
 import { getSupabasePublicConfig } from "../../lib/supabase/config.ts";
 import { createSupabaseServerClient } from "../../lib/supabase/server.ts";
 
@@ -34,12 +39,26 @@ function singleValue(value: string | string[] | undefined) {
   return typeof value === "string" ? value : null;
 }
 
+function selectedResolution(value: string | null): CommunitySearchResolution {
+  return value === "resolved" || value === "unresolved" ? value : "all";
+}
+
+function selectedFreshness(value: string | null): CommunitySearchFreshness {
+  return value === "fresh" || value === "stale" || value === "missing"
+    ? value
+    : "all";
+}
+
 export default async function GeneralCommunityPage({
   searchParams,
 }: GeneralCommunityPageProps) {
   const query = await searchParams;
   const requestedCategory = singleValue(query.category);
   const selectedCategory = getCommunityCategory(requestedCategory);
+  const searchQuery = (singleValue(query.q) ?? "").trim().slice(0, 200);
+  const resolution = selectedResolution(singleValue(query.resolution));
+  const freshness = selectedFreshness(singleValue(query.freshness));
+  const cursor = singleValue(query.cursor);
   const config = getSupabasePublicConfig();
   const liveMode = config.status === "configured";
   const order = liveMode
@@ -49,24 +68,65 @@ export default async function GeneralCommunityPage({
       : "helpful";
   let loadError = false;
   let posts: CommunityPost[];
+  let nextCursor: string | null = null;
 
   if (liveMode) {
     try {
       const client = await createSupabaseServerClient(config);
-      const livePosts = await createSupabaseCommunityRepository(client!).listPosts({
-        boardId: "general",
-        categoryId: selectedCategory?.id,
-      });
-      posts = livePosts.map(durableCommunityPostToView);
+      const result = await searchCommunityPosts(
+        {
+          actor: {
+            authenticated: false,
+            accountStatus: "anonymous",
+            role: "none",
+            artistStatus: "none",
+          },
+          input: {
+            query: searchQuery,
+            board: "general",
+            categoryId: selectedCategory?.id,
+            resolution,
+            freshness,
+            cursor,
+            limit: 24,
+          },
+          now: new Date(),
+        },
+        { repository: createSupabaseCommunitySearchRepository(client!) },
+      );
+      posts = result.posts.map(communitySearchPostToView);
+      nextCursor = result.nextCursor;
     } catch {
       posts = [];
       loadError = true;
     }
   } else {
-    posts = filterCommunityPosts({
-      categoryId: selectedCategory?.id,
-      order,
-    });
+    const normalizedSearch = searchQuery.toLocaleLowerCase("ko-KR");
+    const now = new Date();
+    posts = filterCommunityPosts({ categoryId: selectedCategory?.id, order }).filter(
+      (post) => {
+        const matchesText =
+          !normalizedSearch ||
+          [post.title, post.excerpt, ...post.body, ...post.tags]
+            .join(" ")
+            .toLocaleLowerCase("ko-KR")
+            .includes(normalizedSearch);
+        const matchesResolution =
+          resolution === "all" ||
+          (resolution === "resolved" && post.status === "해결") ||
+          (resolution === "unresolved" && post.status !== "해결");
+        const postFreshness = getCommunitySourceFreshness({
+          checkedAt: post.source?.checkedAt ?? null,
+          validForDays: post.source ? 90 : 0,
+          now,
+        });
+        return (
+          matchesText &&
+          matchesResolution &&
+          (freshness === "all" || freshness === postFreshness)
+        );
+      },
+    );
   }
   const leadingPosts = posts.slice(0, 3);
   const trailingPosts = posts.slice(3);
@@ -76,14 +136,14 @@ export default async function GeneralCommunityPage({
       <PageIntro
         eyebrow="COMMUNITY / OPEN BOARD"
         title="모두의 게시판"
-        description="작가 인증 여부와 관계없이 읽을 수 있는 자유게시판입니다. 실무 정보와 해결된 질문을 먼저 찾고, 자유 대화는 별도 분류로 구분합니다."
+        description="누구나 읽을 수 있는 공개 게시판입니다."
       >
         <div className="intro-actions">
           <Link
             className="button button--primary"
             href="/community/write?board=general"
           >
-            글 작성 화면 열기
+            글 작성
           </Link>
           <Link className="button" href="/community/rules">
             운영·신고 기준
@@ -98,10 +158,20 @@ export default async function GeneralCommunityPage({
         aria-labelledby="general-community-filter"
       >
         <div className="section-line-heading">
-          <h2 id="general-community-filter">정보 좁히기</h2>
+          <h2 id="general-community-filter">검색·필터</h2>
           <span>{posts.length} POSTS</span>
         </div>
         <form action="/community/general" method="get">
+          <label>
+            검색어
+            <input
+              type="search"
+              name="q"
+              maxLength={200}
+              defaultValue={searchQuery}
+              placeholder="제목과 본문 검색"
+            />
+          </label>
           <label>
             분류
             <select
@@ -117,6 +187,23 @@ export default async function GeneralCommunityPage({
             </select>
           </label>
           <label>
+            해결 상태
+            <select name="resolution" defaultValue={resolution}>
+              <option value="all">전체 상태</option>
+              <option value="resolved">해결됨</option>
+              <option value="unresolved">미해결</option>
+            </select>
+          </label>
+          <label>
+            출처 신선도
+            <select name="freshness" defaultValue={freshness}>
+              <option value="all">전체 신선도</option>
+              <option value="fresh">확인 유효</option>
+              <option value="stale">재확인 필요</option>
+              <option value="missing">출처 없음</option>
+            </select>
+          </label>
+          <label>
             정렬
             <select name="order" defaultValue={order}>
               {!liveMode ? <option value="helpful">도움 많은 순</option> : null}
@@ -125,7 +212,7 @@ export default async function GeneralCommunityPage({
           </label>
           <div className="filter-actions">
             <button className="button button--primary" type="submit">
-              적용하기
+              검색 적용
             </button>
             <Link className="text-action" href="/community/general">
               필터 초기화
@@ -165,10 +252,31 @@ export default async function GeneralCommunityPage({
                 />
               </>
             ) : null}
+            {nextCursor ? (
+              <div className="page-actions">
+                <Link
+                  className="button button--primary"
+                  href={communitySearchPageHref(
+                    "/community/general",
+                    {
+                      q: searchQuery,
+                      category: selectedCategory?.id,
+                      resolution,
+                      freshness,
+                      order,
+                    },
+                    nextCursor,
+                  )}
+                >
+                  다음 글 보기
+                </Link>
+                <span className="utility-text">현재 검색·필터를 유지합니다.</span>
+              </div>
+            ) : null}
           </>
         ) : (
           <div className="empty-state">
-            <p>이 분류에는 아직 예시 글이 없습니다.</p>
+            <p>검색 조건에 맞는 글이 없습니다.</p>
             <Link className="text-action" href="/community/general">
               모든 글 다시 보기
             </Link>
@@ -180,14 +288,13 @@ export default async function GeneralCommunityPage({
         <strong>{liveMode ? "공개 커뮤니티" : "예시 데이터"}</strong>
         {liveMode ? (
           <p>
-            게시글은 회원이 작성한 공개 UGC입니다. 작가 인증이나 게시 자체가
-            내용의 사실성을 보증하지 않으므로 출처와 확인 날짜를 함께 살펴보세요.
+            회원이 작성한 공개 글입니다. 사실 정보는 출처와 확인 날짜를
+            확인하세요.
           </p>
         ) : (
           <p>
-            현재 글과 작성자 이름은 게시판 구조를 검증하기 위한 예시입니다.
-            공개 게시와 댓글은 아직 연결되지 않았으며, 작성 화면에서는 이
-            기기에 임시저장만 할 수 있습니다.
+            현재 글과 작성자는 예시입니다. 작성 내용은 이 기기에만
+            임시저장됩니다.
           </p>
         )}
       </aside>

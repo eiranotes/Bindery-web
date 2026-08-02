@@ -2,11 +2,13 @@ import { getCurrentCommunityMember } from "../../../../../lib/server/community/s
 import {
   acceptArtistInvite,
   createSupabaseVerificationDependencies,
+  CURRENT_COMMUNITY_POLICY_VERSION,
 } from "../../../../../lib/server/community/verification.ts";
 import {
   isSameOriginMutation,
   jsonNoStore,
   jsonServiceError,
+  readJsonObject,
 } from "../../../../../lib/server/request-security.ts";
 import { getSupabasePublicConfig } from "../../../../../lib/supabase/config.ts";
 import { createSupabaseServerClient } from "../../../../../lib/supabase/server.ts";
@@ -27,6 +29,31 @@ export async function POST(
     return jsonNoStore({ ok: false, code: "sign-in-required" }, { status: 401 });
   }
 
+  const body = await readJsonObject(request);
+  if (!body) {
+    return jsonNoStore({ ok: false, code: "invalid-json" }, { status: 400 });
+  }
+  if (body.policyConsent !== true) {
+    return jsonNoStore(
+      {
+        ok: false,
+        code: "consent-required",
+        message: "현재 커뮤니티 운영 규칙에 동의해 주세요.",
+      },
+      { status: 400 },
+    );
+  }
+  if (body.policyVersion !== CURRENT_COMMUNITY_POLICY_VERSION) {
+    return jsonNoStore(
+      {
+        ok: false,
+        code: "policy-version-stale",
+        message: "운영 규칙이 변경되었습니다. 현재 내용을 다시 확인해 주세요.",
+      },
+      { status: 400 },
+    );
+  }
+
   try {
     const client = await createSupabaseServerClient(config);
     const userResult = await client!.auth.getUser();
@@ -45,7 +72,8 @@ export async function POST(
         userId: session.member.id,
         email,
         rawToken: token,
-        now: new Date(),
+        policyConsent: true,
+        policyVersion: CURRENT_COMMUNITY_POLICY_VERSION,
       },
       createSupabaseVerificationDependencies(client!),
     );

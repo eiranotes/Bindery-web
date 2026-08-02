@@ -7,6 +7,7 @@ import { getCommunityCategory } from "../../../lib/community.ts";
 import {
   createSupabaseCommunityRepository,
   durableCommunityPostToView,
+  type DurableCommunityRevision,
 } from "../../../lib/server/community/posts.ts";
 import { getCurrentCommunityMember } from "../../../lib/server/community/session.ts";
 import { getSupabasePublicConfig } from "../../../lib/supabase/config.ts";
@@ -70,6 +71,9 @@ export default async function ArtistPostPage({
   }
   const post = durableCommunityPostToView(durablePost);
   const comments = await repository.listComments(durablePost.id);
+  const revisions: DurableCommunityRevision[] = await repository.listRevisions(
+    durablePost.id,
+  );
   const bookmarked = session.member
     ? await repository.isBookmarked(session.member.id, durablePost.id)
     : false;
@@ -121,6 +125,26 @@ export default async function ArtistPostPage({
         </aside>
       ) : null}
 
+      {revisions.length > 0 ? (
+        <section className="community-reply-boundary" aria-labelledby="artist-revision-history-title">
+          <div className="section-line-heading">
+            <h2 id="artist-revision-history-title">수정 이력</h2>
+            <span>{revisions.length} REVISIONS</span>
+          </div>
+          <ol className="community-comment-list">
+            {revisions.map((revision) => (
+              <li key={revision.id}>
+                <div>
+                  <strong>{revision.editorName ?? "작가 회원 또는 운영자"}</strong>
+                  <time dateTime={revision.createdAt}>{formatDate(revision.createdAt)}</time>
+                </div>
+                <p>{revision.reason ?? "수정 사유가 기록되지 않았습니다."}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
       <section className="community-reply-boundary" aria-labelledby="artist-replies-title">
         <div className="section-line-heading">
           <h2 id="artist-replies-title">답변과 댓글</h2>
@@ -145,12 +169,22 @@ export default async function ArtistPostPage({
 
       <CommunityPostActions
         postId={post.slug}
+        postTitle={post.title}
+        postBody={post.body.join("\n\n")}
+        source={post.source ?? null}
         boardId="artists"
         signedIn={session.member !== null}
+        canParticipate={session.access.capabilities.includes("artist:comment")}
+        canCorrect={
+          (session.member?.actor.accountStatus === "active" &&
+            session.member.id === durablePost.authorId) ||
+          session.access.capabilities.includes("moderation:content")
+        }
+        isOperator={session.access.capabilities.includes("moderation:content")}
         canDelete={
-          session.member?.id === durablePost.authorId ||
-          session.member?.actor.role === "moderator" ||
-          session.member?.actor.role === "admin"
+          (session.member?.actor.accountStatus === "active" &&
+            session.member.id === durablePost.authorId) ||
+          session.access.capabilities.includes("moderation:content")
         }
         initiallyBookmarked={bookmarked}
       />
@@ -159,9 +193,11 @@ export default async function ArtistPostPage({
         <Link className="button button--primary" href="/community/artists">
           작가 게시판으로
         </Link>
-        <Link className="button" href="/community/write?board=artists">
-          새 글 작성
-        </Link>
+        {session.access.capabilities.includes("artist:write") ? (
+          <Link className="button" href="/community/write?board=artists">
+            새 글 작성
+          </Link>
+        ) : null}
       </div>
     </article>
   );

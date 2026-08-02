@@ -26,6 +26,16 @@ const member: CommunityActor = {
   artistStatus: "none",
 };
 
+const moderator: CommunityActor = {
+  ...member,
+  role: "moderator",
+};
+
+const admin: CommunityActor = {
+  ...member,
+  role: "admin",
+};
+
 class ArtistRepository implements CommunityOperationsRepository {
   posts: DurableCommunityPost[] = [];
   allowed = true;
@@ -45,7 +55,7 @@ class ArtistRepository implements CommunityOperationsRepository {
     return this.posts.find((post) => post.id === id) ?? null;
   }
 
-  async softDeletePost() {
+  async softDeletePost(): Promise<DurableCommunityPost> {
     throw new Error("not used");
   }
 
@@ -72,13 +82,15 @@ const artistPost = {
 };
 
 test("denies artist-board writes without an active artist status", async () => {
-  const repository = new ArtistRepository();
-  const result = await createCommunityPost(
-    { actor: member, userId: "member-1", input: artistPost, now: new Date() },
-    { repository },
-  );
-  assert.equal(result.code, "forbidden");
-  assert.equal(repository.posts.length, 0);
+  for (const actor of [member, moderator, admin]) {
+    const repository = new ArtistRepository();
+    const result = await createCommunityPost(
+      { actor, userId: "member-1", input: artistPost, now: new Date() },
+      { repository },
+    );
+    assert.equal(result.code, "forbidden");
+    assert.equal(repository.posts.length, 0);
+  }
 });
 
 test("checks provisional post and comment limits and fails closed when exhausted", async () => {
@@ -137,4 +149,15 @@ test("verified artists write without provisional rate checks", async () => {
   );
   assert.equal(result.ok, true);
   assert.deepEqual(repository.limitCalls, []);
+
+  const verifiedAdmin = await createCommunityPost(
+    {
+      actor: { ...admin, artistStatus: "verified" },
+      userId: "admin-artist",
+      input: artistPost,
+      now: new Date(),
+    },
+    { repository },
+  );
+  assert.equal(verifiedAdmin.ok, true);
 });

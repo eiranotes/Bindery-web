@@ -4,6 +4,13 @@ export const BOOKMARKS_CHANGED_EVENT = "bindery:bookmarks-changed";
 export interface BookmarkRecord {
   version: 1;
   eventIds: string[];
+  communityPosts: CommunityPostBookmark[];
+}
+
+export interface CommunityPostBookmark {
+  id: string;
+  title: string;
+  boardId: "general" | "artists";
 }
 
 export interface BookmarkStorage {
@@ -12,7 +19,22 @@ export interface BookmarkStorage {
 }
 
 function emptyBookmarkRecord(): BookmarkRecord {
-  return { version: 1, eventIds: [] };
+  return { version: 1, eventIds: [], communityPosts: [] };
+}
+
+function normalizeCommunityPosts(value: unknown): CommunityPostBookmark[] {
+  if (!Array.isArray(value)) return [];
+  const seen = new Set<string>();
+  return value.flatMap((candidate) => {
+    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return [];
+    const post = candidate as Record<string, unknown>;
+    const id = typeof post.id === "string" ? post.id.trim() : "";
+    const title = typeof post.title === "string" ? post.title.trim() : "";
+    const boardId = post.boardId;
+    if (!id || !title || title.length > 300 || (boardId !== "general" && boardId !== "artists") || seen.has(id)) return [];
+    seen.add(id);
+    return [{ id, title, boardId }];
+  });
 }
 
 function normalizeEventIds(
@@ -63,6 +85,9 @@ export function parseBookmarkRecord(
     return {
       version: 1,
       eventIds: normalizeEventIds(parsed.eventIds, knownEventIds),
+      communityPosts: normalizeCommunityPosts(
+        "communityPosts" in parsed ? parsed.communityPosts : [],
+      ),
     };
   } catch {
     return emptyBookmarkRecord();
@@ -73,6 +98,7 @@ export function serializeBookmarkRecord(record: BookmarkRecord): string {
   return JSON.stringify({
     version: 1,
     eventIds: normalizeEventIds(record.eventIds),
+    communityPosts: normalizeCommunityPosts(record.communityPosts),
   });
 }
 
@@ -87,6 +113,7 @@ export function addBookmark(
       [...record.eventIds, eventId],
       knownEventIds,
     ),
+    communityPosts: record.communityPosts,
   };
 }
 
@@ -101,6 +128,29 @@ export function removeBookmark(
       record.eventIds.filter((candidate) => candidate !== eventId),
       knownEventIds,
     ),
+    communityPosts: record.communityPosts,
+  };
+}
+
+export function addCommunityPostBookmark(
+  record: BookmarkRecord,
+  post: CommunityPostBookmark,
+): BookmarkRecord {
+  return {
+    version: 1,
+    eventIds: record.eventIds,
+    communityPosts: normalizeCommunityPosts([...record.communityPosts, post]),
+  };
+}
+
+export function removeCommunityPostBookmark(
+  record: BookmarkRecord,
+  postId: string,
+): BookmarkRecord {
+  return {
+    version: 1,
+    eventIds: record.eventIds,
+    communityPosts: record.communityPosts.filter((post) => post.id !== postId),
   };
 }
 

@@ -6,6 +6,8 @@ import {
 } from "../../community-access.ts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+export const CURRENT_COMMUNITY_POLICY_VERSION = "community-2026-07";
+
 export type ArtistVerificationRecord = {
   id: string;
   userId: string;
@@ -45,41 +47,47 @@ export type ArtistInviteRecord = {
   createdAt: string;
 };
 
+export type ArtistInviteDraft = Pick<
+  ArtistInviteRecord,
+  | "id"
+  | "email"
+  | "tokenDigest"
+  | "activityName"
+  | "proofUrl"
+  | "proofUrlNormalized"
+  | "primaryField"
+  | "reason"
+  | "policyVersion"
+>;
+
 export type ArtistVerificationRepository = {
-  findApplicationByIdempotency(
-    userId: string,
-    key: string,
-  ): Promise<ArtistVerificationRecord | null>;
-  findApplicationByUser(
-    userId: string,
-  ): Promise<ArtistVerificationRecord | null>;
   findApplicationByProofUrl(
     proofUrlNormalized: string,
   ): Promise<ArtistVerificationRecord | null>;
-  createProvisionalApplication(
-    application: ArtistVerificationRecord,
-  ): Promise<ArtistVerificationRecord>;
   getApplication(id: string): Promise<ArtistVerificationRecord | null>;
   updateApplicationStatus(input: {
     id: string;
     status: ArtistVerificationRecord["status"];
-    reviewedBy: string;
     reason: string;
-    reviewedAt: string;
   }): Promise<ArtistVerificationRecord>;
-  createInvite(invite: ArtistInviteRecord): Promise<ArtistInviteRecord>;
+  createInvite(invite: ArtistInviteDraft): Promise<ArtistInviteRecord>;
   getInvite(id: string): Promise<ArtistInviteRecord | null>;
   findInviteByDigest(tokenDigest: string): Promise<ArtistInviteRecord | null>;
   acceptInvite(input: {
-    inviteId: string;
     tokenDigest: string;
-    userId: string;
-    acceptedAt: string;
-  }): Promise<ArtistVerificationRecord>;
+    policyConsent: boolean;
+    policyVersion: string;
+  }): Promise<
+    | {
+        ok: true;
+        code: "accepted";
+        application: ArtistVerificationRecord;
+      }
+    | { ok: false; code: string }
+  >;
   revokeInvite(input: {
     inviteId: string;
     reason: string;
-    revokedAt: string;
   }): Promise<ArtistInviteRecord>;
   listApplications(
     statuses?: ArtistVerificationRecord["status"][],
@@ -89,20 +97,7 @@ export type ArtistVerificationRepository = {
 
 export type ArtistVerificationDependencies = {
   repository: ArtistVerificationRepository;
-  botVerifier: {
-    verify(token: string): Promise<boolean>;
-  };
-  rateLimiter: {
-    consume(input: {
-      userId: string;
-      action: "artist-application";
-      limit: number;
-      windowSeconds: number;
-      now: Date;
-    }): Promise<{ allowed: boolean; retryAfterSeconds: number }>;
-  };
   ids?: {
-    application(): string;
     invite(): string;
   };
   tokens?: {
@@ -128,6 +123,18 @@ type VerificationResult = {
   invite?: ArtistInviteRecord;
   rawToken?: string;
   retryAfterSeconds?: number;
+};
+
+export type ArtistApplicationEdgeInput = {
+  activityName: string;
+  proofUrl: string;
+  primaryField: string;
+  optionalPublicUrl: string | null;
+  applicantNote: string | null;
+  botToken: string;
+  idempotencyKey: string;
+  policyConsent: boolean;
+  policyVersion: string;
 };
 
 const TRACKING_PARAMETERS = [
@@ -245,10 +252,6 @@ function isActiveMember(actor: CommunityActor, userId: string) {
   );
 }
 
-function applicationId(dependencies: ArtistVerificationDependencies) {
-  return dependencies.ids?.application() ?? crypto.randomUUID();
-}
-
 function inviteId(dependencies: ArtistVerificationDependencies) {
   return dependencies.ids?.invite() ?? crypto.randomUUID();
 }
@@ -338,25 +341,6 @@ export function createSupabaseVerificationRepository(
   client: SupabaseClient,
 ): ArtistVerificationRepository {
   return {
-    async findApplicationByIdempotency(userId, key) {
-      const { data, error } = await client
-        .from("artist_verifications")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("idempotency_key", key)
-        .maybeSingle();
-      if (error) throw error;
-      return data ? applicationFromRow(data) : null;
-    },
-    async findApplicationByUser(userId) {
-      const { data, error } = await client
-        .from("artist_verifications")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle();
-      if (error) throw error;
-      return data ? applicationFromRow(data) : null;
-    },
     async findApplicationByProofUrl(proofUrlNormalized) {
       const { data, error } = await client
         .from("artist_verifications")
@@ -365,23 +349,6 @@ export function createSupabaseVerificationRepository(
         .maybeSingle();
       if (error) throw error;
       return data ? applicationFromRow(data) : null;
-    },
-    async createProvisionalApplication(application) {
-      const { data, error } = await client
-        .rpc("submit_artist_application", {
-          p_id: application.id,
-          p_activity_name: application.activityName,
-          p_proof_url: application.proofUrl,
-          p_proof_url_normalized: application.proofUrlNormalized,
-          p_primary_field: application.primaryField,
-          p_optional_public_url: application.optionalPublicUrl,
-          p_applicant_note: application.applicantNote,
-          p_idempotency_key: application.idempotencyKey,
-          p_policy_version: application.policyVersion,
-          p_submitted_at: application.submittedAt,
-        })
-        .maybeSingle();
-      return requireRow(data, error, applicationFromRow);
     },
     async getApplication(id) {
       const { data, error } = await client
@@ -396,17 +363,19 @@ export function createSupabaseVerificationRepository(
       id,
       status,
       reason,
-      reviewedAt,
     }) {
       const { data, error } = await client
         .rpc("review_artist_application", {
           p_application_id: id,
           p_next_status: status,
           p_reason: reason,
-          p_reviewed_at: reviewedAt,
         })
         .maybeSingle();
-      return requireRow(data, error, applicationFromRow);
+      return requireRow(
+        data as Record<string, unknown> | null,
+        error,
+        applicationFromRow,
+      );
     },
     async createInvite(invite) {
       const { data, error } = await client
@@ -420,11 +389,13 @@ export function createSupabaseVerificationRepository(
           p_primary_field: invite.primaryField,
           p_reason: invite.reason,
           p_policy_version: invite.policyVersion,
-          p_expires_at: invite.expiresAt,
-          p_created_at: invite.createdAt,
         })
         .maybeSingle();
-      return requireRow(data, error, inviteFromRow);
+      return requireRow(
+        data as Record<string, unknown> | null,
+        error,
+        inviteFromRow,
+      );
     },
     async getInvite(id) {
       const { data, error } = await client
@@ -433,7 +404,7 @@ export function createSupabaseVerificationRepository(
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
-      return data ? inviteFromRow(data) : null;
+      return data ? inviteFromRow(data as Record<string, unknown>) : null;
     },
     async findInviteByDigest(tokenDigest) {
       const { data, error } = await client
@@ -442,26 +413,54 @@ export function createSupabaseVerificationRepository(
         })
         .maybeSingle();
       if (error) throw error;
-      return data ? inviteFromRow(data) : null;
+      return data ? inviteFromRow(data as Record<string, unknown>) : null;
     },
-    async acceptInvite({ tokenDigest, acceptedAt }) {
+    async acceptInvite({ tokenDigest, policyConsent, policyVersion }) {
       const { data, error } = await client
         .rpc("accept_artist_invite", {
           p_token_digest: tokenDigest,
-          p_accepted_at: acceptedAt,
-        })
-        .maybeSingle();
-      return requireRow(data, error, applicationFromRow);
+          p_policy_consent: policyConsent,
+          p_policy_version: policyVersion,
+        });
+      if (error) throw error;
+      if (
+        typeof data !== "object" ||
+        data === null ||
+        typeof (data as { code?: unknown }).code !== "string" ||
+        typeof (data as { ok?: unknown }).ok !== "boolean"
+      ) {
+        throw new Error("Invite acceptance RPC returned an invalid response");
+      }
+
+      const result = data as {
+        ok: boolean;
+        code: string;
+        application?: Record<string, unknown>;
+      };
+      if (result.ok) {
+        if (result.code !== "accepted" || !result.application) {
+          throw new Error("Invite acceptance RPC omitted the application");
+        }
+        return {
+          ok: true,
+          code: "accepted",
+          application: applicationFromRow(result.application),
+        };
+      }
+      return { ok: false, code: result.code };
     },
-    async revokeInvite({ inviteId, reason, revokedAt }) {
+    async revokeInvite({ inviteId, reason }) {
       const { data, error } = await client
         .rpc("revoke_artist_invite", {
           p_invite_id: inviteId,
           p_reason: reason,
-          p_revoked_at: revokedAt,
         })
         .maybeSingle();
-      return requireRow(data, error, inviteFromRow);
+      return requireRow(
+        data as Record<string, unknown> | null,
+        error,
+        inviteFromRow,
+      );
     },
     async listApplications(statuses = ["provisional"]) {
       const { data, error } = await client
@@ -483,189 +482,62 @@ export function createSupabaseVerificationRepository(
   };
 }
 
-export function createSupabaseArtistRateLimiter(client: SupabaseClient) {
-  return {
-    async consume(input: {
-      userId: string;
-      action: "artist-application";
-      limit: number;
-      windowSeconds: number;
-      now: Date;
-    }) {
-      const { data, error } = await client
-        .rpc("consume_artist_application_rate_limit", {
-          p_now: input.now.toISOString(),
-          p_window_seconds: input.windowSeconds,
-          p_max_attempts: input.limit,
-        })
-        .maybeSingle();
-      if (error) throw error;
-      return {
-        allowed: data?.allowed === true,
-        retryAfterSeconds:
-          typeof data?.retry_after_seconds === "number"
-            ? data.retry_after_seconds
-            : input.windowSeconds,
-      };
-    },
-  };
+function isVerificationResult(value: unknown): value is VerificationResult {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { ok?: unknown }).ok === "boolean" &&
+    typeof (value as { code?: unknown }).code === "string"
+  );
 }
 
-export function createTurnstileBotVerifier({
-  secretKey = process.env.TURNSTILE_SECRET_KEY,
-  remoteIp,
-  fetcher = fetch,
-}: {
-  secretKey?: string;
-  remoteIp?: string;
-  fetcher?: typeof fetch;
-} = {}) {
+async function verificationResultFromFunctionError(error: unknown) {
+  const context = (error as { context?: unknown } | null)?.context;
+  if (!(context instanceof Response)) return null;
+
+  try {
+    const body = await context.json();
+    return isVerificationResult(body) ? body : null;
+  } catch {
+    return null;
+  }
+}
+
+export function createSupabaseArtistApplicationSubmitter(
+  client: SupabaseClient,
+) {
   return {
-    async verify(token: string) {
-      if (!secretKey?.trim() || !token.trim()) return false;
+    async submit(input: ArtistApplicationEdgeInput): Promise<VerificationResult> {
+      const { data, error } = await client.functions.invoke(
+        "submit-artist-application",
+        { body: input },
+      );
 
-      const body = new URLSearchParams({
-        secret: secretKey,
-        response: token,
-      });
-      if (remoteIp) body.set("remoteip", remoteIp);
-
-      try {
-        const response = await fetcher(
-          "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-          {
-            method: "POST",
-            body,
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          },
-        );
-        if (!response.ok) return false;
-        const result = (await response.json()) as { success?: boolean };
-        return result.success === true;
-      } catch {
-        return false;
-      }
+      if (isVerificationResult(data)) return data;
+      const failure = await verificationResultFromFunctionError(error);
+      if (failure) return failure;
+      throw (
+        error ??
+        new Error("Artist application Edge Function returned an invalid response")
+      );
     },
   };
 }
 
 export function createSupabaseVerificationDependencies(
   client: SupabaseClient,
-  { remoteIp }: { remoteIp?: string } = {},
 ): ArtistVerificationDependencies {
   return {
     repository: createSupabaseVerificationRepository(client),
-    botVerifier: createTurnstileBotVerifier({ remoteIp }),
-    rateLimiter: createSupabaseArtistRateLimiter(client),
   };
-}
-
-export async function submitArtistApplication(
-  command: {
-    actor: CommunityActor;
-    userId: string;
-    input: ApplicationInput;
-    botToken: string;
-    idempotencyKey: string;
-    now: Date;
-  },
-  dependencies: ArtistVerificationDependencies,
-): Promise<VerificationResult> {
-  if (!isActiveMember(command.actor, command.userId)) {
-    return { ok: false, code: "forbidden", message: "로그인이 필요합니다." };
-  }
-
-  const idempotencyKey = cleanText(command.idempotencyKey, 120);
-  if (!idempotencyKey) {
-    return { ok: false, code: "invalid-input", message: "요청 식별값이 올바르지 않습니다." };
-  }
-
-  const existing = await dependencies.repository.findApplicationByIdempotency(
-    command.userId,
-    idempotencyKey,
-  );
-  if (existing) {
-    return { ok: true, code: "existing", application: existing };
-  }
-
-  const input = validateApplicationInput(command.input);
-  if (!input) {
-    return { ok: false, code: "invalid-input", message: "신청 내용을 다시 확인해 주세요." };
-  }
-
-  if (!(await dependencies.botVerifier.verify(command.botToken))) {
-    return {
-      ok: false,
-      code: "bot-verification-failed",
-      message: "자동 제출 방지 확인에 실패했습니다.",
-    };
-  }
-
-  const rate = await dependencies.rateLimiter.consume({
-    userId: command.userId,
-    action: "artist-application",
-    limit: 1,
-    windowSeconds: 24 * 60 * 60,
-    now: command.now,
-  });
-  if (!rate.allowed) {
-    return {
-      ok: false,
-      code: "rate-limited",
-      message: "신청 요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요.",
-      retryAfterSeconds: rate.retryAfterSeconds,
-    };
-  }
-
-  if (await dependencies.repository.findApplicationByUser(command.userId)) {
-    return {
-      ok: false,
-      code: "already-applied",
-      message: "이미 처리 중이거나 완료된 작가 신청이 있습니다.",
-    };
-  }
-
-  if (
-    await dependencies.repository.findApplicationByProofUrl(
-      input.proofUrlNormalized,
-    )
-  ) {
-    return {
-      ok: false,
-      code: "duplicate-proof",
-      message: "이미 다른 신청에 사용된 공개 활동 주소입니다.",
-    };
-  }
-
-  const submittedAt = command.now.toISOString();
-  const application: ArtistVerificationRecord = {
-    id: applicationId(dependencies),
-    userId: command.userId,
-    status: "provisional",
-    ...input,
-    idempotencyKey,
-    submittedAt,
-    reviewedAt: null,
-    reviewedBy: null,
-    reviewReason: null,
-  };
-  const created = await dependencies.repository.createProvisionalApplication(
-    application,
-  );
-
-  return { ok: true, code: "created", application: created };
 }
 
 export async function reviewArtistApplication(
   command: {
     actor: CommunityActor;
-    reviewerId: string;
     applicationId: string;
     nextStatus: ArtistVerificationRecord["status"];
     reason: string;
-    now: Date;
   },
   dependencies: ArtistVerificationDependencies,
 ): Promise<VerificationResult> {
@@ -694,9 +566,7 @@ export async function reviewArtistApplication(
   const updated = await dependencies.repository.updateApplicationStatus({
     id: application.id,
     status: command.nextStatus,
-    reviewedBy: command.reviewerId,
     reason,
-    reviewedAt: command.now.toISOString(),
   });
   return { ok: true, code: "updated", application: updated };
 }
@@ -748,29 +618,16 @@ export async function issueArtistInvite(
   const tokenDigest = dependencies.tokens
     ? await dependencies.tokens.digest(rawToken)
     : await digestInviteToken(rawToken);
-  const createdAt = command.now.toISOString();
-  const expiresAt = new Date(
-    command.now.getTime() + 7 * 24 * 60 * 60 * 1000,
-  ).toISOString();
-  const invite: ArtistInviteRecord = {
+  const invite: ArtistInviteDraft = {
     id: inviteId(dependencies),
     email,
     tokenDigest,
-    state: "pending",
-    issuedBy: command.issuerId,
-    acceptedBy: null,
     activityName: input.activityName,
     proofUrl: input.proofUrl,
     proofUrlNormalized: input.proofUrlNormalized,
     primaryField: input.primaryField,
     reason,
     policyVersion: input.policyVersion,
-    expiresAt,
-    acceptedAt: null,
-    revokedAt: null,
-    revokedBy: null,
-    revocationReason: null,
-    createdAt,
   };
   const created = await dependencies.repository.createInvite(invite);
   return { ok: true, code: "created", invite: created, rawToken };
@@ -782,12 +639,27 @@ export async function acceptArtistInvite(
     userId: string;
     email: string;
     rawToken: string;
-    now: Date;
+    policyConsent: boolean;
+    policyVersion: string;
   },
   dependencies: ArtistVerificationDependencies,
 ): Promise<VerificationResult> {
   if (!isActiveMember(command.actor, command.userId)) {
     return { ok: false, code: "forbidden", message: "로그인이 필요합니다." };
+  }
+  if (!command.policyConsent) {
+    return {
+      ok: false,
+      code: "consent-required",
+      message: "현재 커뮤니티 운영 규칙에 동의해 주세요.",
+    };
+  }
+  if (command.policyVersion !== CURRENT_COMMUNITY_POLICY_VERSION) {
+    return {
+      ok: false,
+      code: "policy-version-stale",
+      message: "운영 규칙이 변경되었습니다. 현재 내용을 다시 확인해 주세요.",
+    };
   }
 
   const tokenDigest = dependencies.tokens
@@ -800,20 +672,32 @@ export async function acceptArtistInvite(
   if (invite.state !== "pending") {
     return { ok: false, code: "invite-used", message: "이미 처리된 초대입니다." };
   }
-  if (new Date(invite.expiresAt).getTime() <= command.now.getTime()) {
-    return { ok: false, code: "invite-expired", message: "초대가 만료됐습니다." };
-  }
   if (invite.email !== command.email.trim().toLowerCase()) {
     return { ok: false, code: "invite-recipient-mismatch", message: "초대 대상 계정이 아닙니다." };
   }
 
-  const application = await dependencies.repository.acceptInvite({
-    inviteId: invite.id,
+  const accepted = await dependencies.repository.acceptInvite({
     tokenDigest: invite.tokenDigest,
-    userId: command.userId,
-    acceptedAt: command.now.toISOString(),
+    policyConsent: command.policyConsent,
+    policyVersion: command.policyVersion,
   });
-  return { ok: true, code: "accepted", application };
+  if (!accepted.ok) {
+    const messages: Record<string, string> = {
+      "invite-expired": "초대가 만료됐습니다.",
+      "invite-not-found": "초대를 찾을 수 없습니다.",
+      "invite-recipient-mismatch": "초대 대상 계정이 아닙니다.",
+      "invite-used": "이미 처리된 초대입니다.",
+      "consent-required": "현재 커뮤니티 운영 규칙에 동의해 주세요.",
+      "policy-version-stale":
+        "운영 규칙이 변경되었습니다. 현재 내용을 다시 확인해 주세요.",
+    };
+    return {
+      ok: false,
+      code: accepted.code,
+      message: messages[accepted.code] ?? "초대를 처리하지 못했습니다.",
+    };
+  }
+  return { ok: true, code: "accepted", application: accepted.application };
 }
 
 export async function revokeArtistInvite(
@@ -821,7 +705,6 @@ export async function revokeArtistInvite(
     actor: CommunityActor;
     inviteId: string;
     reason: string;
-    now: Date;
   },
   dependencies: ArtistVerificationDependencies,
 ): Promise<VerificationResult> {
@@ -848,7 +731,6 @@ export async function revokeArtistInvite(
   const revoked = await dependencies.repository.revokeInvite({
     inviteId: invite.id,
     reason,
-    revokedAt: command.now.toISOString(),
   });
   return { ok: true, code: "revoked", invite: revoked };
 }

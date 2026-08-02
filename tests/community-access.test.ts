@@ -131,8 +131,6 @@ test("keeps moderation and administration capabilities separate", () => {
     },
     [
       "artist:read",
-      "artist:write",
-      "artist:comment",
       "moderation:content",
       "moderation:reports",
       "admin:artist-review",
@@ -142,6 +140,19 @@ test("keeps moderation and administration capabilities separate", () => {
   );
 
   assert.equal(admin.artistAccess, "operator");
+  assert.equal(admin.capabilities.includes("artist:write"), false);
+  assert.equal(admin.capabilities.includes("artist:comment"), false);
+
+  const verifiedAdmin = expectCapabilities(
+    {
+      authenticated: true,
+      accountStatus: "active",
+      role: "admin",
+      artistStatus: "verified",
+    },
+    ["artist:read", "artist:write", "artist:comment", "admin:artist-review"],
+  );
+  assert.equal(verifiedAdmin.artistAccess, "verified");
 });
 
 test("denies unknown runtime roles and states by default", () => {

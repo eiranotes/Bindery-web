@@ -46,7 +46,26 @@
   comment limits without leaking rows after revocation.
 - [x] Add the operator moderation console, scoped actions, and append-only audit
   views.
-- [ ] Add knowledge freshness, search, notifications, and Binder sync.
+- [x] Add knowledge freshness, accepted answers, event links, and
+  provenance-preserving promotion to maintained Notes.
+- [x] Add authorization-aware search, recipient-scoped in-app notifications,
+  and explicit lossless Binder account sync.
+- [x] Close direct provisional-access and broad content-DML bypasses, use
+  database time, add private affected-author appeals, and verify unique
+  migration versions plus real Binder RLS.
+- [x] Add reasoned post corrections with immutable snapshots, operator source
+  rechecks, stable keyset pagination, database event allowlisting, exact
+  database-time invitation expiry, and action-bound appeal reversal safety.
+- [x] Close final review gaps for artist-board write separation, applicant-row
+  privacy, appeal rejection/causal restore, invitation consent and chronology,
+  concurrent application idempotency, capped event Binder writes, private
+  revision bodies, deterministic Note provenance, and configured error states.
+- [x] Audit the full public UI, remove redundant product-explanation copy, and
+  retain only actionable source, safety, permission, and storage guidance.
+- [x] Create and connect the private `eiranotes/Bindery-web` GitHub source
+  repository for the validated nested `website/` checkout.
+- [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
+  runtime binding, backup/restore rehearsal, and authenticated production E2E.
 
 ## Deferred by product policy
 

@@ -48,6 +48,13 @@ export type DurableCommunityComment = {
   createdAt: string;
 };
 
+export type DurableCommunityRevision = {
+  id: string;
+  editorName: string | null;
+  reason: string | null;
+  createdAt: string;
+};
+
 export function durableCommunityPostToView(
   post: DurableCommunityPost,
 ): CommunityPost {
@@ -95,6 +102,13 @@ export type CommunityOperationsRepository = {
   }): Promise<{ allowed: boolean; retryAfterSeconds: number }>;
   createPost(post: DurableCommunityPost): Promise<DurableCommunityPost>;
   getPost(id: string): Promise<DurableCommunityPost | null>;
+  correctPost?(input: {
+    postId: string;
+    title: string;
+    body: string;
+    reason: string;
+    source: DurableCommunitySource | null;
+  }): Promise<DurableCommunityPost>;
   softDeletePost(input: {
     postId: string;
     actorId: string;
@@ -147,6 +161,57 @@ type OperationResult = {
   saved?: boolean;
   retryAfterSeconds?: number;
 };
+
+export function communityCorrectionHttpStatus(
+  result: Pick<OperationResult, "ok" | "code">,
+) {
+  if (result.ok) return 200;
+  if (result.code === "not-found") return 404;
+  if (result.code === "forbidden" || result.code === "operator-required") {
+    return 403;
+  }
+  return 400;
+}
+
+export function validateCommunityCorrectionSource(
+  actor: CommunityActor,
+  input: DurableCommunitySource | null | undefined,
+):
+  | { ok: true; source: DurableCommunitySource | null }
+  | { ok: false; result: OperationResult } {
+  if (!input) return { ok: true, source: null };
+
+  const isOperator = actor.role === "moderator" || actor.role === "admin";
+  if (!isOperator) {
+    return {
+      ok: false,
+      result: {
+        ok: false,
+        code: "operator-required",
+        message: "출처 재확인 기록은 운영자만 추가할 수 있습니다.",
+      },
+    };
+  }
+
+  const label = cleanInlineText(input.label, 120);
+  const normalizedUrl = normalizePublicProofUrl(input.url);
+  const url = normalizedUrl?.startsWith("https://") ? normalizedUrl : null;
+  if (!label || !url || !isIsoDate(input.checkedAt)) {
+    return {
+      ok: false,
+      result: {
+        ok: false,
+        code: "invalid-source",
+        message: "출처 이름, HTTPS 원문 URL과 확인 날짜를 모두 입력해 주세요.",
+      },
+    };
+  }
+
+  return {
+    ok: true,
+    source: { label, url, checkedAt: input.checkedAt },
+  };
+}
 
 const CATEGORY_IDS = new Set<string>(
   COMMUNITY_CATEGORY_CATALOG.map((category) => category.id),
@@ -301,6 +366,88 @@ export async function setCommunityBookmark(
   return { ok: true, code: saved ? "saved" : "removed", saved };
 }
 
+export async function correctCommunityPost(
+  command: {
+    actor: CommunityActor;
+    userId: string;
+    postId: string;
+    title: string;
+    body: string;
+    reason: string;
+    source?: DurableCommunitySource | null;
+  },
+  dependencies: Pick<CommunityOperationDependencies, "repository">,
+): Promise<OperationResult> {
+  const isOperator =
+    command.actor.role === "moderator" || command.actor.role === "admin";
+  const sourceValidation = validateCommunityCorrectionSource(
+    command.actor,
+    command.source,
+  );
+  if (!sourceValidation.ok) return sourceValidation.result;
+  const source = sourceValidation.source;
+
+  const post = await dependencies.repository.getPost(command.postId);
+  if (!post) {
+    return { ok: false, code: "not-found", message: "게시글을 찾을 수 없습니다." };
+  }
+
+  if (
+    !command.userId ||
+    !command.actor.authenticated ||
+    command.actor.accountStatus !== "active" ||
+    (!isOperator &&
+      (post.authorId !== command.userId ||
+        post.state !== "published" ||
+        !canReadPost(command.actor, post)))
+  ) {
+    return { ok: false, code: "forbidden", message: "수정 권한이 없습니다." };
+  }
+  if (post.state !== "published" && !(isOperator && post.state === "locked")) {
+    return {
+      ok: false,
+      code: "invalid-state",
+      message: "현재 상태에서는 글을 수정할 수 없습니다.",
+    };
+  }
+
+  const title = cleanInlineText(command.title, 120);
+  const body = cleanBody(command.body, 10, 20_000);
+  const reason = cleanInlineText(command.reason, 500);
+  if (!title || title.length < 4 || !body || !reason || reason.length < 5) {
+    return {
+      ok: false,
+      code: "invalid-input",
+      message: "제목, 본문과 수정 사유를 확인해 주세요.",
+    };
+  }
+
+  if (!dependencies.repository.correctPost) {
+    return {
+      ok: false,
+      code: "correction-unavailable",
+      message: "수정 저장소를 사용할 수 없습니다.",
+    };
+  }
+
+  const corrected = await dependencies.repository.correctPost({
+    postId: post.id,
+    title,
+    body,
+    reason,
+    source,
+  });
+  return {
+    ok: true,
+    code: "corrected",
+    post: {
+      ...corrected,
+      authorName: corrected.authorName ?? post.authorName,
+      source: source ?? corrected.source ?? post.source,
+    },
+  };
+}
+
 export async function softDeleteCommunityPost(
   command: {
     actor: CommunityActor;
@@ -338,7 +485,16 @@ function postFromRow(row: Record<string, unknown>): DurableCommunityPost {
   const sources = Array.isArray(row.post_sources)
     ? (row.post_sources as Record<string, unknown>[])
     : [];
-  const sourceRow = sources[0];
+  const sourceRow = sources.sort((left, right) => {
+    const checkedOrder = String(right.checked_at).localeCompare(
+      String(left.checked_at),
+    );
+    if (checkedOrder !== 0) return checkedOrder;
+    const createdOrder = String(right.created_at).localeCompare(
+      String(left.created_at),
+    );
+    return createdOrder || String(left.id).localeCompare(String(right.id));
+  })[0];
   return {
     id: String(row.id),
     boardId: row.board_id as DurableCommunityPost["boardId"],
@@ -365,7 +521,7 @@ function postFromRow(row: Record<string, unknown>): DurableCommunityPost {
 }
 
 const POST_SELECT =
-  "*, profiles!posts_author_id_fkey(display_name), post_sources(label,url,checked_at)";
+  "*, profiles!posts_author_id_fkey(display_name), post_sources(id,label,url,checked_at,created_at)";
 
 export function createSupabaseCommunityRepository(
   client: SupabaseClient,
@@ -376,6 +532,7 @@ export function createSupabaseCommunityRepository(
     limit?: number;
   }): Promise<DurableCommunityPost[]>;
   listComments(postId: string): Promise<DurableCommunityComment[]>;
+  listRevisions(postId: string): Promise<DurableCommunityRevision[]>;
   isBookmarked(userId: string, postId: string): Promise<boolean>;
 } {
   return {
@@ -387,11 +544,12 @@ export function createSupabaseCommunityRepository(
         })
         .maybeSingle();
       if (error) throw error;
+      const result = (data ?? {}) as Record<string, unknown>;
       return {
-        allowed: data?.allowed === true,
+        allowed: result.allowed === true,
         retryAfterSeconds:
-          typeof data?.retry_after_seconds === "number"
-            ? data.retry_after_seconds
+          typeof result.retry_after_seconds === "number"
+            ? result.retry_after_seconds
             : 24 * 60 * 60,
       };
     },
@@ -407,12 +565,11 @@ export function createSupabaseCommunityRepository(
           p_source_label: post.source?.label ?? null,
           p_source_url: post.source?.url ?? null,
           p_source_checked_at: post.source?.checkedAt ?? null,
-          p_published_at: post.publishedAt,
         })
         .maybeSingle();
       if (error) throw error;
       if (!data) throw new Error("Expected created post");
-      return { ...postFromRow(data), source: post.source };
+      return { ...postFromRow(data as Record<string, unknown>), source: post.source };
     },
     async getPost(id) {
       const { data, error } = await client
@@ -423,75 +580,75 @@ export function createSupabaseCommunityRepository(
       if (error) throw error;
       return data ? postFromRow(data) : null;
     },
-    async softDeletePost({ postId, reason, deletedAt }) {
+    async correctPost({ postId, title, body, reason, source }) {
+      const { data, error } = await client
+        .rpc("correct_community_post", {
+          p_post_id: postId,
+          p_title: title,
+          p_body: body,
+          p_reason: reason,
+          p_source_label: source?.label ?? null,
+          p_source_url: source?.url ?? null,
+          p_source_checked_at: source?.checkedAt ?? null,
+        })
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error("Expected corrected post");
+      return postFromRow(data as Record<string, unknown>);
+    },
+    async softDeletePost({ postId, reason }) {
       const { data, error } = await client
         .rpc("soft_delete_community_post", {
           p_post_id: postId,
           p_reason: reason,
-          p_deleted_at: deletedAt,
         })
         .maybeSingle();
       if (error) throw error;
       if (!data) throw new Error("Expected deleted post");
-      return postFromRow(data);
+      return postFromRow(data as Record<string, unknown>);
     },
     async createComment(input) {
       const { data, error } = await client
-        .from("comments")
-        .insert({
-          id: input.id,
-          post_id: input.postId,
-          author_id: input.authorId,
-          body: input.body,
-          state: "published",
-          created_at: input.createdAt,
+        .rpc("create_community_comment", {
+          p_id: input.id,
+          p_post_id: input.postId,
+          p_body: input.body,
         })
-        .select("*")
-        .single();
+        .maybeSingle();
       if (error) throw error;
+      if (!data) throw new Error("Expected created comment");
+      const row = data as Record<string, unknown>;
       return {
-        id: String(data.id),
-        postId: String(data.post_id),
-        authorId: String(data.author_id),
-        body: String(data.body),
+        id: String(row.id),
+        postId: String(row.post_id),
+        authorId: String(row.author_id),
+        body: String(row.body),
         state: "published",
-        createdAt: String(data.created_at),
+        createdAt: String(row.created_at),
       };
     },
     async setBookmark({ userId, postId, saved }) {
-      const query = saved
-        ? client.from("bookmarks").upsert({ user_id: userId, post_id: postId })
-        : client.from("bookmarks").delete().eq("user_id", userId).eq("post_id", postId);
-      const { error } = await query;
+      void userId;
+      const { data, error } = await client.rpc("set_community_bookmark", {
+        p_post_id: postId,
+        p_saved: saved,
+      });
       if (error) throw error;
-      return saved;
+      return data === true;
     },
     async createReport(input) {
-      const { data: existing, error: findError } = await client
-        .from("reports")
-        .select("id")
-        .eq("reporter_id", input.reporterId)
-        .eq("post_id", input.postId)
-        .eq("reason_code", input.reasonCode)
-        .not("state", "in", "(dismissed,closed)")
-        .maybeSingle();
-      if (findError) throw findError;
-      if (existing) return { id: String(existing.id), existing: true };
-
       const { data, error } = await client
-        .from("reports")
-        .insert({
-          id: input.id,
-          reporter_id: input.reporterId,
-          post_id: input.postId,
-          reason_code: input.reasonCode,
-          details: input.details,
-          created_at: input.createdAt,
+        .rpc("submit_community_report", {
+          p_id: input.id,
+          p_post_id: input.postId,
+          p_reason_code: input.reasonCode,
+          p_details: input.details,
         })
-        .select("id")
-        .single();
+        .maybeSingle();
       if (error) throw error;
-      return { id: String(data.id), existing: false };
+      if (!data) throw new Error("Expected submitted report");
+      const row = data as Record<string, unknown>;
+      return { id: String(row.id), existing: row.existing === true };
     },
     async listPosts({ boardId, categoryId, limit = 50 }) {
       let query = client
@@ -528,6 +685,29 @@ export function createSupabaseCommunityRepository(
               ? profiles.display_name
               : null,
           body: String(row.body),
+          createdAt: String(row.created_at),
+        };
+      });
+    },
+    async listRevisions(postId) {
+      const { data, error } = await client
+        .from("post_revisions")
+        .select("id,editor_id,reason,created_at,profiles!post_revisions_editor_id_fkey(display_name)")
+        .eq("post_id", postId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []).map((row) => {
+        const profile = row.profiles as
+          | { display_name?: unknown }
+          | null
+          | undefined;
+        return {
+          id: String(row.id),
+          editorName:
+            typeof profile?.display_name === "string"
+              ? profile.display_name
+              : null,
+          reason: typeof row.reason === "string" ? row.reason : null,
           createdAt: String(row.created_at),
         };
       });

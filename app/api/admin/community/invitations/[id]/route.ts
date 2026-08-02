@@ -41,7 +41,6 @@ export async function PATCH(
         actor: session.member.actor,
         inviteId: id,
         reason: String(body.reason ?? ""),
-        now: new Date(),
       },
       createSupabaseVerificationDependencies(client!),
     );

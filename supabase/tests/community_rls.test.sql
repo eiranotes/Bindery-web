@@ -253,49 +253,29 @@ begin
       visible_notifications;
   end if;
 
-  insert into public.posts (
-    id,
-    board_id,
-    author_id,
-    category_id,
-    kind,
-    state,
-    title,
-    body,
-    published_at
-  )
-  values (
+  perform * from public.create_community_post(
     '21000000-0000-4000-8000-000000000001',
     'general',
-    '00000000-0000-4000-8000-000000000001',
     'event',
     'question',
-    'published',
     '회원 공개 글',
     '정상 회원의 공개 게시판 작성 테스트입니다.',
-    now()
+    null,
+    null,
+    null
   );
 
   begin
-    insert into public.posts (
-      board_id,
-      author_id,
-      category_id,
-      kind,
-      state,
-      title,
-      body,
-      published_at
-    )
-    values (
+    perform * from public.create_community_post(
+      gen_random_uuid(),
       'artists',
-      '00000000-0000-4000-8000-000000000001',
       'production',
       'experience',
-      'published',
       '일반 회원 작가 글',
       '일반 회원의 작가 게시판 작성은 실패해야 합니다.',
-      now()
+      null,
+      null,
+      null
     );
     raise exception 'member artist-board insert unexpectedly succeeded';
   exception
@@ -326,27 +306,16 @@ begin
       artist_posts;
   end if;
 
-  insert into public.posts (
-    id,
-    board_id,
-    author_id,
-    category_id,
-    kind,
-    state,
-    title,
-    body,
-    published_at
-  )
-  values (
+  perform * from public.create_community_post(
     '22000000-0000-4000-8000-000000000001',
     'artists',
-    '00000000-0000-4000-8000-000000000002',
     'production',
     'experience',
-    'published',
     '임시 작가 글',
     '임시 승인 작가의 보호 게시판 작성 테스트입니다.',
-    now()
+    null,
+    null,
+    null
   );
 end
 $$;
@@ -399,20 +368,9 @@ begin
     raise exception 'moderator expected report queue, found %', visible_reports;
   end if;
 
-  insert into public.moderation_actions (
-    report_id,
-    actor_id,
-    action_type,
-    target_type,
-    target_id,
-    reason
-  )
-  values (
+  perform * from public.moderate_community_report(
     '30000000-0000-4000-8000-000000000001',
-    '00000000-0000-4000-8000-000000000004',
     'triage',
-    'post',
-    '20000000-0000-4000-8000-000000000001',
     '테스트 신고 분류'
   );
 end
@@ -427,13 +385,11 @@ select set_config(
   true
 );
 
-update public.artist_verifications
-set
-  status = 'verified',
-  reviewed_at = now(),
-  reviewed_by = '00000000-0000-4000-8000-000000000005',
-  review_reason = '테스트 관리자 검수'
-where user_id = '00000000-0000-4000-8000-000000000002';
+select * from public.review_artist_application(
+  '10000000-0000-4000-8000-000000000002',
+  'verified',
+  '테스트 관리자 검수'
+);
 
 do $$
 declare

@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "커뮤니티 감사 이력", robots:
 export default async function CommunityAuditPage() {
   const config = getSupabasePublicConfig();
   const session = await getCurrentCommunityMember({ config });
-  const isAdmin = session.member?.actor.role === "admin";
+  const isAdmin = session.access.capabilities.includes("admin:roles");
   let entries: Record<string, unknown>[] = [];
   let loadError = false;
   if (isAdmin && config.status === "configured") {

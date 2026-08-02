@@ -80,6 +80,14 @@ test("keeps auth return paths on the current site", () => {
   );
   assert.equal(safeCommunityReturnPath("https://evil.example"), "/community");
   assert.equal(safeCommunityReturnPath("//evil.example"), "/community");
+  assert.equal(safeCommunityReturnPath("/\\evil.example"), "/community");
+  assert.equal(safeCommunityReturnPath("/%5c%5cevil.example"), "/community");
+  assert.equal(safeCommunityReturnPath("/%2f%2fevil.example"), "/community");
+  assert.equal(safeCommunityReturnPath("/%252f%252fevil.example"), "/community");
+  assert.equal(
+    safeCommunityReturnPath("/community?next=https%3A%2F%2Fevil.example"),
+    "/community?next=https%3A%2F%2Fevil.example",
+  );
   assert.equal(safeCommunityReturnPath(null), "/community");
 });
 

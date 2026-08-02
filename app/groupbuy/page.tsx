@@ -25,9 +25,7 @@ export default function GroupbuyPage() {
         <p className="eyebrow">공구 기록 · 읽기 전용</p>
         <h1>공동구매 현황</h1>
         <p className="page-lede">
-          모집 인원과 진행 단계를 한 장의 발주 기록처럼 정리합니다. 참여를
-          결정하기 전에는 주최자의 최신 원문과 정산 조건을 다시 확인해야
-          합니다.
+          모집 인원, 진행 단계, 정산 조건을 확인합니다.
         </p>
       </header>
 

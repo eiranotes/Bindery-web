@@ -24,8 +24,7 @@ export default function NewsPage() {
         <p className="eyebrow">NEWS · 원문 색인</p>
         <h1>업계 소식</h1>
         <p className="page-lede">
-          참가 조건과 현장 운영에 영향을 주는 공지만 짧게 색인합니다. 원문을
-          옮겨 싣지 않고 무엇이 달라졌는지와 확인할 지점만 적습니다.
+          참가 조건과 현장 운영에 영향을 주는 공지를 원문과 함께 정리합니다.
         </p>
         {latestDate ? (
           <p className="utility-text">

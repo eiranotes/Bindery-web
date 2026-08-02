@@ -28,7 +28,7 @@ function fillDraft() {
 test("draft saves locally, restores, and clears without implying publication", async () => {
   const firstRender = render(<CommunityComposer />);
   expect(
-    screen.getByText(/암호화되거나 자동 삭제되지 않으므로/),
+    screen.getByText(/암호화·자동 삭제되지 않습니다/),
   ).toBeTruthy();
   fillDraft();
 

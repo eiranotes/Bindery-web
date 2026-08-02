@@ -13,7 +13,8 @@ test("community hub exposes two distinct free boards and an honest boundary", as
   assert.match(html, /모두의 게시판/);
   assert.match(html, /href="\/community\/artists"/);
   assert.match(html, /href="\/community\/general"/);
-  assert.match(html, /공개된 글은 실제 회원 게시물이 아닙니다/);
+  assert.match(html, /현재 글은 예시입니다/);
+  assert.match(html, /공개 게시와 신고는 아직 연결되지 않았습니다/);
   assert.match(html, /data-ad-placement="community-hub"/);
 });
 
@@ -78,7 +79,7 @@ test("write, verification, rules, and report destinations explain their live bou
     ["/community/write?board=general", /이 브라우저에만 임시저장/],
     ["/community/write?board=artists", /작성 잠금/],
     ["/community/verify", /이 화면에서는 파일, 사업자번호, 계정 정보를 받지 않습니다/],
-    ["/community/rules", /현재는 운영 기준만 공개합니다/],
+    ["/community/rules", /운영 저장소가 연결되지 않아 기준만 공개합니다/],
     ["/community/report", /현재 신고를 전송하거나 저장하지 않습니다/],
   ];
 

@@ -11,7 +11,7 @@ import { createSupabaseServerClient } from "../../../../../lib/supabase/server.t
 export const dynamic = "force-dynamic";
 
 const ACTIONS = new Set<ModerationAction>([
-  "triage", "dismiss", "hide", "lock", "restore", "suspend_account", "resolve_appeal",
+  "triage", "dismiss", "hide", "lock", "restore", "suspend_account", "resolve_appeal", "reject_appeal",
 ]);
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {

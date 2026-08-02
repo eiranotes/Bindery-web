@@ -14,8 +14,7 @@ export function SiteFooter() {
           <Link href="/rss.xml">RSS</Link>
         </nav>
         <p className="site-footer__note">
-          현재 공개된 내용은 제품 검증용 예시 데이터입니다. 신청 전 공식 원문을
-          확인하세요.
+          예시 데이터입니다. 신청 전 공식 원문을 확인하세요.
         </p>
       </div>
     </footer>

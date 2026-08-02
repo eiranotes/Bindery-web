@@ -31,12 +31,19 @@ export const COMMUNITY_CAPABILITIES = [
 ] as const;
 export type CommunityCapability = (typeof COMMUNITY_CAPABILITIES)[number];
 
-export type CommunityActor = {
-  authenticated: boolean;
-  accountStatus: AccountStatus;
-  role: AccountRole;
-  artistStatus: ArtistStatus;
-};
+export type CommunityActor =
+  | {
+      authenticated: false;
+      accountStatus: "anonymous";
+      role: "none";
+      artistStatus: "none";
+    }
+  | {
+      authenticated: true;
+      accountStatus: AccountStatus;
+      role: AccountRole;
+      artistStatus: ArtistStatus;
+    };
 
 export const ARTIST_PROVISIONAL_LIMITS = {
   postsPer24Hours: 1,
@@ -92,8 +99,6 @@ const MODERATOR_CAPABILITIES: CommunityCapability[] = [
 
 const ADMIN_CAPABILITIES: CommunityCapability[] = [
   "artist:read",
-  "artist:write",
-  "artist:comment",
   "moderation:content",
   "moderation:reports",
   "admin:artist-review",
@@ -156,26 +161,13 @@ export function getCommunityAccess(
 
   const capabilities = [...GENERAL_MEMBER_CAPABILITIES];
 
-  if (actor.role === "admin") {
+  const isAdmin = actor.role === "admin";
+  const isModerator = actor.role === "moderator";
+
+  if (isAdmin) {
     capabilities.push(...ADMIN_CAPABILITIES);
-
-    return {
-      capabilities: uniqueCapabilities(capabilities),
-      artistAccess: "operator",
-      artistDenialReason: null,
-      provisionalLimits: null,
-    };
-  }
-
-  if (actor.role === "moderator") {
+  } else if (isModerator) {
     capabilities.push(...MODERATOR_CAPABILITIES);
-
-    return {
-      capabilities: uniqueCapabilities(capabilities),
-      artistAccess: "operator",
-      artistDenialReason: null,
-      provisionalLimits: null,
-    };
   }
 
   if (actor.artistStatus === "provisional") {
@@ -195,6 +187,15 @@ export function getCommunityAccess(
     return {
       capabilities: uniqueCapabilities(capabilities),
       artistAccess: "verified",
+      artistDenialReason: null,
+      provisionalLimits: null,
+    };
+  }
+
+  if (isAdmin || isModerator) {
+    return {
+      capabilities: uniqueCapabilities(capabilities),
+      artistAccess: "operator",
       artistDenialReason: null,
       provisionalLimits: null,
     };

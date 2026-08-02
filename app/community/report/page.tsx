@@ -36,7 +36,9 @@ export default async function CommunityReportPage({
   const config = getSupabasePublicConfig();
   const liveMode = config.status === "configured";
   const session = await getCurrentCommunityMember({ config });
+  const canReport = session.access.capabilities.includes("general:report");
   let post = !liveMode && postSlug ? getCommunityPost(postSlug) : null;
+  let loadError = false;
 
   if (liveMode && postSlug) {
     try {
@@ -44,7 +46,7 @@ export default async function CommunityReportPage({
       const durablePost = await createSupabaseCommunityRepository(client!).getPost(postSlug);
       post = durablePost ? durableCommunityPostToView(durablePost) : null;
     } catch {
-      post = null;
+      loadError = true;
     }
   }
 
@@ -53,7 +55,7 @@ export default async function CommunityReportPage({
       <PageIntro
         eyebrow="COMMUNITY / REPORT"
         title="신고 안내"
-        description="개인정보 노출, 저작권 침해, 괴롭힘, 허위 사실, 반복 광고를 운영 검토 대상으로 분류합니다."
+        description="신고 사유와 처리 기준을 확인합니다."
       />
 
       {!liveMode ? (
@@ -61,11 +63,21 @@ export default async function CommunityReportPage({
           <p className="status-stamp">접수 전</p>
           <div>
             <h2 id="report-boundary-title">현재 신고를 전송하거나 저장하지 않습니다.</h2>
-            <p>
-              신고 접수는 대상 보존, 신고자 보호, 처리 이력, 운영자 알림이 함께
-              있어야 합니다. 이 기반이 없는 상태에서 전송되는 것처럼 보이는
-              빈 폼을 만들지 않았습니다.
-            </p>
+            <p>운영 저장소가 연결되기 전에는 신고를 받지 않습니다.</p>
+          </div>
+        </section>
+      ) : loadError ? (
+        <section className="community-lock" aria-labelledby="report-service-error">
+          <p className="status-stamp">서비스 오류</p>
+          <div>
+            <h2 id="report-service-error">신고 대상 글을 불러오지 못했습니다.</h2>
+            <p>공개 글 저장소에 일시적으로 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+            <Link
+              className="button button--primary"
+              href={postSlug ? `/community/report?post=${encodeURIComponent(postSlug)}` : "/community/report"}
+            >
+              다시 시도
+            </Link>
           </div>
         </section>
       ) : !post ? (
@@ -89,19 +101,27 @@ export default async function CommunityReportPage({
             </Link>
           </div>
         </section>
+      ) : !canReport ? (
+        <section className="community-lock" aria-labelledby="report-account-inactive">
+          <p className="status-stamp">접수 잠금</p>
+          <div>
+            <h2 id="report-account-inactive">현재 계정 상태에서는 신고를 접수할 수 없습니다.</h2>
+            <p>계정 상태가 복구된 뒤 다시 시도하거나 운영자 연락 경로를 이용해 주세요.</p>
+          </div>
+        </section>
       ) : null}
 
-      {post ? (
+      {!loadError && post ? (
         <section className="report-target" aria-labelledby="report-target-title">
           <div className="section-line-heading">
             <h2 id="report-target-title">확인한 대상 글</h2>
-            <span>EXAMPLE POST</span>
+            <span>{liveMode ? "DURABLE POST" : "EXAMPLE POST"}</span>
           </div>
           <p>{post.title}</p>
         </section>
       ) : null}
 
-      {liveMode && post && session.member ? (
+      {liveMode && !loadError && post && canReport ? (
         <section className="community-write-sheet" aria-labelledby="report-form-title">
           <div className="section-line-heading">
             <h2 id="report-form-title">신고 접수</h2>

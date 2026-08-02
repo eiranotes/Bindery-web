@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readdir } from "node:fs/promises";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -7,6 +8,7 @@ const migrationUrl = new URL(
   import.meta.url,
 );
 const migration = await readFile(migrationUrl, "utf8");
+const migrationDirectory = new URL("../supabase/migrations/", import.meta.url);
 
 const requiredTables = [
   "profiles",
@@ -100,4 +102,18 @@ test("declares role-specific grants and board/content policies", () => {
   assert.match(migration, /create policy reports_select_own_or_operator/i);
   assert.match(migration, /create policy notifications_select_own/i);
   assert.doesNotMatch(migration, /service[_-]?role[_-]?key/i);
+});
+
+test("uses one unique ordered version per production migration", async () => {
+  const files = (await readdir(migrationDirectory)).filter((name) =>
+    name.endsWith(".sql"),
+  );
+  const versions = files.map((name) => name.split("_", 1)[0]);
+
+  assert.equal(
+    new Set(versions).size,
+    versions.length,
+    `duplicate migration version: ${files.join(", ")}`,
+  );
+  assert.deepEqual(files, [...files].sort());
 });

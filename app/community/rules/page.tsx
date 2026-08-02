@@ -3,6 +3,9 @@ import Link from "next/link";
 
 import { CommunityBoardNav } from "../../components/CommunityBoardNav";
 import { PageIntro } from "../../components/PageIntro";
+import { getSupabasePublicConfig } from "../../lib/supabase/config.ts";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "커뮤니티 운영 기준",
@@ -11,12 +14,14 @@ export const metadata: Metadata = {
 };
 
 export default function CommunityRulesPage() {
+  const liveMode = getSupabasePublicConfig().status === "configured";
+
   return (
     <div className="page-shell community-page">
       <PageIntro
         eyebrow="COMMUNITY / RULES"
         title="운영·신고 기준"
-        description="자유게시판의 대화량보다 다시 찾을 수 있는 정보와 안전한 운영을 우선합니다. 실제 접수 전에 적용할 기준을 화면으로 먼저 고정합니다."
+        description="게시 금지 항목과 신고·운영 절차를 확인합니다."
       />
 
       <CommunityBoardNav />
@@ -54,7 +59,7 @@ export default function CommunityRulesPage() {
       <section className="moderation-flow" aria-labelledby="moderation-title">
         <div className="section-line-heading">
           <h2 id="moderation-title">운영자 조치 흐름</h2>
-          <span>FUTURE BACKEND</span>
+          <span>{liveMode ? "DURABLE PROCESS" : "FAIL CLOSED"}</span>
         </div>
         <ol>
           <li>
@@ -78,10 +83,16 @@ export default function CommunityRulesPage() {
 
       <aside className="source-notice">
         <strong>접수 경계</strong>
-        <p>
-          현재는 운영 기준만 공개합니다. 신고 접수와 운영자 조치는 서버
-          계정, 저장소, 알림, 처리 이력 기능이 연결된 뒤 시작합니다.
-        </p>
+        {liveMode ? (
+          <p>
+            신고는 운영 대기열과 감사 기록에 저장됩니다. 계정 알림은 이메일
+            발송과 다릅니다.
+          </p>
+        ) : (
+          <p>
+            운영 저장소가 연결되지 않아 기준만 공개합니다.
+          </p>
+        )}
       </aside>
 
       <div className="page-actions">

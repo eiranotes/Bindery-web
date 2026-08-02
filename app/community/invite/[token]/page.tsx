@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ArtistInviteAcceptForm } from "../../../components/ArtistInviteAcceptForm";
 import { PageIntro } from "../../../components/PageIntro";
 import { getCurrentCommunityMember } from "../../../lib/server/community/session.ts";
+import {
+  CURRENT_COMMUNITY_POLICY_VERSION,
+} from "../../../lib/server/community/verification.ts";
 
 export const dynamic = "force-dynamic";
 
@@ -28,8 +31,11 @@ export default async function ArtistInvitePage({
         description="운영자가 발급한 일회용 초대를 현재 로그인 계정에 연결합니다."
       />
 
-      {session.state === "signed_in" ? (
-        <ArtistInviteAcceptForm token={token} />
+      {session.state === "signed_in" && session.member?.actor.accountStatus === "active" ? (
+        <ArtistInviteAcceptForm
+          token={token}
+          currentPolicyVersion={CURRENT_COMMUNITY_POLICY_VERSION}
+        />
       ) : session.state === "signed_out" ? (
         <section className="community-lock" aria-labelledby="invite-sign-in">
           <p className="status-stamp">로그인 필요</p>

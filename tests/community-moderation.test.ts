@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import type { CommunityActor } from "../app/lib/community-access.ts";
 import {
+  isCommunityAppealExpired,
+  getCommunityAppealContext,
   moderateCommunityReport,
+  submitCommunityAppeal,
+  type CommunityAppealContext,
   type CommunityModerationRepository,
   type ModerationReport,
 } from "../app/lib/server/community/moderation.ts";
@@ -26,6 +31,18 @@ class MemoryModerationRepository implements CommunityModerationRepository {
     createdAt: new Date().toISOString(),
   };
   actions: string[] = [];
+  appealContext: CommunityAppealContext = {
+    reportId: "report-1",
+    postId: "post-1",
+    postTitle: "검토할 게시글",
+    affectedUserId: "member-1",
+    reportState: "actioned",
+    action: "suspend_account",
+    actionAt: "2026-07-28T00:00:00.000Z",
+    deadlineAt: "2026-08-11T00:00:00.000Z",
+    appealedAt: null,
+    appealReason: null,
+  };
 
   async getReport(id: string) {
     return id === this.report.id ? this.report : null;
@@ -36,11 +53,23 @@ class MemoryModerationRepository implements CommunityModerationRepository {
     if (input.action === "triage") this.report.state = "triaged";
     if (["hide", "lock", "suspend_account"].includes(input.action)) this.report.state = "actioned";
     if (input.action === "dismiss") this.report.state = "dismissed";
-    if (["restore", "resolve_appeal"].includes(input.action)) this.report.state = "closed";
+    if (["restore", "resolve_appeal", "reject_appeal"].includes(input.action)) this.report.state = "closed";
     if (input.action === "hide") this.report.postState = "hidden";
     if (input.action === "lock") this.report.postState = "locked";
     if (["restore", "resolve_appeal"].includes(input.action)) this.report.postState = "published";
     return this.report;
+  }
+
+  async getAppealContext(id: string) {
+    return id === this.report.id ? this.appealContext : null;
+  }
+
+  async submitAppeal(input: { reportId: string; reason: string }) {
+    this.report.state = "appealed";
+    this.appealContext.reportState = "appealed";
+    this.appealContext.appealReason = input.reason;
+    this.appealContext.appealedAt = "2026-07-29T00:00:00.000Z";
+    return this.appealContext;
   }
 }
 
@@ -84,7 +113,31 @@ test("reserves account suspension and appeal decisions for admins", async () => 
   );
   assert.equal(suspended.report?.state, "actioned");
 
-  repository.report.state = "appealed";
+  const deniedAppeal = await submitCommunityAppeal(
+    {
+      actor: member,
+      userId: "member-2",
+      reportId: "report-1",
+      reason: "신고자에게는 이의제기 권한이 없어야 합니다.",
+      now: new Date("2026-07-29T00:00:00.000Z"),
+    },
+    { repository },
+  );
+  assert.equal(deniedAppeal.code, "forbidden");
+
+  const appealed = await submitCommunityAppeal(
+    {
+      actor: { ...member, accountStatus: "suspended" },
+      userId: "member-1",
+      reportId: "report-1",
+      reason: "위반으로 판단한 근거를 다시 검토해 주세요.",
+      now: new Date("2026-07-29T00:00:00.000Z"),
+    },
+    { repository },
+  );
+  assert.equal(appealed.code, "appealed");
+  assert.equal(repository.report.state, "appealed");
+
   repository.report.postState = "hidden";
   const resolved = await moderateCommunityReport(
     { actor: admin, actorId: "admin-1", reportId: "report-1", action: "resolve_appeal", reason: "이의 인용 및 복구", now: new Date() },
@@ -92,4 +145,58 @@ test("reserves account suspension and appeal decisions for admins", async () => 
   );
   assert.equal(resolved.report?.state, "closed");
   assert.equal(resolved.report?.postState, "published");
+
+  repository.report.state = "appealed";
+  repository.report.postState = "hidden";
+  const rejected = await moderateCommunityReport(
+    { actor: admin, actorId: "admin-1", reportId: "report-1", action: "reject_appeal", reason: "원 조치 유지", now: new Date() },
+    { repository },
+  );
+  assert.equal(rejected.report?.state, "closed");
+  assert.equal(rejected.report?.postState, "hidden");
+  assert.equal(repository.actions.at(-1), "reject_appeal:원 조치 유지");
+});
+
+test("exposes an affected member appeal context and enforces the fourteen-day deadline", async () => {
+  const repository = new MemoryModerationRepository();
+  const context = await getCommunityAppealContext(
+    { actor: member, userId: "member-1", reportId: "report-1" },
+    { repository },
+  );
+  assert.equal(context.ok, true);
+  assert.equal(context.appeal?.deadlineAt, "2026-08-11T00:00:00.000Z");
+
+  const late = await submitCommunityAppeal(
+    {
+      actor: member,
+      userId: "member-1",
+      reportId: "report-1",
+      reason: "기한이 지난 이의제기",
+      now: new Date("2026-08-12T00:00:00.000Z"),
+    },
+    { repository },
+  );
+  assert.equal(late.code, "deadline-expired");
+  assert.equal(repository.report.state, "open");
+});
+
+test("wires admin-only appeal rejection through the form and route allow-list", async () => {
+  const [form, route] = await Promise.all([
+    readFile(new URL("../app/components/AdminModerationForm.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/admin/community/reports/[id]/route.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(form, /isAdmin\s*\?\s*<option value="reject_appeal"/);
+  assert.match(route, /"reject_appeal"/);
+});
+
+test("marks an appeal expired only after its database deadline", () => {
+  const deadline = "2026-08-11T00:00:00.000Z";
+  assert.equal(
+    isCommunityAppealExpired(deadline, new Date("2026-08-10T23:59:59.000Z")),
+    false,
+  );
+  assert.equal(
+    isCommunityAppealExpired(deadline, new Date("2026-08-11T00:00:01.000Z")),
+    true,
+  );
 });

@@ -2,6 +2,11 @@
 
 ## 2026-07-28
 
+- Shortened introductions, home index labels, and Community helper copy across
+  public routes while preserving source, permission, safety, and storage
+  boundaries; removed the redundant Community principles panel and decorative
+  notice side stripes, and raised placeholder contrast to the theme's AA text
+  token.
 - Added Supabase public configuration validation, browser/server SSR clients,
   email sign-in and callback routes, and verified-claims session resolution.
 - Loaded account role and artist status from protected database rows instead
@@ -31,6 +36,65 @@
 - Added moderator report queues, reasoned content actions, admin-only account
   suspension and appeal resolution, plus separate action and audit history
   screens that remain hidden from ordinary members.
+- Added source freshness windows, author-only answer acceptance, event links,
+  and operator promotion of resolved sourced discussions into maintained Notes.
+- Added a public promoted-Note catalog and detail view that retains the original
+  community post, author, checked source, accepted answer, and promotion time.
+- Added indexed community search with board, category, resolution, and source
+  freshness filters while excluding protected, hidden, and deleted rows before
+  results can be returned.
+- Added recipient-only in-app notifications for replies, accepted answers,
+  artist review decisions, moderation outcomes, and appeal outcomes, including
+  an explicit read action.
+- Added an explicit signed-in Binder merge that saves supported event and
+  readable community bookmarks idempotently, reports conflicts and partial
+  failures, and preserves device-local data.
+- Reconciled backend setup, operator routines, migration order, backup limits,
+  and the remaining external Supabase, Turnstile, legal, and hosted E2E gates.
+- Closed direct provisional-artist self-grants with an authenticated Supabase
+  Edge Function, single-use Turnstile verification, explicit consent, and a
+  service-role-only transactional application RPC.
+- Made invitation expiry database-time-only and auditable, including persisted
+  expired state that cannot be bypassed with a caller timestamp.
+- Added reasoned author/operator post correction with immutable prior-content
+  snapshots and append-only operator source rechecks.
+- Added opaque rank/update/ID keyset pagination to filtered general and artist
+  community feeds while preserving active URL filters.
+- Restricted community event links to the maintained database allowlist and
+  made invitation issuance exactly seven database days without caller time.
+- Bound each appeal to the exact restricting moderation action and prevented a
+  successful appeal from reversing a newer post or account restriction.
+- Separated artist-board moderation access from artist write capability and
+  restricted application records to the applicant or an administrator.
+- Added explicit current-policy consent to invitation acceptance, database-owned
+  review/revocation time, and transaction-safe concurrent application replay.
+- Added appeal rejection and causally safe normal restore without undoing later
+  restrictions or deleted content.
+- Replaced raw event-bookmark inserts with an allowlisted, account-capped RPC
+  and preserved legacy event references during populated migration upgrades.
+- Limited public correction history to editor/reason/time metadata, aligned
+  correction sources on HTTPS, and made same-day Note source selection stable.
+- Made the configured Community hub load durable public rows and render honest
+  retryable errors for hub, detail, and report read failures.
+- Hid live write, comment, report, account-Binder, correction, and deletion
+  affordances when a signed-in account lacks the corresponding active capability.
+- Made Note promotion chronology database-owned and rendered expired appeals as
+  closed to new submissions before the user reaches the API.
+- Restored least-privilege ACLs on both Note-promotion RPC signatures and gated
+  account Binder, artist application/invitation, audit, and artist write CTAs by
+  active capabilities rather than raw sign-in or role state.
+- Corrected the unconfigured artist-write boundary so it explains the missing
+  backend and links to verification criteria instead of implying account suspension.
+- Replaced broad authenticated content DML with narrow database-time RPCs and
+  added same-post accepted-answer enforcement plus account-target suspension
+  audit evidence.
+- Added affected-author appeals with a private reason record, 14-day database
+  deadline, account notification link, administrator resolution, and audit
+  history.
+- Extended device/account Binder behavior to public community posts and added
+  real PostgreSQL RLS evidence plus unique migration-version verification.
+- Added `npm run typecheck` to the required test gate and corrected remaining
+  live-vs-fallback UI copy for writing, reporting, rules, and event bookmarks.
 
 ## 2026-07-26
 

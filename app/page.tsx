@@ -7,8 +7,7 @@ import { daysUntilDeadline } from "./lib/events.ts";
 
 export const metadata: Metadata = {
   title: "만드는 사람의 다음 일정을, 한 장에",
-  description:
-    "가장 가까운 행사 마감과 창작 준비 정보를 조용한 한 장의 플래너로 확인하세요.",
+  description: "가장 가까운 행사 마감과 준비 기준을 확인하세요.",
 };
 
 export default function Home() {
@@ -35,31 +34,31 @@ export default function Home() {
       number: "01",
       href: "/events",
       title: "행사",
-      copy: "신청 마감과 지난 회차를 비교해요.",
+      copy: "마감·회차 비교",
     },
     {
       number: "02",
       href: "/notes",
       title: "노트",
-      copy: "기록하고 싶은 준비 정보를 모았어요.",
+      copy: "준비 기준",
     },
     {
       number: "03",
       href: "/groupbuy",
       title: "공동구매",
-      copy: "함께 쓰면 좋은 물건의 현황을 살펴요.",
+      copy: "진행 현황",
     },
     {
       number: "04",
       href: "/news",
       title: "소식",
-      copy: "새로운 공지와 변화를 원문으로 전해요.",
+      copy: "공식 공지",
     },
     {
       number: "05",
       href: "/community",
       title: "커뮤니티",
-      copy: "작가 게시판과 모두의 게시판에서 정보를 나눠요.",
+      copy: "작가·모두의 게시판",
     },
   ];
 
@@ -75,10 +74,7 @@ export default function Home() {
             <br />
             <em>1년을 기다립니다.</em>
           </h1>
-          <p>
-            문구·일러스트 굿즈를 혼자 만들고 파는 사람을 위한 정보
-            바인더입니다. 지금 필요한 일정과 준비 기준만 간결하게 모았습니다.
-          </p>
+          <p>혼자 만드는 사람을 위한 행사 일정과 준비 기준.</p>
           <div className="intro-actions">
             <Link className="button button--primary" href="/events">
               행사 전체 보기
@@ -105,7 +101,7 @@ export default function Home() {
             ))}
           </ol>
           <p className="mockup-deadline__note">
-            마감일은 주최측 공지 기준입니다. 신청 전 공식 페이지를 확인하세요.
+            신청 전 공식 공지를 확인하세요.
           </p>
         </aside>
       </section>

@@ -22,13 +22,14 @@ export default async function CommunityVerificationPage() {
   const session = await getCurrentCommunityMember();
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
   const artistStatus = session.member?.actor.artistStatus ?? "none";
+  const canApply = session.member?.actor.accountStatus === "active";
 
   return (
     <div className="page-shell community-page">
       <PageIntro
         eyebrow="COMMUNITY / VERIFICATION"
         title="작가 인증 기준"
-        description="작가 전용 게시판의 접근 자격만 확인하기 위한 기준입니다. 작품의 품질, 판매 실적, 게시글의 사실성을 평가하는 제도가 아닙니다."
+        description="작가 인증은 게시판 접근 자격만 확인합니다."
       />
 
       <CommunityBoardNav current="artists" />
@@ -65,6 +66,11 @@ export default async function CommunityVerificationPage() {
               <p className="status-stamp">확인 지연</p>
               <p>회원 상태를 확인하지 못해 신청을 열지 않았습니다.</p>
             </>
+          ) : !canApply ? (
+            <>
+              <p className="status-stamp">신청 잠금</p>
+              <p>현재 계정 상태에서는 작가 신청을 제출할 수 없습니다.</p>
+            </>
           ) : artistStatus === "provisional" ? (
             <>
               <p className="status-stamp">임시 승인 · 검수 대기</p>
@@ -90,7 +96,7 @@ export default async function CommunityVerificationPage() {
         </div>
       </section>
 
-      {session.state === "signed_in" && artistStatus === "none" ? (
+      {session.state === "signed_in" && canApply && artistStatus === "none" ? (
         <section className="community-write-sheet" aria-labelledby="artist-application-title">
           <div className="section-line-heading">
             <h2 id="artist-application-title">작가 신청</h2>
@@ -156,11 +162,8 @@ export default async function CommunityVerificationPage() {
       <aside className="boundary-note">
         <p className="stamp">개인정보 경계</p>
         <div>
-          <h2>사업자등록증을 기본 증빙으로 요구하지 않습니다.</h2>
-          <p>
-            주민등록번호, 주소, 계좌번호 같은 불필요한 개인정보를 수집하지
-            않습니다. 작가 상태는 활동 자격이며 정보의 정확성 인증이 아닙니다.
-          </p>
+          <h2>신분증·사업자등록증을 받지 않습니다.</h2>
+          <p>공개 활동 URL만 확인하며, 인증은 글의 정확성을 보증하지 않습니다.</p>
         </div>
       </aside>
 

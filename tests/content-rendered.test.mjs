@@ -54,6 +54,6 @@ test("news timeline summarizes and links each named source", async () => {
     html,
     /서울일러스트레이션페어(?:<!-- -->)? 원문 확인/,
   );
-  assert.match(html, /원문을 옮겨 싣지 않고/);
+  assert.match(html, /공지를 원문과 함께 정리합니다/);
   assert.match(html, /최종 판단은 연결된 공식 원문에서 확인/);
 });

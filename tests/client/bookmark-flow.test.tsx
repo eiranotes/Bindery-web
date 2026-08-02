@@ -10,6 +10,7 @@ import { afterEach, expect, test, vi } from "vitest";
 
 import { BinderClient } from "../../app/components/BinderClient";
 import { BookmarkButton } from "../../app/components/BookmarkButton";
+import { CommunityPostActions } from "../../app/components/CommunityPostActions";
 import { BOOKMARK_STORAGE_KEY } from "../../app/lib/bookmarks";
 
 vi.mock("next/link", () => ({
@@ -23,6 +24,7 @@ vi.mock("next/link", () => ({
     </a>
   ),
 }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }) }));
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -36,7 +38,7 @@ test("save, same-tab sync, binder removal, and empty guidance stay connected", a
     </>,
   );
 
-  await screen.findByText("아직 꽂아 둔 행사가 없습니다.");
+  await screen.findByText("아직 꽂아 둔 페이지가 없습니다.");
   fireEvent.click(
     screen.getByRole("button", { name: "내 바인더에 넣기" }),
   );
@@ -58,7 +60,7 @@ test("save, same-tab sync, binder removal, and empty guidance stay connected", a
     }),
   );
 
-  await screen.findByText("아직 꽂아 둔 행사가 없습니다.");
+  await screen.findByText("아직 꽂아 둔 페이지가 없습니다.");
   await waitFor(() => {
     expect(
       screen
@@ -67,8 +69,61 @@ test("save, same-tab sync, binder removal, and empty guidance stay connected", a
     ).toBe("false");
   });
   expect(window.localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(
-    '{"version":1,"eventIds":[]}',
+    '{"version":1,"eventIds":[],"communityPosts":[]}',
   );
+});
+
+test("a signed-out public reader saves a community post on this device", async () => {
+  render(
+    <CommunityPostActions
+      postId="00000000-0000-4000-8000-000000000001"
+      postTitle="공개 인쇄 질문"
+      boardId="general"
+      signedIn={false}
+      canDelete={false}
+      initiallyBookmarked={false}
+    />,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "이 기기 Binder에 저장" }));
+  expect(await screen.findByText("이 기기의 Binder에 저장했습니다.")).toBeTruthy();
+  expect(JSON.parse(localStorage.getItem(BOOKMARK_STORAGE_KEY) ?? "")).toEqual({
+    version: 1,
+    eventIds: [],
+    communityPosts: [{
+      id: "00000000-0000-4000-8000-000000000001",
+      title: "공개 인쇄 질문",
+      boardId: "general",
+    }],
+  });
+});
+
+test("explicit merge sends local events and posts while retaining both", async () => {
+  const localRecord = JSON.stringify({
+    version: 1,
+    eventIds: ["illustar-2026-winter"],
+    communityPosts: [{ id: "00000000-0000-4000-8000-000000000001", title: "공개 글", boardId: "general" }],
+  });
+  localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
+  const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ ok: true, merged: [], conflicts: [{}, {}], rejected: [] }), { status: 200 }));
+  render(<BinderClient syncState="signed_in" />);
+  fireEvent.click(await screen.findByRole("button", { name: "계정 Binder와 합치기" }));
+  await screen.findByText("2개 모두 이미 계정 Binder에 있습니다. 이 기기의 저장은 그대로 남아 있습니다.");
+  expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({ items: [
+    { kind: "event", id: "illustar-2026-winter" },
+    { kind: "community_post", id: "00000000-0000-4000-8000-000000000001" },
+  ] });
+  expect(localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(localRecord);
+});
+
+test("account community posts render cross-device with their board link", async () => {
+  render(<BinderClient syncState="signed_in" accountCommunityPosts={[{
+    id: "00000000-0000-4000-8000-000000000001",
+    title: "계정에 저장한 글",
+    boardId: "general",
+  }]} />);
+  const link = await screen.findByRole("link", { name: "계정에 저장한 글" });
+  expect(link.getAttribute("href")).toBe("/community/general/00000000-0000-4000-8000-000000000001");
+  expect(screen.getByText("계정 Binder에 저장됨")).toBeTruthy();
 });
 
 test("blocked storage keeps the saved item and explains why removal failed", async () => {
@@ -97,4 +152,121 @@ test("blocked storage keeps the saved item and explains why removal failed", asy
     ),
   ).toBeTruthy();
   expect(within(savedRegion).getByText("일러스타페어 2026 겨울")).toBeTruthy();
+});
+
+test("a signed-in member explicitly merges local saves without clearing them", async () => {
+  const localRecord =
+    '{"version":1,"eventIds":["illustar-2026-winter"]}';
+  window.localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
+  const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    new Response(
+      JSON.stringify({
+        ok: true,
+        code: "merged",
+        merged: [{ kind: "event", id: "illustar-2026-winter" }],
+        rejected: [],
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    ),
+  );
+
+  render(<BinderClient syncState="signed_in" />);
+  await screen.findByRole("region", { name: "꽂아 둔 행사 1" });
+  fireEvent.click(
+    screen.getByRole("button", { name: "계정 Binder와 합치기" }),
+  );
+
+  expect(
+    await screen.findByText(
+      "계정 Binder와 1개를 합쳤습니다. 이 기기의 저장은 그대로 남아 있습니다.",
+    ),
+  ).toBeTruthy();
+  expect(fetchMock).toHaveBeenCalledOnce();
+  const [, request] = fetchMock.mock.calls[0];
+  expect(request).toMatchObject({
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  expect(JSON.parse(String(request?.body))).toEqual({
+    items: [{ kind: "event", id: "illustar-2026-winter" }],
+  });
+  expect(window.localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(localRecord);
+});
+
+test("a rejected account item remains local with an explicit partial result", async () => {
+  const localRecord =
+    '{"version":1,"eventIds":["illustar-2026-winter"]}';
+  window.localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
+  vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    new Response(
+      JSON.stringify({
+        ok: false,
+        code: "rejected",
+        merged: [],
+        rejected: [
+          {
+            item: { kind: "event", id: "illustar-2026-winter" },
+            code: "service-error",
+            message: "이 항목을 계정 Binder에 저장하지 못했습니다.",
+          },
+        ],
+      }),
+      { status: 422, headers: { "Content-Type": "application/json" } },
+    ),
+  );
+
+  render(<BinderClient syncState="signed_in" />);
+  await screen.findByRole("region", { name: "꽂아 둔 행사 1" });
+  fireEvent.click(
+    screen.getByRole("button", { name: "계정 Binder와 합치기" }),
+  );
+
+  expect(
+    await screen.findByText(
+      "합치지 못한 1개 항목은 이 기기에 그대로 남아 있습니다.",
+    ),
+  ).toBeTruthy();
+  expect(window.localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(localRecord);
+});
+
+test("signed-out Binder stays local-only and never sends device saves", async () => {
+  window.localStorage.setItem(
+    BOOKMARK_STORAGE_KEY,
+    '{"version":1,"eventIds":["illustar-2026-winter"]}',
+  );
+  const fetchMock = vi.spyOn(globalThis, "fetch");
+
+  render(<BinderClient syncState="signed_out" />);
+
+  await screen.findByRole("region", { name: "꽂아 둔 행사 1" });
+  expect(
+    screen.queryByRole("button", { name: "계정 Binder와 합치기" }),
+  ).toBeNull();
+  expect(fetchMock).not.toHaveBeenCalled();
+});
+
+test("a signed-in member sees account event saves on another device", async () => {
+  const fetchMock = vi.spyOn(globalThis, "fetch");
+
+  render(
+    <BinderClient
+      accountEventIds={["seoul-illustration-2026-v20"]}
+      syncState="signed_in"
+    />,
+  );
+
+  const savedRegion = await screen.findByRole("region", {
+    name: "꽂아 둔 행사 1",
+  });
+  expect(
+    within(savedRegion).getByText("서울일러스트레이션페어 V.20"),
+  ).toBeTruthy();
+  expect(
+    within(savedRegion).queryByRole("button", {
+      name: "내 바인더에서 빼기",
+    }),
+  ).toBeNull();
+  expect(within(savedRegion).getByText("계정 Binder에 저장됨")).toBeTruthy();
+  expect(window.localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBeNull();
+  expect(fetchMock).not.toHaveBeenCalled();
 });

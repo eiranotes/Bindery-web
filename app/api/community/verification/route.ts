@@ -1,7 +1,6 @@
 import { getCurrentCommunityMember } from "../../../lib/server/community/session.ts";
 import {
-  createSupabaseVerificationDependencies,
-  submitArtistApplication,
+  createSupabaseArtistApplicationSubmitter,
 } from "../../../lib/server/community/verification.ts";
 import {
   isSameOriginMutation,
@@ -15,11 +14,15 @@ import { createSupabaseServerClient } from "../../../lib/supabase/server.ts";
 export const dynamic = "force-dynamic";
 
 function resultStatus(code: string) {
-  if (code === "forbidden") return 401;
+  if (code === "forbidden") return 403;
   if (code === "duplicate-proof" || code === "already-applied") return 409;
   if (code === "rate-limited") return 429;
-  if (code === "bot-verification-failed" || code === "invalid-input") return 400;
-  return 500;
+  if (
+    code === "bot-verification-failed" ||
+    code === "consent-required" ||
+    code === "invalid-input"
+  ) return 400;
+  return 503;
 }
 
 export async function POST(request: Request) {
@@ -47,35 +50,23 @@ export async function POST(request: Request) {
 
   try {
     const client = await createSupabaseServerClient(config);
-    const dependencies = createSupabaseVerificationDependencies(client!, {
-      remoteIp:
-        request.headers.get("cf-connecting-ip") ??
-        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
+    const result = await createSupabaseArtistApplicationSubmitter(client!).submit({
+      activityName: String(body.activityName ?? ""),
+      proofUrl: String(body.proofUrl ?? ""),
+      primaryField: String(body.primaryField ?? ""),
+      optionalPublicUrl:
+        typeof body.optionalPublicUrl === "string"
+          ? body.optionalPublicUrl
+          : null,
+      applicantNote:
+        typeof body.applicantNote === "string" ? body.applicantNote : null,
+      botToken: String(body.botToken ?? ""),
+      idempotencyKey:
+        request.headers.get("idempotency-key") ??
+        String(body.idempotencyKey ?? ""),
+      policyConsent: body.policyConsent === true,
+      policyVersion: "community-2026-07",
     });
-    const result = await submitArtistApplication(
-      {
-        actor: session.member.actor,
-        userId: session.member.id,
-        input: {
-          activityName: String(body.activityName ?? ""),
-          proofUrl: String(body.proofUrl ?? ""),
-          primaryField: String(body.primaryField ?? ""),
-          optionalPublicUrl:
-            typeof body.optionalPublicUrl === "string"
-              ? body.optionalPublicUrl
-              : null,
-          applicantNote:
-            typeof body.applicantNote === "string" ? body.applicantNote : null,
-          policyVersion: "community-2026-07",
-        },
-        botToken: String(body.botToken ?? ""),
-        idempotencyKey:
-          request.headers.get("idempotency-key") ??
-          String(body.idempotencyKey ?? ""),
-        now: new Date(),
-      },
-      dependencies,
-    );
 
     return jsonNoStore(result, {
       status: result.ok

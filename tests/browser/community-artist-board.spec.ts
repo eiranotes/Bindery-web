@@ -26,8 +26,12 @@ test("artist write form stays absent when server artist access is unavailable", 
 }) => {
   await page.goto("/community/write?board=artists");
   await expect(
-    page.getByRole("heading", { name: "작가 인증 세션이 있어야 작성할 수 있습니다." }),
+    page.getByRole("heading", { name: "백엔드 연결 후 작가 인증 상태를 확인합니다." }),
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "작가 인증 기준 확인" })).toHaveAttribute(
+    "href",
+    "/community/verify",
+  );
   await expect(page.getByRole("button", { name: "게시하기" })).toHaveCount(0);
   await expect(page.getByLabel("제목")).toHaveCount(0);
 });

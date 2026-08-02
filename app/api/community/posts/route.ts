@@ -3,6 +3,13 @@ import {
   createCommunityPost,
   createSupabaseCommunityRepository,
 } from "../../../lib/server/community/posts.ts";
+import {
+  decodeCommunitySearchCursor,
+  createSupabaseCommunitySearchRepository,
+  searchCommunityPosts,
+  type CommunitySearchFreshness,
+  type CommunitySearchResolution,
+} from "../../../lib/server/community/search.ts";
 import { getCurrentCommunityMember } from "../../../lib/server/community/session.ts";
 import {
   isSameOriginMutation,
@@ -23,13 +30,46 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const category = getCommunityCategory(url.searchParams.get("category"));
+  const cursor = url.searchParams.get("cursor");
+  if (cursor && !decodeCommunitySearchCursor(cursor)) {
+    return jsonNoStore({ ok: false, code: "invalid-cursor" }, { status: 400 });
+  }
+  const resolution = url.searchParams.get("resolution");
+  const freshness = url.searchParams.get("freshness");
+  const limitValue = url.searchParams.get("limit");
+  const requestedLimit = limitValue === null ? null : Number(limitValue);
   try {
     const client = await createSupabaseServerClient(config);
-    const posts = await createSupabaseCommunityRepository(client!).listPosts({
-      boardId: "general",
-      categoryId: category?.id,
+    const result = await searchCommunityPosts(
+      {
+        actor: {
+          authenticated: false,
+          accountStatus: "anonymous",
+          role: "none",
+          artistStatus: "none",
+        },
+        input: {
+          query: url.searchParams.get("q") ?? "",
+          board: "general",
+          categoryId: category?.id,
+          resolution: resolution as CommunitySearchResolution,
+          freshness: freshness as CommunitySearchFreshness,
+          limit:
+            requestedLimit !== null && Number.isFinite(requestedLimit)
+              ? requestedLimit
+              : undefined,
+          cursor,
+        },
+        now: new Date(),
+      },
+      { repository: createSupabaseCommunitySearchRepository(client!) },
+    );
+    return jsonNoStore({
+      ok: true,
+      posts: result.posts,
+      nextCursor: result.nextCursor,
+      filters: result.filters,
     });
-    return jsonNoStore({ ok: true, posts });
   } catch {
     return jsonServiceError();
   }

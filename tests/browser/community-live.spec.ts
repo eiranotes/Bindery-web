@@ -46,6 +46,13 @@ test("unconfigured reporting shows criteria but no intake form", async ({ page }
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "신고 접수" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "신고 사유" })).toBeVisible();
+  await expect(page.getByText("EXAMPLE POST", { exact: true })).toBeVisible();
+});
+
+test("the appeal entry path fails closed when durable community storage is unavailable", async ({ page }) => {
+  await page.goto("/community/appeals/82000000-0000-4000-8000-000000000001");
+  await expect(page.getByRole("heading", { name: "이의제기 저장소가 아직 연결되지 않았습니다." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "이의제기 제출" })).toHaveCount(0);
 });
 
 test("general board, detail, write, and report stay within mobile and desktop width", async ({
@@ -61,6 +68,7 @@ test("general board, detail, write, and report stay within mobile and desktop wi
       "/community/general/first-booth-card-reader-checklist",
       "/community/write?board=general",
       "/community/report?post=first-booth-card-reader-checklist",
+      "/community/appeals/82000000-0000-4000-8000-000000000001",
     ]) {
       await page.goto(path);
       const overflow = await page.evaluate(

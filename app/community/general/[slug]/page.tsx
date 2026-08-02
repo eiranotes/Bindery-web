@@ -3,11 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CommunityPostActions } from "../../../components/CommunityPostActions";
+import { CommunityKnowledgeActions } from "../../../components/CommunityKnowledgeActions";
+import { events as eventCatalog } from "../../../lib/data.ts";
 import { getCommunityCategory, getCommunityPost } from "../../../lib/community";
+import {
+  createSupabaseKnowledgeRepository,
+  getCommunitySourceFreshness,
+  type KnowledgePost,
+} from "../../../lib/server/community/knowledge.ts";
 import {
   createSupabaseCommunityRepository,
   durableCommunityPostToView,
   type DurableCommunityComment,
+  type DurableCommunityRevision,
 } from "../../../lib/server/community/posts.ts";
 import { getCurrentCommunityMember } from "../../../lib/server/community/session.ts";
 import { getSupabasePublicConfig } from "../../../lib/supabase/config.ts";
@@ -63,26 +71,54 @@ export default async function CommunityPostPage({
   const session = await getCurrentCommunityMember({ config });
   let post = liveMode ? undefined : getCommunityPost(slug);
   let comments: DurableCommunityComment[] = [];
+  let revisions: DurableCommunityRevision[] = [];
   let bookmarked = false;
   let liveAuthorId: string | null = null;
+  let knowledgePost: KnowledgePost | null = null;
+  let loadError = false;
 
   if (liveMode) {
     try {
       const client = await createSupabaseServerClient(config);
       const repository = createSupabaseCommunityRepository(client!);
       const durablePost = await repository.getPost(slug);
-      if (!durablePost || durablePost.boardId !== "general") {
-        notFound();
+      if (durablePost?.boardId === "general") {
+        post = durableCommunityPostToView(durablePost);
+        liveAuthorId = durablePost.authorId;
+        knowledgePost = await createSupabaseKnowledgeRepository(client!).getPost(
+          durablePost.id,
+        );
+        comments = await repository.listComments(durablePost.id);
+        revisions = await repository.listRevisions(durablePost.id);
+        bookmarked = session.member
+          ? await repository.isBookmarked(session.member.id, durablePost.id)
+          : false;
       }
-      post = durableCommunityPostToView(durablePost);
-      liveAuthorId = durablePost.authorId;
-      comments = await repository.listComments(durablePost.id);
-      bookmarked = session.member
-        ? await repository.isBookmarked(session.member.id, durablePost.id)
-        : false;
     } catch {
-      notFound();
+      loadError = true;
     }
+  }
+
+  if (liveMode && loadError) {
+    return (
+      <div className="page-shell community-page">
+        <nav className="breadcrumbs" aria-label="현재 위치">
+          <Link href="/community">커뮤니티</Link>
+          <span aria-hidden="true">/</span>
+          <Link href="/community/general">모두의 게시판</Link>
+        </nav>
+        <section className="community-lock" aria-labelledby="post-service-error">
+          <p className="status-stamp">서비스 오류</p>
+          <div>
+            <h1 id="post-service-error">게시글을 불러오지 못했습니다.</h1>
+            <p>공개 글 저장소에 일시적으로 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+            <Link className="button button--primary" href={`/community/general/${encodeURIComponent(slug)}`}>
+              다시 시도
+            </Link>
+          </div>
+        </section>
+      </div>
+    );
   }
 
   if (!post) {
@@ -90,6 +126,22 @@ export default async function CommunityPostPage({
   }
 
   const category = getCommunityCategory(post.categoryId);
+  const linkedEvent = knowledgePost?.eventId
+    ? eventCatalog.find((event) => event.id === knowledgePost?.eventId)
+    : null;
+  const sourceFreshness = knowledgePost?.source
+    ? getCommunitySourceFreshness({
+        checkedAt: knowledgePost.source.checkedAt,
+        validForDays: knowledgePost.source.validForDays,
+        now: new Date(),
+      })
+    : "missing";
+  const isActiveAuthor =
+    session.member?.actor.accountStatus === "active" &&
+    session.member.id === liveAuthorId;
+  const isActiveOperator = session.access.capabilities.includes(
+    "moderation:content",
+  );
 
   return (
     <article className="page-shell community-post-page">
@@ -137,7 +189,16 @@ export default async function CommunityPostPage({
 
       {post.source ? (
         <aside className="source-notice">
-          <strong>참고 원문</strong>
+          <strong>
+            참고 원문
+            {liveMode
+              ? sourceFreshness === "stale"
+                ? " · 재확인 필요"
+                : sourceFreshness === "fresh"
+                  ? " · 확인 기간 내"
+                  : ""
+              : ""}
+          </strong>
           <p>
             <a
               href={post.source.url}
@@ -147,6 +208,35 @@ export default async function CommunityPostPage({
               {post.source.label}
             </a>
             <span> · {formatDate(post.source.checkedAt)} 확인</span>
+          </p>
+        </aside>
+      ) : null}
+
+      {liveMode && revisions.length > 0 ? (
+        <section className="community-reply-boundary" aria-labelledby="revision-history-title">
+          <div className="section-line-heading">
+            <h2 id="revision-history-title">수정 이력</h2>
+            <span>{revisions.length} REVISIONS</span>
+          </div>
+          <ol className="community-comment-list">
+            {revisions.map((revision) => (
+              <li key={revision.id}>
+                <div>
+                  <strong>{revision.editorName ?? "회원 또는 운영자"}</strong>
+                  <time dateTime={revision.createdAt}>{formatDate(revision.createdAt)}</time>
+                </div>
+                <p>{revision.reason ?? "수정 사유가 기록되지 않았습니다."}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {linkedEvent ? (
+        <aside className="trust-notice">
+          <p className="utility-text">RELATED EVENT</p>
+          <p>
+            관련 행사: <Link href={`/events/${linkedEvent.slug}/${linkedEvent.edition}`}>{linkedEvent.name}</Link>
           </p>
         </aside>
       ) : null}
@@ -173,6 +263,9 @@ export default async function CommunityPostPage({
                 <li key={comment.id}>
                   <div>
                     <strong>{comment.authorName ?? "회원"}</strong>
+                    {knowledgePost?.acceptedCommentId === comment.id ? (
+                      <span className="status-stamp">채택 답변</span>
+                    ) : null}
                     <time dateTime={comment.createdAt}>{formatDate(comment.createdAt)}</time>
                   </div>
                   <p>{comment.body}</p>
@@ -190,15 +283,35 @@ export default async function CommunityPostPage({
         )}
       </section>
 
+      {liveMode && knowledgePost ? (
+        <CommunityKnowledgeActions
+          postId={post.slug}
+          comments={knowledgePost.kind === "question" ? comments : []}
+          acceptedCommentId={knowledgePost.acceptedCommentId}
+          canManage={
+            session.member?.actor.accountStatus === "active" &&
+            session.member.id === liveAuthorId
+          }
+          isOperator={session.access.capabilities.includes("moderation:content")}
+          events={eventCatalog.map((event) => ({ id: event.id, label: event.name }))}
+        />
+      ) : null}
+
       {liveMode ? (
         <CommunityPostActions
           postId={post.slug}
+          postTitle={post.title}
+          postBody={post.body.join("\n\n")}
+          source={post.source ?? null}
           boardId="general"
           signedIn={session.member !== null}
+          canParticipate={session.access.capabilities.includes("general:comment")}
+          canCorrect={
+            isActiveAuthor || isActiveOperator
+          }
+          isOperator={isActiveOperator}
           canDelete={
-            session.member?.id === liveAuthorId ||
-            session.member?.actor.role === "moderator" ||
-            session.member?.actor.role === "admin"
+            isActiveAuthor || isActiveOperator
           }
           initiallyBookmarked={bookmarked}
         />

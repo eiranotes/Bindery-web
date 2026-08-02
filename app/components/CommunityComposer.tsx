@@ -254,10 +254,8 @@ export function CommunityComposer({
           </p>
         ) : (
           <p>
-            아래 내용은 이 브라우저에만 임시저장됩니다. 계정, 서버, 운영 검수
-            체계가 연결되기 전에는 다른 사람에게 보이지 않습니다. 암호화되거나
-            자동 삭제되지 않으므로 공용 기기·공유 브라우저 프로필에서는 다른
-            사용자나 확장 프로그램이 읽을 수 있습니다. 작업 후 직접 지워 주세요.
+            이 브라우저에만 임시저장되며 암호화·자동 삭제되지 않습니다. 공유
+            기기에서는 저장하지 말고, 작업 후 직접 지워 주세요.
           </p>
         )}
       </div>
@@ -271,7 +269,6 @@ export function CommunityComposer({
             </option>
           ))}
         </select>
-        <small>사실 정보와 자유 대화를 구분해 다음 사람이 찾기 쉽게 합니다.</small>
       </label>
 
       <label>
@@ -281,7 +278,6 @@ export function CommunityComposer({
           <option value="experience">경험 공유</option>
           <option value="fact">사실·안내</option>
         </select>
-        <small>경험과 사실을 구분하면 다음 사람이 판단하기 쉽습니다.</small>
       </label>
 
       <label>
@@ -317,7 +313,7 @@ export function CommunityComposer({
           autoComplete="url"
           placeholder="https://"
         />
-        <small>행사·업체·제도 정보라면 원문 주소와 확인 날짜를 함께 남깁니다.</small>
+        <small>사실 정보에는 원문과 확인 날짜를 남겨 주세요.</small>
       </label>
 
       <label>

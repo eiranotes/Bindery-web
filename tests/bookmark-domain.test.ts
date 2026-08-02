@@ -3,10 +3,12 @@ import test from "node:test";
 
 import {
   addBookmark,
+  addCommunityPostBookmark,
   BOOKMARK_STORAGE_KEY,
   parseBookmarkRecord,
   readBookmarkRecord,
   removeBookmark,
+  removeCommunityPostBookmark,
   serializeBookmarkRecord,
   writeBookmarkRecord,
 } from "../app/lib/bookmarks.ts";
@@ -37,21 +39,22 @@ test("uses one versioned, deterministic device-local record", () => {
       "seoul-illustration-2026-v20",
       "illustar-2026-winter",
     ],
+    communityPosts: [],
   });
   assert.equal(
     serializeBookmarkRecord(parsed),
-    '{"version":1,"eventIds":["seoul-illustration-2026-v20","illustar-2026-winter"]}',
+    '{"version":1,"eventIds":["seoul-illustration-2026-v20","illustar-2026-winter"],"communityPosts":[]}',
   );
 });
 
 test("fails closed for malformed, old-version, and unknown stored values", () => {
   assert.deepEqual(parseBookmarkRecord(null, knownEventIds), {
     version: 1,
-    eventIds: [],
+    eventIds: [], communityPosts: [],
   });
   assert.deepEqual(parseBookmarkRecord("{broken", knownEventIds), {
     version: 1,
-    eventIds: [],
+    eventIds: [], communityPosts: [],
   });
   assert.deepEqual(
     parseBookmarkRecord(
@@ -61,7 +64,7 @@ test("fails closed for malformed, old-version, and unknown stored values", () =>
       }),
       knownEventIds,
     ),
-    { version: 1, eventIds: [] },
+    { version: 1, eventIds: [], communityPosts: [] },
   );
   assert.deepEqual(
     parseBookmarkRecord(
@@ -71,7 +74,7 @@ test("fails closed for malformed, old-version, and unknown stored values", () =>
       }),
       knownEventIds,
     ),
-    { version: 1, eventIds: ["illustar-2026-winter"] },
+    { version: 1, eventIds: ["illustar-2026-winter"], communityPosts: [] },
   );
 });
 
@@ -99,8 +102,23 @@ test("adding is idempotent and removal preserves the other saved events", () => 
     {
       version: 1,
       eventIds: ["seoul-illustration-2026-v20"],
+      communityPosts: [],
     },
   );
+});
+
+test("community post bookmarks retain safe link metadata and remove independently", () => {
+  const record = addCommunityPostBookmark(parseBookmarkRecord(null), {
+    id: "00000000-0000-4000-8000-000000000001",
+    title: "인쇄 순서 질문",
+    boardId: "general",
+  });
+  assert.deepEqual(record.communityPosts, [{
+    id: "00000000-0000-4000-8000-000000000001",
+    title: "인쇄 순서 질문",
+    boardId: "general",
+  }]);
+  assert.deepEqual(removeCommunityPostBookmark(record, record.communityPosts[0].id).communityPosts, []);
 });
 
 test("fails closed when the browser blocks local storage", () => {
@@ -116,11 +134,13 @@ test("fails closed when the browser blocks local storage", () => {
   assert.deepEqual(readBookmarkRecord(blockedStorage, knownEventIds), {
     version: 1,
     eventIds: [],
+    communityPosts: [],
   });
   assert.equal(
     writeBookmarkRecord(blockedStorage, {
       version: 1,
       eventIds: ["illustar-2026-winter"],
+      communityPosts: [],
     }),
     false,
   );

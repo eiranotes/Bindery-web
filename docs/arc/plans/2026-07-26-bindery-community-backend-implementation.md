@@ -171,7 +171,12 @@
   <name>Implement provisional artist applications and operator invitations</name>
   <files>
     <create>supabase/migrations/20260728110000_verification_workflow.sql</create>
+    <create>supabase/migrations/20260728240000_artist_application_hardening.sql</create>
+    <create>supabase/migrations/20260728280000_verification_integrity.sql</create>
+    <create>supabase/functions/submit-artist-application/index.ts</create>
+    <create>supabase/functions/.env.example</create>
     <create>supabase/tests/community_verification.test.sql</create>
+    <create>supabase/tests/community_security_hardening.test.sql</create>
     <create>app/lib/server/community/verification.ts</create>
     <create>app/components/ArtistApplicationForm.tsx</create>
     <create>app/components/AdminArtistReviewForm.tsx</create>
@@ -187,6 +192,8 @@
     <create>app/admin/community/invitations/page.tsx</create>
     <create>app/community/invite/[token]/page.tsx</create>
     <create>tests/community-verification.test.ts</create>
+    <create>tests/community-security-hardening.test.mjs</create>
+    <create>tests/client/artist-invite-accept.test.tsx</create>
     <create>tests/browser/community-verification.spec.ts</create>
     <modify>app/community/verify/page.tsx</modify>
     <modify>app/globals.css</modify>
@@ -265,9 +272,14 @@
     <create>app/components/AdminModerationForm.tsx</create>
     <create>app/api/admin/community/reports/[id]/route.ts</create>
     <create>supabase/migrations/20260728190000_moderation_console.sql</create>
+    <create>supabase/migrations/20260728250000_content_integrity_appeals.sql</create>
+    <create>supabase/migrations/20260728270000_lifecycle_integrity.sql</create>
     <create>supabase/tests/community_moderation.test.sql</create>
     <create>tests/community-moderation.test.ts</create>
     <create>tests/browser/community-moderation.spec.ts</create>
+    <create>app/api/community/reports/[id]/appeal/route.ts</create>
+    <create>app/community/appeals/[id]/page.tsx</create>
+    <create>app/components/CommunityAppealForm.tsx</create>
     <modify>app/globals.css</modify>
   </files>
   <read_first>app/lib/server/community/reports.ts, app/lib/server/community/session.ts, docs/COMMUNITY_OPERATIONS.md</read_first>
@@ -280,15 +292,18 @@
   <commit>feat(moderation): add community operator console</commit>
 </task>
 
-<task id="9" depends="8" type="auto" kind="behavior">
+<task id="9" depends="8" type="auto" kind="behavior" status="done">
   <name>Add knowledge freshness and operator Note promotion</name>
   <files>
-    <create>supabase/migrations/20260726140000_community_knowledge.sql</create>
+    <create>supabase/migrations/20260728210000_community_knowledge.sql</create>
     <create>supabase/tests/community_knowledge.test.sql</create>
     <create>app/lib/server/community/knowledge.ts</create>
+    <create>app/api/community/posts/[id]/knowledge/route.ts</create>
+    <create>app/components/CommunityKnowledgeActions.tsx</create>
     <create>tests/community-knowledge.test.ts</create>
     <modify>app/community/general/[slug]/page.tsx</modify>
     <modify>app/notes/page.tsx</modify>
+    <modify>app/notes/[slug]/page.tsx</modify>
     <modify>tests/community-rendered.test.mjs</modify>
   </files>
   <read_first>app/lib/server/community/posts.ts, app/lib/data.ts, app/notes/page.tsx, docs/COMMUNITY_OPERATIONS.md</read_first>
@@ -301,37 +316,46 @@
   <commit>feat(community): add knowledge lifecycle</commit>
 </task>
 
-<task id="10" depends="9" type="auto" kind="behavior">
+<task id="10" depends="9" type="auto" kind="behavior" status="done">
   <name>Add authorized filtered community search</name>
   <files>
-    <create>supabase/migrations/20260726141000_community_search.sql</create>
+    <create>supabase/migrations/20260728220000_community_search.sql</create>
+    <create>supabase/migrations/20260728260000_community_corrections_pagination.sql</create>
+    <create>supabase/migrations/20260728290000_content_read_integrity.sql</create>
     <create>supabase/tests/community_search.test.sql</create>
+    <create>supabase/tests/community_corrections_pagination.test.sql</create>
+    <create>supabase/tests/content_read_integrity.test.sql</create>
     <create>app/lib/server/community/search.ts</create>
     <create>tests/community-search.test.ts</create>
+    <create>tests/community-corrections-pagination.test.ts</create>
     <create>tests/browser/community-search.spec.ts</create>
+    <create>tests/browser/community-pagination.spec.ts</create>
+    <create>tests/client/community-correction.test.tsx</create>
+    <create>tests/client/community-read-states.test.tsx</create>
+    <modify>app/api/community/posts/[id]/route.ts</modify>
+    <modify>app/components/CommunityPostActions.tsx</modify>
     <modify>app/community/general/page.tsx</modify>
     <modify>app/community/artists/page.tsx</modify>
   </files>
   <read_first>app/lib/server/community/posts.ts, supabase/migrations/20260726140000_community_knowledge.sql, app/community/general/page.tsx</read_first>
-  <action>Add indexed Postgres text search with board, category, resolution, and freshness filters. Apply the caller's board authorization before results are ranked or returned, exclude hidden/deleted content, and defer a separate Korean search service until measured queries show a need.</action>
+  <action>Add indexed Postgres text search with board, category, resolution, and freshness filters plus opaque keyset pagination. Add reasoned author/operator correction, immutable prior-content snapshots, and operator-only append-only source rechecks. Apply the caller's board authorization before results are ranked or returned, exclude hidden/deleted content, and defer a separate Korean search service until measured queries show a need.</action>
   <seams><seam ref="community-search" /></seams>
-  <behavior>Members can find authorized active content with stable filters while anonymous users never receive artist or moderated rows.</behavior>
+  <behavior>Members can find authorized active content with stable filters and rank/update/ID cursors, while authors and operators can correct facts without erasing history and anonymous users never receive artist or moderated rows.</behavior>
   <examples>An anonymous practical-category search returns matching general posts only; a provisional artist can include artist results; a revoked artist immediately loses them; hidden posts never appear.</examples>
   <verify>Red: `node --test tests/community-search.test.ts` fails on the first missing search operation. Green: `node --test tests/community-search.test.ts` passes authorization, filters, hidden-content, and stable-order cases; `bash scripts/test-community-db.sh supabase/tests/community_search.test.sql` proves anonymous search cannot return artist or hidden rows while authorized artist search can in actual Postgres; `npx playwright test tests/browser/community-search.spec.ts --config playwright.config.ts`, `npm run lint`, and `npm run build` exit zero.</verify>
   <done>Community search is indexed, filterable, authorization-aware, and does not leak protected or moderated content.</done>
   <commit>feat(community): add authorized search</commit>
 </task>
 
-<task id="11" depends="9" type="auto" kind="behavior">
+<task id="11" depends="9" type="auto" kind="behavior" status="done">
   <name>Add recipient-scoped in-app notifications</name>
   <files>
     <create>app/lib/server/community/notifications.ts</create>
     <create>tests/community-notifications.test.ts</create>
     <create>app/me/notifications/page.tsx</create>
-    <modify>app/lib/server/community/comments.ts</modify>
-    <modify>app/lib/server/community/knowledge.ts</modify>
-    <modify>app/lib/server/community/moderation.ts</modify>
-    <modify>app/lib/server/community/verification.ts</modify>
+    <create>app/api/community/notifications/[id]/read/route.ts</create>
+    <create>supabase/migrations/20260728230000_community_notifications.sql</create>
+    <create>supabase/tests/community_notifications.test.sql</create>
   </files>
   <read_first>app/lib/server/community/comments.ts, app/lib/server/community/moderation.ts, supabase/migrations/20260726130000_community_foundation.sql</read_first>
   <action>Create idempotent in-app notifications for replies, accepted answers, verification decisions, moderation outcomes, and appeals. Limit listing and read-state mutation to the recipient and keep external email delivery out of this slice.</action>
@@ -343,12 +367,17 @@
   <commit>feat(community): add in-app notifications</commit>
 </task>
 
-<task id="12" depends="6" type="auto" kind="behavior">
+<task id="12" depends="6" type="auto" kind="behavior" status="done">
   <name>Synchronize My Binder bookmarks for signed-in members</name>
   <files>
     <create>app/lib/server/community/binder-sync.ts</create>
     <create>tests/community-binder-sync.test.ts</create>
+    <create>supabase/migrations/20260728205000_binder_event_bookmarks.sql</create>
+    <create>supabase/tests/community_binder_sync.test.sql</create>
+    <create>app/api/community/binder-sync/route.ts</create>
     <modify>app/components/BinderClient.tsx</modify>
+    <modify>app/components/CommunityPostActions.tsx</modify>
+    <modify>app/lib/bookmarks.ts</modify>
     <modify>app/me/page.tsx</modify>
     <modify>tests/client/bookmark-flow.test.tsx</modify>
   </files>
@@ -362,7 +391,7 @@
   <commit>feat(binder): sync member bookmarks</commit>
 </task>
 
-<task id="13" depends="10,11,12" type="auto" kind="documentation">
+<task id="13" depends="10,11,12" type="auto" kind="documentation" status="done">
   <name>Reconcile setup, operations, progress, and residual gates</name>
   <files>
     <modify>README.md</modify>
@@ -391,14 +420,16 @@
 - none
 
 **Excluded metadata:** this plan and `docs/arc/plans/INDEX.md`
-**Commit posture:** the user authorized using the clean current HEAD as the pre-work checkpoint. Later implementation commits remain uncommitted until separately authorized.
-**Last coherent commit:** `7f4be4a26b5b1f00f23df3e727b755f3ff4c5c62`
-**Closeout:** pending
+**Commit posture:** the user authorized checkpoint commit `d44a6d2` for tasks 1–8. Later implementation slices remain uncommitted until separately authorized.
+**Last coherent commit:** `d44a6d24926fa5571fa3595492eef92918374a4b`
+**Closeout:** passed 2026-07-28T14:41:13+09:00 — `npm test` (103 Node, 30 Vitest, 30 Playwright), separate `npm run build`, all 12 isolated PostgreSQL/RLS suites, `npm run lint`, and `git diff --check` passed.
 
 ## Decision log
 
 - The clean starting worktree required no empty checkpoint commit; existing HEAD
   `7f4be4a` is the requested pre-work checkpoint.
+- The user later authorized a verified checkpoint commit for completed tasks
+  1–8; it was recorded as `d44a6d2` without push or deployment.
 - The approved architecture keeps GPT Sites/vinext as the frontend and uses
   Supabase Auth/Postgres/RLS as the backend boundary.
 - Automatic approval is named `provisional` and remains visibly distinct from
@@ -414,3 +445,29 @@
   17.10 is available. Real RLS evidence therefore uses an isolated temporary
   PostgreSQL cluster with Supabase role and `auth.uid()` test stubs; it does not
   modify a global database service or weaken the actual-database gate.
+- Whole-implementation review found direct provisional-access, broad DML,
+  duplicate migration, typecheck, redirect, invitation expiry, appeal-entry,
+  and Binder-evidence gaps. The fixes use an Edge-only service credential,
+  database-time RPCs, unique migrations, private appeals, and a required
+  TypeScript gate; the review axes must rerun on the corrected fingerprint.
+- Corrected-target review then found Edge handler evidence, response-loss
+  idempotency, discoverable correction, stable pagination, Binder batch-size,
+  caller-time invitation issue, event-reference, and causal appeal-reversal
+  gaps. The final target adds direct Edge behavior tests, service-only replay
+  lookup, immutable correction/source history, opaque keyset cursors, explicit
+  oversized-merge rejection, database-time invite issue, an event allowlist,
+  and action-bound latest-restriction-safe appeal resolution.
+- Final fixed-target review found remaining write/read separation, applicant
+  privacy, appeal rejection and normal-restore causality, invite consent and
+  chronology, concurrent replay, legacy upgrade, event Binder, revision-body,
+  configured-error, and deterministic Note-source gaps. The corrected target
+  uses independent board-write authority, admin-only application visibility,
+  accept/reject appeal outcomes, exact-action restore, explicit policy consent,
+  database clocks and advisory locking, upgrade-safe allowlist classification,
+  a capped event RPC, metadata-only revision reads, durable configured states,
+  and stable source ordering. All review axes must rerun on the new fingerprint.
+- The final corrected target passed specification, Guarded security/data,
+  engineering-standards, and product/browser review. Browser evidence covered
+  360px, 768px, and 1280px routes, 21 visible destinations, 44px targets,
+  overflow, text measure, ad reservations, themes, and fail-closed boundaries.
+  Hosted authenticated Supabase E2E remains a separate external gate.

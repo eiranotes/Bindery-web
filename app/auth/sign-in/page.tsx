@@ -51,7 +51,7 @@ export default function CommunitySignInPage() {
       <PageIntro
         eyebrow="COMMUNITY / SIGN IN"
         title="커뮤니티 로그인"
-        description="모두의 게시판 작성과 작가 신청에 사용할 이메일 로그인입니다. 게시판 권한은 로그인 뒤에도 서버에서 다시 확인합니다."
+        description="글 작성과 작가 신청에 쓰는 이메일 로그인입니다."
       />
 
       {config.status === "unconfigured" ? (
@@ -60,8 +60,7 @@ export default function CommunitySignInPage() {
           <div>
             <h2 id="sign-in-unavailable">아직 로그인을 받을 수 없습니다.</h2>
             <p>
-              현재 배포에는 Supabase 공개 설정이 연결되지 않았습니다. 기존 공개
-              정보는 계속 읽을 수 있지만 회원 작성과 작가 인증은 열지 않습니다.
+              백엔드가 연결되지 않아 읽기만 제공합니다.
             </p>
             <div className="intro-actions">
               <Link className="button button--primary" href="/community/general">

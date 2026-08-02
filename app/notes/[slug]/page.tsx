@@ -3,7 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { notes } from "../../lib/data";
+import {
+  createSupabaseKnowledgeRepository,
+  type PromotedCommunityNote,
+} from "../../lib/server/community/knowledge.ts";
 import { getSiteUrl } from "../../lib/site.ts";
+import { getSupabasePublicConfig } from "../../lib/supabase/config.ts";
+import { createSupabaseServerClient } from "../../lib/supabase/server.ts";
+
+export const dynamic = "force-dynamic";
 
 interface NotePageProps {
   params: Promise<{ slug: string }>;
@@ -40,12 +48,62 @@ export async function generateMetadata({
 export default async function NoteDetailPage({ params }: NotePageProps) {
   const { slug } = await params;
   const note = getNote(slug);
+  let promotedNote: PromotedCommunityNote | null = null;
 
   if (!note) {
+    const config = getSupabasePublicConfig();
+    if (config.status === "configured") {
+      try {
+        const client = await createSupabaseServerClient(config);
+        promotedNote = await createSupabaseKnowledgeRepository(
+          client!,
+        ).getPromotedNote(slug);
+      } catch {
+        promotedNote = null;
+      }
+    }
+  }
+
+  if (!note && !promotedNote) {
     notFound();
   }
 
   const siteUrl = await getSiteUrl();
+  if (promotedNote) {
+    const paragraphs = promotedNote.body.split(/\n{2,}/).filter(Boolean);
+    return (
+      <div className="page-shell content-page content-page--reading">
+        <nav className="breadcrumb" aria-label="현재 위치">
+          <Link href="/notes">실무 노트</Link>
+          <span aria-hidden="true">/</span>
+          <span>커뮤니티 승격</span>
+        </nav>
+        <article className="note-sheet">
+          <header className="page-intro note-header">
+            <p className="eyebrow">COMMUNITY NOTE</p>
+            <h1>{promotedNote.title}</h1>
+            <p className="page-lede">{promotedNote.summary}</p>
+          </header>
+          <aside className="trust-notice" aria-label="원문과 출처">
+            <p className="utility-text">PROVENANCE</p>
+            <p>
+              원 작성자 {promotedNote.sourceAuthorName} · 출처 확인 {formatEditorialDate(promotedNote.sourceCheckedAt)} ·{" "}
+              <a href={promotedNote.sourceUrl} target="_blank" rel="ugc nofollow noreferrer">원문 출처</a>
+            </p>
+            <p><Link href={`/community/general/${promotedNote.sourcePostId}`}>원래 커뮤니티 글 보기</Link></p>
+          </aside>
+          <div className="reading-column">
+            <section className="note-section">
+              <h2>정리된 내용</h2>
+              {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </section>
+          </div>
+        </article>
+      </div>
+    );
+  }
+
+  if (!note) notFound();
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",

@@ -17,8 +17,10 @@ access.
 
 - `모두의 게시판` is publicly readable. Authenticated active members can
   create posts, comment, bookmark, and report.
-- `작가 인증 게시판` is readable and writable only by accounts with an active
-  provisional or verified artist status.
+- `작가 인증 게시판` participation is readable and writable only by accounts
+  with an active provisional or verified artist status. Active moderators and
+  admins may read it for operations, but their role alone never grants posts or
+  comments.
 - A submitted artist application receives `provisional` status automatically
   and enters an operator review queue. The interface must call this
   `임시 승인 · 검수 대기`, never `인증 완료`.
@@ -55,8 +57,9 @@ Account roles are independent from artist status.
 - `revoked`
 
 All state changes retain actor, reason, and timestamp history. Revocation or
-suspension must remove artist-board access on the next server-authorized
-request.
+suspension must remove artist-participation read/write access on the next
+server-authorized request without removing a separate active operator's
+moderation read authority.
 
 ## Access matrix
 
@@ -66,8 +69,8 @@ request.
 | Active member | Yes | Yes | No | No |
 | Provisional artist | Yes | Yes | Yes, with provisional rate controls | No |
 | Verified artist | Yes | Yes | Yes | No |
-| Moderator | Yes | Yes | Yes for moderation | Content/report actions |
-| Admin | Yes | Yes | Yes | All role, verification, and policy actions |
+| Moderator | Yes | Yes | Read for moderation; write only with own artist status | Content/report actions |
+| Admin | Yes | Yes | Read for operations; write only with own artist status | All role, verification, and policy actions |
 
 Authorization denies by default and is checked in both the server operation and
 Postgres Row Level Security. Admin credentials and service-role keys never

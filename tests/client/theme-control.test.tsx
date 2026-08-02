@@ -7,6 +7,10 @@ import {
   THEME_STORAGE_KEY,
 } from "../../app/lib/themes";
 
+function asSelect(element: HTMLElement) {
+  return element as unknown as HTMLSelectElement;
+}
+
 describe("ThemeControl", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -16,8 +20,10 @@ describe("ThemeControl", () => {
   it("applies and remembers a catalog selection", async () => {
     render(<ThemeControl />);
 
-    const selector = screen.getByRole("combobox", { name: "인쇄 테마" });
-    expect((selector as HTMLSelectElement).value).toBe(DEFAULT_THEME_ID);
+    const selector = asSelect(
+      screen.getByRole("combobox", { name: "인쇄 테마" }),
+    );
+    expect(selector.value).toBe(DEFAULT_THEME_ID);
     expect(screen.getByRole("option", { name: "리소 원색" })).toBeTruthy();
     expect(screen.getByRole("option", { name: "먹지 교정" })).toBeTruthy();
 
@@ -39,9 +45,9 @@ describe("ThemeControl", () => {
     });
     expect(
       (
-        screen.getByRole("combobox", {
+        asSelect(screen.getByRole("combobox", {
           name: "인쇄 테마",
-        }) as HTMLSelectElement
+        }))
       ).value,
     ).toBe(DEFAULT_THEME_ID);
   });
@@ -50,9 +56,9 @@ describe("ThemeControl", () => {
     localStorage.setItem(THEME_STORAGE_KEY, "carbon-proof");
     render(<ThemeControl />);
 
-    const selector = screen.getByRole("combobox", {
-      name: "인쇄 테마",
-    }) as HTMLSelectElement;
+    const selector = asSelect(
+      screen.getByRole("combobox", { name: "인쇄 테마" }),
+    );
 
     await waitFor(() => {
       expect(selector.value).toBe("carbon-proof");
@@ -99,9 +105,9 @@ describe("ThemeControl", () => {
       </>,
     );
 
-    const selectors = screen.getAllByRole("combobox", {
-      name: "인쇄 테마",
-    }) as HTMLSelectElement[];
+    const selectors = screen
+      .getAllByRole("combobox", { name: "인쇄 테마" })
+      .map(asSelect);
 
     fireEvent.change(selectors[0], {
       target: { value: "carbon-proof" },

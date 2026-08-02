@@ -45,6 +45,7 @@ export function AdminModerationForm({ reportId, isAdmin }: { reportId: string; i
           <option value="restore">글 복구</option>
           {isAdmin ? <option value="suspend_account">작성자 계정 정지</option> : null}
           {isAdmin ? <option value="resolve_appeal">이의제기 인용·복구</option> : null}
+          {isAdmin ? <option value="reject_appeal">이의제기 기각·원 조치 유지</option> : null}
         </select>
       </label>
       <label>

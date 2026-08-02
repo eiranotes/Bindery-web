@@ -5,9 +5,17 @@ import { CommunityBoardNav } from "../../components/CommunityBoardNav";
 import { CommunityPostList } from "../../components/CommunityPostList";
 import { PageIntro } from "../../components/PageIntro";
 import {
-  createSupabaseCommunityRepository,
-  durableCommunityPostToView,
-} from "../../lib/server/community/posts.ts";
+  COMMUNITY_CATEGORY_CATALOG,
+  getCommunityCategory,
+} from "../../lib/community.ts";
+import {
+  communitySearchPageHref,
+  communitySearchPostToView,
+  createSupabaseCommunitySearchRepository,
+  searchCommunityPosts,
+  type CommunitySearchFreshness,
+  type CommunitySearchResolution,
+} from "../../lib/server/community/search.ts";
 import { getCurrentCommunityMember } from "../../lib/server/community/session.ts";
 import { getSupabasePublicConfig } from "../../lib/supabase/config.ts";
 import { createSupabaseServerClient } from "../../lib/supabase/server.ts";
@@ -24,20 +32,62 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ArtistCommunityPage() {
+type ArtistCommunityPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+function singleValue(value: string | string[] | undefined) {
+  return typeof value === "string" ? value : null;
+}
+
+function selectedResolution(value: string | null): CommunitySearchResolution {
+  return value === "resolved" || value === "unresolved" ? value : "all";
+}
+
+function selectedFreshness(value: string | null): CommunitySearchFreshness {
+  return value === "fresh" || value === "stale" || value === "missing"
+    ? value
+    : "all";
+}
+
+export default async function ArtistCommunityPage({
+  searchParams,
+}: ArtistCommunityPageProps) {
+  const query = await searchParams;
+  const searchQuery = (singleValue(query.q) ?? "").trim().slice(0, 200);
+  const category = getCommunityCategory(singleValue(query.category));
+  const resolution = selectedResolution(singleValue(query.resolution));
+  const freshness = selectedFreshness(singleValue(query.freshness));
+  const cursor = singleValue(query.cursor);
   const config = getSupabasePublicConfig();
   const session = await getCurrentCommunityMember({ config });
   const hasArtistAccess = session.access.capabilities.includes("artist:read");
-  let posts = [] as ReturnType<typeof durableCommunityPostToView>[];
+  const canWriteArtist = session.access.capabilities.includes("artist:write");
+  let posts = [] as ReturnType<typeof communitySearchPostToView>[];
   let loadError = false;
+  let nextCursor: string | null = null;
 
   if (hasArtistAccess && config.status === "configured") {
     try {
       const client = await createSupabaseServerClient(config);
-      const durablePosts = await createSupabaseCommunityRepository(client!).listPosts({
-        boardId: "artists",
-      });
-      posts = durablePosts.map(durableCommunityPostToView);
+      const result = await searchCommunityPosts(
+        {
+          actor: session.member!.actor,
+          input: {
+            query: searchQuery,
+            board: "artists",
+            categoryId: category?.id,
+            resolution,
+            freshness,
+            cursor,
+            limit: 24,
+          },
+          now: new Date(),
+        },
+        { repository: createSupabaseCommunitySearchRepository(client!) },
+      );
+      posts = result.posts.map(communitySearchPostToView);
+      nextCursor = result.nextCursor;
     } catch {
       loadError = true;
     }
@@ -88,7 +138,7 @@ export default async function ArtistCommunityPage() {
       <PageIntro
         eyebrow="COMMUNITY / VERIFIED ARTISTS"
         title="작가 인증 게시판"
-        description="행사 참가와 제작 실무처럼 공개하기 조심스러운 정보를 인증 작가끼리 나누는 자유게시판입니다."
+        description="인증 작가만 읽고 쓰는 실무 게시판입니다."
       />
 
       <CommunityBoardNav current="artists" />
@@ -116,14 +166,74 @@ export default async function ArtistCommunityPage() {
                 </p>
               ) : null}
               <div className="intro-actions">
-                <Link className="button button--primary" href="/community/write?board=artists">
-                  작가 글 작성
-                </Link>
+                {canWriteArtist ? (
+                  <Link className="button button--primary" href="/community/write?board=artists">
+                    작가 글 작성
+                  </Link>
+                ) : null}
                 <Link className="button" href="/community/general">
                   모두의 게시판 보기
                 </Link>
               </div>
             </div>
+          </section>
+
+          <section
+            className="filter-sheet community-filter"
+            aria-labelledby="artist-community-filter"
+          >
+            <div className="section-line-heading">
+              <h2 id="artist-community-filter">보호 글 검색·필터</h2>
+              <span>{posts.length} POSTS</span>
+            </div>
+            <form action="/community/artists" method="get">
+              <label>
+                검색어
+                <input
+                  type="search"
+                  name="q"
+                  maxLength={200}
+                  defaultValue={searchQuery}
+                  placeholder="제목과 본문 검색"
+                />
+              </label>
+              <label>
+                분류
+                <select name="category" defaultValue={category?.id ?? "all"}>
+                  <option value="all">전체 분류</option>
+                  {COMMUNITY_CATEGORY_CATALOG.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                해결 상태
+                <select name="resolution" defaultValue={resolution}>
+                  <option value="all">전체 상태</option>
+                  <option value="resolved">해결됨</option>
+                  <option value="unresolved">미해결</option>
+                </select>
+              </label>
+              <label>
+                출처 신선도
+                <select name="freshness" defaultValue={freshness}>
+                  <option value="all">전체 신선도</option>
+                  <option value="fresh">확인 유효</option>
+                  <option value="stale">재확인 필요</option>
+                  <option value="missing">출처 없음</option>
+                </select>
+              </label>
+              <div className="filter-actions">
+                <button className="button button--primary" type="submit">
+                  검색 적용
+                </button>
+                <Link className="text-action" href="/community/artists">
+                  필터 초기화
+                </Link>
+              </div>
+            </form>
           </section>
 
           <section className="community-post-ledger" aria-labelledby="artist-post-list-title">
@@ -136,10 +246,32 @@ export default async function ArtistCommunityPage() {
                 <p>보호 게시글을 불러오지 못했습니다. 내용은 노출하지 않았습니다.</p>
               </div>
             ) : posts.length > 0 ? (
-              <CommunityPostList posts={posts} mode="live" />
+              <>
+                <CommunityPostList posts={posts} mode="live" />
+                {nextCursor ? (
+                  <div className="page-actions">
+                    <Link
+                      className="button button--primary"
+                      href={communitySearchPageHref(
+                        "/community/artists",
+                        {
+                          q: searchQuery,
+                          category: category?.id,
+                          resolution,
+                          freshness,
+                        },
+                        nextCursor,
+                      )}
+                    >
+                      다음 보호 글 보기
+                    </Link>
+                    <span className="utility-text">현재 검색·필터를 유지합니다.</span>
+                  </div>
+                ) : null}
+              </>
             ) : (
               <div className="empty-state">
-                <p>아직 작가 게시판 글이 없습니다.</p>
+                <p>검색 조건에 맞는 작가 게시판 글이 없습니다.</p>
                 <Link className="text-action" href="/community/write?board=artists">
                   첫 글 작성하기
                 </Link>
@@ -192,12 +324,8 @@ export default async function ArtistCommunityPage() {
       <aside className="boundary-note">
         <p className="stamp">배지의 뜻</p>
         <div>
-          <h2>작가 인증은 정보 검증 배지가 아닙니다.</h2>
-          <p>
-            인증은 창작 활동 자격을 확인하는 신호입니다. 게시글의 사실성과
-            거래 안전을 보증하지 않으며, 사실 정보는 원문과 확인 날짜를
-            별도로 판단해야 합니다.
-          </p>
+          <h2>인증은 내용 검증이 아닙니다.</h2>
+          <p>활동 자격만 확인하며, 글의 사실성을 보증하지 않습니다.</p>
         </div>
       </aside>
     </div>

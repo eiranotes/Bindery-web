@@ -93,10 +93,8 @@ export const communityBoards: CommunityBoard[] = [
     path: "/community/artists",
     audience: "verified-artist",
     audienceLabel: "작가 인증 후 읽기·쓰기",
-    description:
-      "행사 참가와 제작 실무처럼 공개하기 조심스러운 정보를 인증 작가끼리 나누는 자유게시판입니다.",
-    purpose:
-      "작가 인증은 활동 자격을 확인하는 신호이며, 게시글 내용의 사실 검증을 뜻하지 않습니다.",
+    description: "행사·제작 실무를 인증 작가끼리 나눕니다.",
+    purpose: "인증은 활동 자격만 확인합니다.",
   },
   {
     id: "general",
@@ -105,10 +103,8 @@ export const communityBoards: CommunityBoard[] = [
     path: "/community/general",
     audience: "public",
     audienceLabel: "누구나 읽기",
-    description:
-      "작가, 예비 작가, 문구를 좋아하는 사람이 함께 질문하고 경험을 정리하는 자유게시판입니다.",
-    purpose:
-      "실무 정보와 출처가 있는 글을 먼저 찾을 수 있게 분류하고, 자유 대화는 별도 범주로 둡니다.",
+    description: "질문과 경험을 누구나 읽을 수 있게 모읍니다.",
+    purpose: "실무 정보와 자유 대화를 분류합니다.",
   },
 ];
 

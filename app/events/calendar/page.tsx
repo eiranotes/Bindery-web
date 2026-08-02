@@ -77,7 +77,7 @@ export default async function CalendarPage({
       <PageIntro
         eyebrow="EVENTS / CALENDAR"
         title="일정 달력"
-        description="핑크 선은 신청 마감, 파란 면은 행사 시작입니다. 목록과 같은 행사 상세로 연결됩니다."
+        description="신청 마감과 개최일을 함께 봅니다."
       >
         <div className="intro-actions">
           <a className="button button--primary" href="/events/calendar.ics">

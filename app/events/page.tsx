@@ -46,7 +46,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <PageIntro
         eyebrow="INDEX 01 / EVENTS"
         title="행사"
-        description="신청 마감과 참가 조건을 먼저 비교하고, 선택한 행사에서 지난 회차와 현장 정보를 확인하세요."
+        description="마감·참가비·조건을 비교합니다."
       >
         <div className="intro-actions">
           <Link className="button button--primary" href="/events/calendar">
@@ -178,8 +178,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <aside className="source-notice">
         <strong>정보 경계</strong>
         <p>
-          이 목록은 제품 검증용 예시 데이터입니다. 참가비와 일정은 바뀔 수
-          있으므로 신청 전 행사 상세의 공식 원문과 확인 날짜를 함께 보세요.
+          예시 데이터입니다. 신청 전 공식 원문과 확인 날짜를 확인하세요.
         </p>
       </aside>
     </div>

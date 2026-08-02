@@ -285,8 +285,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             캘린더에 추가
           </a>
           <small>
-            바인더 저장은 이 기기의 브라우저에만 남습니다. 알림이나 계정
-            동기화는 제공하지 않습니다.
+            이 버튼은 먼저 이 기기의 브라우저에 저장합니다. 로그인한 뒤
+            My Binder에서 직접 실행하면 계정 Binder와 중복 없이 합칠 수 있습니다.
           </small>
         </aside>
       </div>

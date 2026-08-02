@@ -66,7 +66,9 @@ Wide comparison tables and calendars continue to own intentional local scroll.
 The user's corrected direction supersedes D-010's no-board policy. Community is
 now a free-board product with two independent URLs:
 
-- `작가 인증 게시판`: server-verified artists only for both reading and writing.
+- `작가 인증 게시판`: active provisional/verified artists participate; active
+  moderators and admins may read for operations but write only with their own
+  active artist status.
 - `모두의 게시판`: readable regardless of artist-verification status.
 
 “Information first” no longer means forbidding a board. It means practical
@@ -115,8 +117,9 @@ may read the artist board and, by default, create one post and five comments per
 The first release collects a public activity name, one normalized public proof
 URL, activity field, and current policy acceptance. It does not collect identity
 documents, business-registration files, addresses, telephone numbers, or
-private attachments. Rejection, suspension, and revocation remove artist access
-on the next server authorization check.
+private attachments. Rejection, suspension, and revocation remove
+artist-participation read/write access on the next server authorization check;
+an active operator's separate moderation read authority is role-derived.
 
 ## D-017 — Separate account role, artist state, and database authorization
 
@@ -124,7 +127,9 @@ Account roles are `member`, `moderator`, and `admin`; artist status is a
 separate `provisional`, `verified`, `rejected`, `suspended`, or `revoked`
 lifecycle. The general board is public to read and requires an active member to
 write, comment, bookmark, or report. The artist board requires an active
-provisional or verified artist for both reading and writing.
+provisional or verified artist to write. Active moderators and admins may read
+it for operations, but their role alone never grants artist-board post or
+comment creation.
 
 Server operations and Postgres Row Level Security both deny by default. Browser
 storage, URL/query values, visual badges, and client-provided roles never grant
@@ -200,3 +205,110 @@ reason. Account suspension and appeal resolution require an admin. Report and
 post transitions happen in one database operation; every action adds a new
 `moderation_actions` row, while report changes also append immutable audit
 events. Member and signed-out responses contain no queue or audit payload.
+
+## D-023 — Resolved community knowledge keeps immutable provenance
+
+Source freshness is computed from an explicit confirmation date and validity
+window rather than a visual badge alone. Only the question author may accept a
+published answer, and accepting it marks the post resolved in the same database
+operation. Authors or operators may connect a maintained event identifier, but
+the server accepts only identifiers from the product event catalog.
+
+Only an operator may promote a resolved, publicly visible, sourced general-board
+question to a maintained Note. Promotion snapshots the original post body,
+accepted answer, source URL/check date, original author identity, operator, and
+promotion time. Artist-board and hidden content cannot enter the public Note
+catalog through this path.
+
+## D-024 — Authorization precedes discovery, delivery, and account merge
+
+Community search computes the caller's readable boards before the database may
+rank rows, and the database repeats the board, published-state, deletion, and
+RLS checks. Korean text uses the built-in PostgreSQL `simple` configuration for
+the first release; a separate search provider requires measured query evidence
+and a new privacy/authorization review.
+
+Replies, answer acceptance, verification decisions, moderation outcomes, and
+appeal outcomes create idempotent in-app notifications. Listing and read-state
+mutation are recipient-only database contracts. External email delivery is not
+part of this slice and must not be inferred from an in-app row.
+
+My Binder keeps device-local behavior for guests and adds an explicit merge for
+active signed-in members. Merge is idempotent, validates protected post
+readability, reports partial failure, and never automatically deletes the local
+collection. External Supabase binding, hosted authenticated E2E, backup/restore,
+privacy/legal approval, and live advertising remain separate production gates.
+
+## D-025 — Sensitive lifecycle mutations use narrow server/database entrypoints
+
+Artist application is the one community mutation that requires a Supabase Edge
+Function. The Function authenticates the caller, requires explicit policy
+consent, verifies the single-use Turnstile token exactly once, and then calls a
+service-role-only transactional RPC. The Sites runtime never receives the
+service-role key or Turnstile secret, and authenticated clients cannot insert a
+provisional verification or call the legacy submission/rate RPC directly.
+
+Posts, comments, sources, revisions, bookmarks, reports, moderation actions,
+accepted answers, knowledge promotion, notification read state, and invitation
+acceptance use narrow RPCs for supported mutations. Database time, not a caller
+timestamp, controls limits, audit time, invitation expiry, and appeal deadlines.
+Raw lifecycle DML is revoked even where older RLS policies remain as defense in
+depth.
+
+An appeal belongs to the author affected by a hide, lock, or account suspension.
+Its reason is stored outside the reporter-readable report row, the database
+enforces the 14-day window, and only an admin resolves it. Account suspension
+and reversal also write account-targeted immutable audit events.
+
+## D-026 — Corrections, pagination, and reversals preserve causal history
+
+Post correction is a narrow authenticated RPC. An author may correct a live
+post with a reason; an operator may additionally append a newly checked public
+source. The old title and body are copied to an immutable revision before the
+post changes, and source rows are appended instead of overwritten. Public
+views select the latest checked source, so provenance remains inspectable.
+
+Community feeds use opaque keyset cursors over search rank, database update
+time, and post ID. The application resolves readable boards before search, and
+the database repeats published/deleted/RLS constraints before applying the
+cursor. Offset pagination is not used for mutable community feeds.
+
+Invitation creation and exact seven-day expiry originate from one database
+clock. Community event references must exist in a private service-maintained
+allowlist that mirrors the product catalog. Each appeal stores the exact hide,
+lock, or account-suspension action being challenged; resolving it may reverse
+only that still-effective restriction and never a later moderation action.
+
+## D-027 — Read, write, consent, and reversal authority stay separate
+
+Operator visibility of the artist board does not imply artist write authority.
+The database uses a separate write predicate that requires an active member and,
+for the artist board, that member's own provisional or verified artist state.
+Artist applications are readable only by the applicant or an admin; moderators
+operate content and reports without enumerating application notes.
+
+Invitation acceptance requires explicit consent to the current community policy
+before either the invite, verification, or acceptance ledger changes. Artist
+review and invitation revocation times come from the database clock. Application
+idempotency is serialized per user and key before rate-limit mutation, so a
+concurrent replay returns the original application instead of consuming another
+attempt.
+
+Public revision history exposes editor, reason, and time metadata but not the
+prior title or body snapshot. Normal restore and appeal acceptance reverse only
+the exact still-effective restriction; appeal rejection closes the case while
+preserving it. Event Binder writes are catalog-bound, idempotent, active-member
+RPCs capped at 100 rows per account, while legacy references are preserved and
+classified during migration.
+
+## D-028 — Interface copy states the task or the boundary once
+
+Public pages use short task descriptions and noun-phrase indexes instead of
+repeating the product philosophy above each section. The Community hub no
+longer explains its information architecture in a separate principles panel;
+the board labels, filters, states, and source fields demonstrate that structure.
+
+Source freshness, example-data status, official-link checks, permissions,
+moderation consequences, and device-local storage risks remain explicit where
+the user makes a decision. Notices use the same complete rule and sheet
+vocabulary as the rest of Bindery rather than a decorative colored side stripe.

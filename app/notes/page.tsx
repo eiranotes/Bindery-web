@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { notes } from "../lib/data";
+import {
+  createSupabaseKnowledgeRepository,
+  type PromotedCommunityNote,
+} from "../lib/server/community/knowledge.ts";
+import { getSupabasePublicConfig } from "../lib/supabase/config.ts";
+import { createSupabaseServerClient } from "../lib/supabase/server.ts";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "실무 노트 | 바인더리",
@@ -13,10 +21,23 @@ function formatEditorialDate(value: string): string {
   return value.split("-").join(".");
 }
 
-export default function NotesPage() {
+export default async function NotesPage() {
   const sortedNotes = notes.toSorted((left, right) =>
     right.updatedAt.localeCompare(left.updatedAt),
   );
+  const config = getSupabasePublicConfig();
+  let promotedNotes: PromotedCommunityNote[] = [];
+  let promotedLoadError = false;
+  if (config.status === "configured") {
+    try {
+      const client = await createSupabaseServerClient(config);
+      promotedNotes = await createSupabaseKnowledgeRepository(
+        client!,
+      ).listPromotedNotes();
+    } catch {
+      promotedLoadError = true;
+    }
+  }
 
   return (
     <div className="page-shell content-page">
@@ -24,8 +45,7 @@ export default function NotesPage() {
         <p className="eyebrow">NOTES · 실무 기록</p>
         <h1>필요할 때 다시 펴보는 실무 노트</h1>
         <p className="page-lede">
-          신고, 인쇄, 원가, 현장 운영처럼 자주 다시 확인하는 기준을 짧은
-          단위로 정리합니다. 먼저 마지막 업데이트 날짜를 확인하세요.
+          신고, 인쇄, 원가, 현장 운영 기준을 업데이트 날짜와 함께 확인합니다.
         </p>
       </header>
 
@@ -83,6 +103,42 @@ export default function NotesPage() {
           ))}
         </ol>
       </section>
+
+      {config.status === "configured" ? (
+        <section className="content-ledger" aria-labelledby="promoted-notes-title">
+          <div className="section-heading">
+            <h2 id="promoted-notes-title">커뮤니티에서 정리한 노트</h2>
+            <p className="utility-text">{promotedNotes.length}권</p>
+          </div>
+          {promotedLoadError ? (
+            <p className="inline-notice">승격된 노트를 불러오지 못했습니다.</p>
+          ) : promotedNotes.length === 0 ? (
+            <p className="inline-notice">아직 커뮤니티에서 승격된 노트가 없습니다.</p>
+          ) : (
+            <ol className="note-list">
+              {promotedNotes.map((note, index) => (
+                <li className="note-list-item" key={note.id}>
+                  <article>
+                    <div className="note-index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
+                    <div className="note-copy">
+                      <div className="note-meta">
+                        <span>커뮤니티 승격</span>
+                        <span>원문 확인 {formatEditorialDate(note.sourceCheckedAt)}</span>
+                      </div>
+                      <h3><Link href={`/notes/${note.slug}`}>{note.title}</Link></h3>
+                      <p>{note.summary}</p>
+                      <p className="utility-text">원 작성자 {note.sourceAuthorName}</p>
+                    </div>
+                    <Link className="text-action" href={`/notes/${note.slug}`}>노트 펼치기</Link>
+                  </article>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      ) : null}
 
       <aside className="trust-notice" aria-label="노트 이용 안내">
         <p className="utility-text">READING NOTE</p>

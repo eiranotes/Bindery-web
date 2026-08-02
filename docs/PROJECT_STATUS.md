@@ -10,10 +10,13 @@ reserved ad inventory. The production site remains owner-only at
 release is deployed there as owner-only Sites version 5. Community backend work
 has progressed locally from clean checkpoint `7f4be4a` through operating
 policy, typed authorization, real PostgreSQL/RLS proof, and a fail-closed
-Supabase session boundary. The local backend now also implements automatic
-provisional artist applications, later admin review, single-use operator
-invitations, invitation cancellation, and append-only audit evidence. No
+Supabase session boundary. The local backend now covers automatic provisional
+artist applications, later admin review, single-use operator invitations,
+durable split boards, moderation and audit, knowledge promotion, authorized
+search, recipient notifications, and explicit Binder account merge. No
 production Supabase project or Sites runtime configuration has been created.
+The validated source is maintained in the private GitHub repository
+<https://github.com/eiranotes/Bindery-web>.
 
 ## Completed
 
@@ -104,16 +107,74 @@ production Supabase project or Sites runtime configuration has been created.
   restore actions; account suspension and appeal resolution remain admin-only.
   Each action is appended separately and report changes remain in immutable
   audit history, with unauthorized queues returning content-free screens.
+- Added explicit source freshness windows, author-only accepted answers,
+  maintained event links, and operator Note promotion for resolved sourced
+  general-board questions. Promoted Notes preserve the original post, author,
+  checked source, accepted answer, and promotion time.
+- Added indexed board/category/resolution/freshness search that resolves board
+  access before ranking and excludes hidden, deleted, and revoked-access rows.
+- Added idempotent in-app notifications for replies, accepted answers,
+  verification decisions, moderation outcomes, and appeals. Only the recipient
+  can list or mark the durable rows read.
+- Added explicit, lossless Binder account merge for signed-in members. Guest
+  storage remains local, duplicates are reported, and partial failures never
+  delete the current device collection.
+- Moved artist application mutation behind a Supabase Edge Function that
+  verifies one Turnstile token and calls a service-role-only transactional RPC.
+  Direct table/RPC provisional self-grants and backdated invitation acceptance
+  are denied; expired invitations persist an audited terminal state.
+- Replaced broad authenticated content DML with database-time RPCs, enforced
+  same-post answer references, and added account-target suspension audit rows.
+- Added a private affected-author appeal path with a database-enforced 14-day
+  window. Appeal reasons are stored separately from reporter-visible records.
+- Extended device and account Binder collections to public community posts as
+  well as events, with an explicit notification entry point from My Binder.
+- Added author/operator post correction with immutable prior-title/body
+  snapshots, operator-only source rechecks, and visible correction history.
+- Added opaque keyset pagination ordered by search rank, update time, and post
+  ID so filtered public and artist feeds do not repeat or skip rows as the
+  collection grows.
+- Bound community event links to the maintained five-event catalog at the
+  database layer, moved invitation issue time and exact seven-day expiry fully
+  into PostgreSQL, and tied appeals to the exact restricting action so a
+  successful appeal cannot undo a later restriction.
+- Split artist-board read/moderation from write capability, restricted artist
+  application rows to their applicant or an admin, and blocked inactive member
+  knowledge and correction controls at both service and database boundaries.
+- Added explicit current-policy consent to invitation acceptance, database-owned
+  review/revocation time, and transaction-lock evidence that concurrent
+  application retries return one row without consuming a second rate attempt.
+- Added appeal rejection, causal normal restore, catalog/capped event Binder
+  RPCs, metadata-only public revision history, deterministic Note source
+  selection, and configured hub/detail/report error states.
+- Aligned artist-board operator read access with artist-status-only writing,
+  removed inactive-account mutation affordances, rendered expired appeals as
+  non-actionable, and made Note promotion time database-owned.
+- Restored explicit Note RPC ACLs and capability-gated account Binder, artist
+  application/invitation, audit, artist writing, and independent moderation
+  controls for inactive and operator-only sessions.
+- Completed final specification, Guarded security, engineering-standards, and
+  product/browser review with no actionable findings remaining. The fresh
+  closeout passed 103 Node tests, 30 client tests, 30 Playwright tests, a
+  separate production build, and 12 isolated PostgreSQL/RLS suites.
+- Audited the public UI with the Impeccable product register, removed the
+  redundant Community principles section, shortened page introductions and
+  helper copy, and replaced accent-stripe notices with the existing flat rule
+  vocabulary. Placeholder text now uses a verified AA theme token; safety,
+  source, permission, and local-storage boundaries remain explicit.
+- Created the private `eiranotes/Bindery-web` GitHub repository as the source
+  remote for this nested `website/` checkout.
 
 ## Next
 
 - Replace curated sample content with product-owner data and complete legal/privacy policy work.
-- Add knowledge freshness, accepted answers, event links, and provenance-safe
-  promotion from resolved discussions to maintained Notes.
-- Add authorization-aware search, recipient-scoped notifications, explicit
-  Binder account sync, and the final setup/operations reconciliation.
-- Define correction, source-verification, privacy, and legal operations before
-  accepting any real Community submission.
+- Request a separate commit checkpoint for the completed post-`d44a6d2`
+  backend slices if they should be recorded in Git.
+- Provision and bind an external Supabase/Turnstile environment only after an
+  explicit mutation checkpoint and product-owner approval.
+- Approve the implemented correction/source-verification operating routine and
+  complete privacy and legal review before accepting any real Community
+  submission.
 - Select an ad provider only after consent, privacy, content suitability, and
   production placement review.
 - Decide whether to keep owner-only access or explicitly approve a wider audience.
@@ -130,9 +191,16 @@ production Supabase project or Sites runtime configuration has been created.
 - Artist application, review, and invitation code is complete locally, but
   real email delivery, Turnstile, and Supabase behavior remain unverified until
   the product owner approves and supplies an external project/runtime binding.
-- Community writing stores one draft only in the current browser and does not
-  publish, sync, or submit it. It is not encrypted or automatically deleted, so
-  shared-browser users must clear it manually.
+- Search, notifications, appeals, account Binder merge, and promoted Notes are
+  complete in source and isolated PostgreSQL proof but have not been exercised
+  against an external Supabase project or hosted authenticated session.
+- In the current unconfigured owner-only deployment, Community writing stores
+  one draft only in the browser and does not publish. Configured environments
+  use the server/RLS publishing path. The fallback draft is not encrypted or
+  automatically deleted, so shared-browser users must clear it manually.
+- The Edge Function, email callback, Turnstile verification, hosted RLS, backup
+  and recovery behavior have not been exercised against an external Supabase
+  project; local PostgreSQL proof does not replace that production gate.
 - Ad spaces are placeholders. No provider, consent flow, measurement, or live
   ad code is connected.
 - The original plan named SvelteKit and Supabase. GPT Sites deployment uses the generated vinext/React runtime; this implementation preserves the product contracts but does not pretend a Supabase production backend exists.

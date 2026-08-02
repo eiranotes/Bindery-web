@@ -45,7 +45,7 @@ function loadTurnstile() {
     script.dataset.binderyTurnstile = "true";
     script.addEventListener("load", () => resolve(), { once: true });
     script.addEventListener("error", () => reject(), { once: true });
-    document.head.append(script);
+    document.head.appendChild(script);
   });
 
   return turnstileScript;
@@ -112,6 +112,7 @@ export function ArtistApplicationForm({ siteKey }: { siteKey: string }) {
           primaryField: form.get("primaryField"),
           optionalPublicUrl: form.get("optionalPublicUrl"),
           applicantNote: form.get("applicantNote"),
+          policyConsent: form.get("policyAccepted") === "on",
           botToken,
         }),
       });

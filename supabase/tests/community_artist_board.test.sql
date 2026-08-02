@@ -16,7 +16,21 @@ values
     '70000000-0000-4000-8000-000000000003',
     'member@example.com',
     '{"display_name":"일반회원"}'::jsonb
+  ),
+  (
+    '70000000-0000-4000-8000-000000000004',
+    'moderator@example.com',
+    '{"display_name":"작가아닌운영자"}'::jsonb
+  ),
+  (
+    '70000000-0000-4000-8000-000000000005',
+    'admin@example.com',
+    '{"display_name":"작가아닌관리자"}'::jsonb
   );
+
+insert into public.user_roles (user_id, role, reason) values
+  ('70000000-0000-4000-8000-000000000004', 'moderator', 'artist board write denial'),
+  ('70000000-0000-4000-8000-000000000005', 'admin', 'artist board write denial');
 
 insert into public.artist_verifications (
   id,
@@ -153,36 +167,18 @@ begin
   end;
 
   for comment_index in 1..5 loop
-    insert into public.comments (
-      id,
-      post_id,
-      author_id,
-      body,
-      created_at
-    )
-    values (
+    perform * from public.create_community_comment(
       ('73000000-0000-4000-8000-' || lpad(comment_index::text, 12, '0'))::uuid,
       '72000000-0000-4000-8000-000000000001',
-      '70000000-0000-4000-8000-000000000001',
-      '임시 승인 댓글 ' || comment_index,
-      '2026-07-28T12:10:00+09:00'::timestamptz + make_interval(mins => comment_index)
+      '임시 승인 댓글 ' || comment_index
     );
   end loop;
 
   begin
-    insert into public.comments (
-      id,
-      post_id,
-      author_id,
-      body,
-      created_at
-    )
-    values (
+    perform * from public.create_community_comment(
       '73000000-0000-4000-8000-000000000006',
       '72000000-0000-4000-8000-000000000001',
-      '70000000-0000-4000-8000-000000000001',
-      '여섯 번째 댓글',
-      '2026-07-28T12:20:00+09:00'
+      '여섯 번째 댓글'
     );
     raise exception 'sixth provisional comment unexpectedly succeeded';
   exception
@@ -191,6 +187,67 @@ begin
 end
 $$;
 commit;
+
+begin;
+set local role authenticated;
+select set_config(
+  'request.jwt.claim.sub',
+  '70000000-0000-4000-8000-000000000004',
+  true
+);
+do $$
+declare visible_posts integer;
+begin
+  select count(*) into visible_posts from public.posts where board_id = 'artists';
+  if visible_posts < 1 then
+    raise exception 'moderator could not read artist board';
+  end if;
+  if public.can_write_board('artists') then
+    raise exception 'moderator without artist status received board write access';
+  end if;
+  begin
+    perform * from public.create_community_post(
+      '72000000-0000-4000-8000-000000000006', 'artists', 'production',
+      'experience', '운영자 작성 거부', '작가 상태 없는 운영자는 작성할 수 없습니다.',
+      null, null, null
+    );
+    raise exception 'moderator artist post unexpectedly succeeded';
+  exception when insufficient_privilege then null; end;
+  begin
+    perform * from public.create_community_comment(
+      '73000000-0000-4000-8000-000000000020',
+      '72000000-0000-4000-8000-000000000001',
+      '작가 상태 없는 운영자 댓글'
+    );
+    raise exception 'moderator artist comment unexpectedly succeeded';
+  exception when insufficient_privilege then null; end;
+end
+$$;
+rollback;
+
+begin;
+set local role authenticated;
+select set_config(
+  'request.jwt.claim.sub',
+  '70000000-0000-4000-8000-000000000005',
+  true
+);
+do $$
+begin
+  if public.can_write_board('artists') then
+    raise exception 'admin without artist status received board write access';
+  end if;
+  begin
+    perform * from public.create_community_comment(
+      '73000000-0000-4000-8000-000000000021',
+      '72000000-0000-4000-8000-000000000001',
+      '작가 상태 없는 관리자 댓글'
+    );
+    raise exception 'admin artist comment unexpectedly succeeded';
+  exception when insufficient_privilege then null; end;
+end
+$$;
+rollback;
 
 begin;
 set local role authenticated;

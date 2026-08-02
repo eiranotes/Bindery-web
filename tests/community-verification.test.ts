@@ -4,12 +4,14 @@ import test from "node:test";
 import type { CommunityActor } from "../app/lib/community-access.ts";
 import {
   acceptArtistInvite,
+  createSupabaseArtistApplicationSubmitter,
+  createSupabaseVerificationRepository,
   issueArtistInvite,
   normalizePublicProofUrl,
   revokeArtistInvite,
   reviewArtistApplication,
-  submitArtistApplication,
   type ArtistInviteRecord,
+  type ArtistInviteDraft,
   type ArtistVerificationDependencies,
   type ArtistVerificationRecord,
   type ArtistVerificationRepository,
@@ -32,22 +34,14 @@ const admin: CommunityActor = {
 class MemoryVerificationRepository implements ArtistVerificationRepository {
   applications: ArtistVerificationRecord[] = [];
   invites: ArtistInviteRecord[] = [];
+  private databaseNow: string;
 
-  async findApplicationByIdempotency(userId: string, key: string) {
-    return (
-      this.applications.find(
-        (application) =>
-          application.userId === userId &&
-          application.idempotencyKey === key,
-      ) ?? null
-    );
+  constructor(databaseNow = "2026-07-28T01:00:00.000Z") {
+    this.databaseNow = databaseNow;
   }
 
-  async findApplicationByUser(userId: string) {
-    return (
-      this.applications.find((application) => application.userId === userId) ??
-      null
-    );
+  setDatabaseNow(databaseNow: string) {
+    this.databaseNow = databaseNow;
   }
 
   async findApplicationByProofUrl(proofUrlNormalized: string) {
@@ -59,13 +53,6 @@ class MemoryVerificationRepository implements ArtistVerificationRepository {
     );
   }
 
-  async createProvisionalApplication(
-    application: ArtistVerificationRecord,
-  ) {
-    this.applications.push(application);
-    return application;
-  }
-
   async getApplication(id: string) {
     return this.applications.find((application) => application.id === id) ?? null;
   }
@@ -73,28 +60,39 @@ class MemoryVerificationRepository implements ArtistVerificationRepository {
   async updateApplicationStatus({
     id,
     status,
-    reviewedBy,
     reason,
-    reviewedAt,
   }: {
     id: string;
     status: ArtistVerificationRecord["status"];
-    reviewedBy: string;
     reason: string;
-    reviewedAt: string;
   }) {
     const application = await this.getApplication(id);
     if (!application) throw new Error("application not found");
     application.status = status;
-    application.reviewedBy = reviewedBy;
+    application.reviewedBy = "admin-1";
     application.reviewReason = reason;
-    application.reviewedAt = reviewedAt;
+    application.reviewedAt = this.databaseNow;
     return application;
   }
 
-  async createInvite(invite: ArtistInviteRecord) {
-    this.invites.push(invite);
-    return invite;
+  async createInvite(invite: ArtistInviteDraft) {
+    const createdAt = this.databaseNow;
+    const created: ArtistInviteRecord = {
+      ...invite,
+      state: "pending",
+      issuedBy: "admin-1",
+      acceptedBy: null,
+      expiresAt: new Date(
+        new Date(createdAt).getTime() + 7 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+      acceptedAt: null,
+      revokedAt: null,
+      revokedBy: null,
+      revocationReason: null,
+      createdAt,
+    };
+    this.invites.push(created);
+    return created;
   }
 
   async getInvite(id: string) {
@@ -106,24 +104,36 @@ class MemoryVerificationRepository implements ArtistVerificationRepository {
   }
 
   async acceptInvite({
-    inviteId,
-    userId,
-    acceptedAt,
+    tokenDigest,
+    policyConsent,
+    policyVersion,
   }: {
-    inviteId: string;
     tokenDigest: string;
-    userId: string;
-    acceptedAt: string;
+    policyConsent: boolean;
+    policyVersion: string;
   }) {
-    const invite = this.invites.find((candidate) => candidate.id === inviteId);
+    const invite = this.invites.find(
+      (candidate) => candidate.tokenDigest === tokenDigest,
+    );
     if (!invite) throw new Error("invite not found");
+    if (!policyConsent) return { ok: false as const, code: "consent-required" };
+    if (policyVersion !== "community-2026-07") {
+      return { ok: false as const, code: "policy-version-stale" };
+    }
+    if (
+      new Date(invite.expiresAt).getTime() <=
+      new Date(this.databaseNow).getTime()
+    ) {
+      invite.state = "expired";
+      return { ok: false as const, code: "invite-expired" };
+    }
     invite.state = "accepted";
-    invite.acceptedBy = userId;
-    invite.acceptedAt = acceptedAt;
+    invite.acceptedBy = "member-3";
+    invite.acceptedAt = this.databaseNow;
 
     const application: ArtistVerificationRecord = {
-      id: `application-${userId}`,
-      userId,
+      id: "application-member-3",
+      userId: "member-3",
       status: "verified",
       activityName: invite.activityName,
       proofUrl: invite.proofUrl,
@@ -133,28 +143,26 @@ class MemoryVerificationRepository implements ArtistVerificationRepository {
       applicantNote: null,
       idempotencyKey: `invite:${invite.id}`,
       policyVersion: invite.policyVersion,
-      submittedAt: acceptedAt,
-      reviewedAt: acceptedAt,
+      submittedAt: this.databaseNow,
+      reviewedAt: this.databaseNow,
       reviewedBy: invite.issuedBy,
       reviewReason: invite.reason,
     };
     this.applications.push(application);
-    return application;
+    return { ok: true as const, code: "accepted" as const, application };
   }
 
   async revokeInvite({
     inviteId,
     reason,
-    revokedAt,
   }: {
     inviteId: string;
     reason: string;
-    revokedAt: string;
   }) {
     const invite = await this.getInvite(inviteId);
     if (!invite) throw new Error("invite not found");
     invite.state = "revoked";
-    invite.revokedAt = revokedAt;
+    invite.revokedAt = this.databaseNow;
     invite.revokedBy = "admin-1";
     invite.revocationReason = reason;
     return invite;
@@ -173,30 +181,10 @@ function dependencies(
   repository = new MemoryVerificationRepository(),
 ): ArtistVerificationDependencies & {
   repository: MemoryVerificationRepository;
-  botCalls: { count: number };
-  rateCalls: { count: number };
 } {
-  const botCalls = { count: 0 };
-  const rateCalls = { count: 0 };
-
   return {
     repository,
-    botCalls,
-    rateCalls,
-    botVerifier: {
-      async verify(token) {
-        botCalls.count += 1;
-        return token === "valid-bot-token";
-      },
-    },
-    rateLimiter: {
-      async consume() {
-        rateCalls.count += 1;
-        return { allowed: true, retryAfterSeconds: 0 };
-      },
-    },
     ids: {
-      application: () => "application-1",
       invite: () => "invite-1",
     },
     tokens: {
@@ -225,143 +213,237 @@ test("normalizes public proof URLs and rejects unsafe or non-public values", () 
   assert.equal(normalizePublicProofUrl("javascript:alert(1)"), null);
 });
 
-test("creates an immediately provisional application and retries idempotently", async () => {
-  const deps = dependencies();
-  const command = {
-    actor: member,
-    userId: "member-1",
-    input: validApplication,
-    botToken: "valid-bot-token",
-    idempotencyKey: "request-1",
-    now: new Date("2026-07-28T10:00:00+09:00"),
+test("forwards explicit consent and one Turnstile token to the Edge Function", async () => {
+  const calls: Array<{ name: string; body: Record<string, unknown> }> = [];
+  const client = {
+    functions: {
+      async invoke(name: string, options: { body: Record<string, unknown> }) {
+        calls.push({ name, body: options.body });
+        return {
+          data: { ok: true, code: "created", application: { id: "application-1" } },
+          error: null,
+        };
+      },
+    },
   };
 
-  const created = await submitArtistApplication(command, deps);
-  assert.equal(created.ok, true);
-  assert.equal(created.code, "created");
-  assert.equal(created.application?.status, "provisional");
-  assert.equal(
-    created.application?.proofUrlNormalized,
-    "https://example.com/artist",
-  );
-
-  const repeated = await submitArtistApplication(command, deps);
-  assert.equal(repeated.ok, true);
-  assert.equal(repeated.code, "existing");
-  assert.equal(repeated.application?.id, created.application?.id);
-  assert.equal(deps.botCalls.count, 1);
-  assert.equal(deps.rateCalls.count, 1);
-});
-
-test("rejects invalid bot tokens and rate-limit excess before storage", async () => {
-  const invalidBot = dependencies();
-  const botResult = await submitArtistApplication(
-    {
-      actor: member,
-      userId: "member-1",
-      input: validApplication,
-      botToken: "expired-token",
-      idempotencyKey: "request-1",
-      now: new Date("2026-07-28T10:00:00+09:00"),
-    },
-    invalidBot,
-  );
-  assert.deepEqual(botResult, {
-    ok: false,
-    code: "bot-verification-failed",
-    message: "자동 제출 방지 확인에 실패했습니다.",
+  const result = await createSupabaseArtistApplicationSubmitter(
+    client as never,
+  ).submit({
+    activityName: "종이산책",
+    proofUrl: "https://example.com/artist",
+    primaryField: "문구",
+    optionalPublicUrl: null,
+    applicantNote: null,
+    botToken: "single-use-turnstile-token",
+    idempotencyKey: "request-1",
+    policyConsent: true,
+    policyVersion: "community-2026-07",
   });
-  assert.equal(invalidBot.repository.applications.length, 0);
-  assert.equal(invalidBot.rateCalls.count, 0);
 
-  const rateLimited = dependencies();
-  rateLimited.rateLimiter.consume = async () => ({
-    allowed: false,
-    retryAfterSeconds: 3600,
-  });
-  const rateResult = await submitArtistApplication(
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls, [
     {
-      actor: member,
-      userId: "member-1",
-      input: validApplication,
-      botToken: "valid-bot-token",
-      idempotencyKey: "request-1",
-      now: new Date("2026-07-28T10:00:00+09:00"),
-    },
-    rateLimited,
-  );
-  assert.equal(rateResult.ok, false);
-  assert.equal(rateResult.code, "rate-limited");
-  assert.equal(rateResult.retryAfterSeconds, 3600);
-  assert.equal(rateLimited.repository.applications.length, 0);
-});
-
-test("rejects duplicate proof URLs and a second non-idempotent application", async () => {
-  const deps = dependencies();
-  await submitArtistApplication(
-    {
-      actor: member,
-      userId: "member-1",
-      input: validApplication,
-      botToken: "valid-bot-token",
-      idempotencyKey: "request-1",
-      now: new Date("2026-07-28T10:00:00+09:00"),
-    },
-    deps,
-  );
-
-  const duplicateProof = await submitArtistApplication(
-    {
-      actor: member,
-      userId: "member-2",
-      input: { ...validApplication, activityName: "다른작가" },
-      botToken: "valid-bot-token",
-      idempotencyKey: "request-2",
-      now: new Date("2026-07-28T11:00:00+09:00"),
-    },
-    deps,
-  );
-  assert.equal(duplicateProof.code, "duplicate-proof");
-
-  const secondApplication = await submitArtistApplication(
-    {
-      actor: member,
-      userId: "member-1",
-      input: {
-        ...validApplication,
-        proofUrl: "https://example.com/artist-two",
+      name: "submit-artist-application",
+      body: {
+        activityName: "종이산책",
+        proofUrl: "https://example.com/artist",
+        primaryField: "문구",
+        optionalPublicUrl: null,
+        applicantNote: null,
+        botToken: "single-use-turnstile-token",
+        idempotencyKey: "request-1",
+        policyConsent: true,
+        policyVersion: "community-2026-07",
       },
-      botToken: "valid-bot-token",
-      idempotencyKey: "request-3",
-      now: new Date("2026-07-28T12:00:00+09:00"),
     },
-    deps,
-  );
-  assert.equal(secondApplication.code, "already-applied");
+  ]);
+});
+
+test("omits caller-controlled timestamps when issuing an invitation RPC", async () => {
+  const calls: Array<{ name: string; body: Record<string, unknown> }> = [];
+  const row = {
+    id: "invite-1",
+    invited_email: "artist@example.com",
+    token_digest: "digest:token",
+    state: "pending",
+    issued_by: "admin-1",
+    accepted_by: null,
+    activity_name: "초대작가",
+    proof_url: "https://example.com/artist",
+    proof_url_normalized: "https://example.com/artist",
+    primary_field: "문구",
+    reason: "활동 확인",
+    policy_version: "community-2026-07",
+    expires_at: "2026-08-04T01:00:00.000Z",
+    accepted_at: null,
+    revoked_at: null,
+    revoked_by: null,
+    revocation_reason: null,
+    created_at: "2026-07-28T01:00:00.000Z",
+  };
+  const client = {
+    rpc(name: string, body: Record<string, unknown>) {
+      calls.push({ name, body });
+      return {
+        async maybeSingle() {
+          return { data: row, error: null };
+        },
+      };
+    },
+  };
+
+  await createSupabaseVerificationRepository(client as never).createInvite({
+    id: "invite-1",
+    email: "artist@example.com",
+    tokenDigest: "digest:token",
+    activityName: "초대작가",
+    proofUrl: "https://example.com/artist",
+    proofUrlNormalized: "https://example.com/artist",
+    primaryField: "문구",
+    reason: "활동 확인",
+    policyVersion: "community-2026-07",
+  });
+
+  assert.deepEqual(calls, [{
+    name: "issue_artist_invite",
+    body: {
+      p_id: "invite-1",
+      p_invited_email: "artist@example.com",
+      p_token_digest: "digest:token",
+      p_activity_name: "초대작가",
+      p_proof_url: "https://example.com/artist",
+      p_proof_url_normalized: "https://example.com/artist",
+      p_primary_field: "문구",
+      p_reason: "활동 확인",
+      p_policy_version: "community-2026-07",
+    },
+  }]);
+});
+
+test("uses timestamp-free review and revocation RPCs and forwards invite consent", async () => {
+  const calls: Array<{ name: string; body: Record<string, unknown> }> = [];
+  const applicationRow = {
+    id: "application-1",
+    user_id: "member-1",
+    status: "verified",
+    activity_name: "검수 작가",
+    proof_url: "https://example.com/reviewed",
+    proof_url_normalized: "https://example.com/reviewed",
+    primary_field: "문구",
+    optional_public_url: null,
+    applicant_note: null,
+    idempotency_key: "request-1",
+    policy_version: "community-2026-07",
+    submitted_at: "2026-07-28T01:00:00.000Z",
+    reviewed_at: "2026-07-28T02:00:00.000Z",
+    reviewed_by: "admin-1",
+    review_reason: "활동 확인",
+  };
+  const inviteRow = {
+    id: "invite-1",
+    invited_email: "artist@example.com",
+    token_digest: "digest:token",
+    state: "revoked",
+    issued_by: "admin-1",
+    accepted_by: null,
+    activity_name: "초대작가",
+    proof_url: "https://example.com/invited",
+    proof_url_normalized: "https://example.com/invited",
+    primary_field: "문구",
+    reason: "활동 확인",
+    policy_version: "community-2026-07",
+    expires_at: "2026-08-04T01:00:00.000Z",
+    accepted_at: null,
+    revoked_at: "2026-07-28T02:00:00.000Z",
+    revoked_by: "admin-1",
+    revocation_reason: "이메일 변경",
+    created_at: "2026-07-28T01:00:00.000Z",
+  };
+  const client = {
+    rpc(name: string, body: Record<string, unknown>) {
+      calls.push({ name, body });
+      if (name === "accept_artist_invite") {
+        return { data: { ok: false, code: "consent-required" }, error: null };
+      }
+      return {
+        async maybeSingle() {
+          return {
+            data: name === "review_artist_application" ? applicationRow : inviteRow,
+            error: null,
+          };
+        },
+      };
+    },
+  };
+  const repository = createSupabaseVerificationRepository(client as never);
+
+  await repository.updateApplicationStatus({
+    id: "application-1",
+    status: "verified",
+    reason: "활동 확인",
+  });
+  await repository.revokeInvite({
+    inviteId: "invite-1",
+    reason: "이메일 변경",
+  });
+  await repository.acceptInvite({
+    tokenDigest: "digest:token",
+    policyConsent: true,
+    policyVersion: "community-2026-07",
+  });
+
+  assert.deepEqual(calls, [
+    {
+      name: "review_artist_application",
+      body: {
+        p_application_id: "application-1",
+        p_next_status: "verified",
+        p_reason: "활동 확인",
+      },
+    },
+    {
+      name: "revoke_artist_invite",
+      body: { p_invite_id: "invite-1", p_reason: "이메일 변경" },
+    },
+    {
+      name: "accept_artist_invite",
+      body: {
+        p_token_digest: "digest:token",
+        p_policy_consent: true,
+        p_policy_version: "community-2026-07",
+      },
+    },
+  ]);
 });
 
 test("reserves review, rejection, suspension, and revocation for active admins", async () => {
   const deps = dependencies();
-  const created = await submitArtistApplication(
-    {
-      actor: member,
-      userId: "member-1",
-      input: validApplication,
-      botToken: "valid-bot-token",
-      idempotencyKey: "request-1",
-      now: new Date("2026-07-28T10:00:00+09:00"),
-    },
-    deps,
-  );
+  const created: ArtistVerificationRecord = {
+    id: "application-1",
+    userId: "member-1",
+    status: "provisional",
+    activityName: validApplication.activityName,
+    proofUrl: validApplication.proofUrl,
+    proofUrlNormalized: "https://example.com/artist",
+    primaryField: validApplication.primaryField,
+    optionalPublicUrl: validApplication.optionalPublicUrl,
+    applicantNote: validApplication.applicantNote,
+    idempotencyKey: "request-1",
+    policyVersion: validApplication.policyVersion,
+    submittedAt: "2026-07-28T01:00:00.000Z",
+    reviewedAt: null,
+    reviewedBy: null,
+    reviewReason: null,
+  };
+  deps.repository.applications.push(created);
 
   const denied = await reviewArtistApplication(
     {
       actor: member,
-      reviewerId: "member-2",
-      applicationId: created.application!.id,
+      applicationId: created.id,
       nextStatus: "verified",
       reason: "권한 없는 검수",
-      now: new Date("2026-07-28T12:00:00+09:00"),
     },
     deps,
   );
@@ -370,11 +452,9 @@ test("reserves review, rejection, suspension, and revocation for active admins",
   const verified = await reviewArtistApplication(
     {
       actor: admin,
-      reviewerId: "admin-1",
-      applicationId: created.application!.id,
+      applicationId: created.id,
       nextStatus: "verified",
       reason: "공개 활동 채널 확인",
-      now: new Date("2026-07-28T12:10:00+09:00"),
     },
     deps,
   );
@@ -384,11 +464,9 @@ test("reserves review, rejection, suspension, and revocation for active admins",
   const revoked = await reviewArtistApplication(
     {
       actor: admin,
-      reviewerId: "admin-1",
-      applicationId: created.application!.id,
+      applicationId: created.id,
       nextStatus: "revoked",
       reason: "활동 채널 소유 확인 불가",
-      now: new Date("2026-07-29T12:10:00+09:00"),
     },
     deps,
   );
@@ -416,6 +494,8 @@ test("issues single-use admin invitations and rejects expired acceptance", async
   assert.equal(issued.ok, true);
   assert.equal(issued.rawToken, "raw-invite-token");
   assert.equal(issued.invite?.state, "pending");
+  assert.equal(issued.invite?.createdAt, "2026-07-28T01:00:00.000Z");
+  assert.equal(issued.invite?.expiresAt, "2026-08-04T01:00:00.000Z");
 
   const accepted = await acceptArtistInvite(
     {
@@ -423,14 +503,17 @@ test("issues single-use admin invitations and rejects expired acceptance", async
       userId: "member-3",
       email: "artist@example.com",
       rawToken: "raw-invite-token",
-      now: new Date("2026-07-29T10:00:00+09:00"),
+      policyConsent: true,
+      policyVersion: "community-2026-07",
     },
     deps,
   );
   assert.equal(accepted.ok, true);
   assert.equal(accepted.application?.status, "verified");
 
-  const expiredDeps = dependencies();
+  const expiredDeps = dependencies(
+    new MemoryVerificationRepository("2026-07-01T01:00:00.000Z"),
+  );
   const expiredIssue = await issueArtistInvite(
     {
       actor: admin,
@@ -448,6 +531,7 @@ test("issues single-use admin invitations and rejects expired acceptance", async
     expiredDeps,
   );
   assert.equal(expiredIssue.ok, true);
+  expiredDeps.repository.setDatabaseNow("2026-07-28T01:00:00.000Z");
 
   const expired = await acceptArtistInvite(
     {
@@ -455,7 +539,8 @@ test("issues single-use admin invitations and rejects expired acceptance", async
       userId: "member-4",
       email: "late@example.com",
       rawToken: "raw-invite-token",
-      now: new Date("2026-07-28T10:00:00+09:00"),
+      policyConsent: true,
+      policyVersion: "community-2026-07",
     },
     expiredDeps,
   );
@@ -487,7 +572,6 @@ test("lets only admins revoke a pending invitation with a reason", async () => {
       actor: member,
       inviteId: issued.invite!.id,
       reason: "회원의 임의 취소",
-      now,
     },
     deps,
   );
@@ -498,7 +582,6 @@ test("lets only admins revoke a pending invitation with a reason", async () => {
       actor: admin,
       inviteId: issued.invite!.id,
       reason: "대상 이메일 변경 요청",
-      now,
     },
     deps,
   );
@@ -511,9 +594,48 @@ test("lets only admins revoke a pending invitation with a reason", async () => {
       actor: admin,
       inviteId: issued.invite!.id,
       reason: "다시 취소",
-      now,
     },
     deps,
   );
   assert.equal(repeated.code, "invite-used");
+});
+
+test("requires explicit current-policy consent before accepting an invitation", async () => {
+  const deps = dependencies();
+  const issued = await issueArtistInvite(
+    {
+      actor: admin,
+      issuerId: "admin-1",
+      input: {
+        email: "consent@example.com",
+        activityName: "동의 확인 작가",
+        proofUrl: "https://example.com/consent-artist",
+        primaryField: "문구",
+        reason: "활동 확인",
+        policyVersion: "community-2026-07",
+      },
+      now: new Date("2026-07-28T10:00:00+09:00"),
+    },
+    deps,
+  );
+
+  for (const [policyConsent, policyVersion, code] of [
+    [false, "community-2026-07", "consent-required"],
+    [true, "community-2026-06", "policy-version-stale"],
+  ] as const) {
+    const result = await acceptArtistInvite(
+      {
+        actor: member,
+        userId: "member-consent",
+        email: "consent@example.com",
+        rawToken: "raw-invite-token",
+        policyConsent,
+        policyVersion,
+      },
+      deps,
+    );
+    assert.equal(result.code, code);
+    assert.equal(deps.repository.applications.length, 0);
+    assert.equal(issued.invite?.state, "pending");
+  }
 });

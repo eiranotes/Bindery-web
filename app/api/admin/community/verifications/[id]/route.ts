@@ -51,7 +51,6 @@ export async function PATCH(
     const result = await reviewArtistApplication(
       {
         actor: session.member.actor,
-        reviewerId: session.member.id,
         applicationId: id,
         nextStatus: nextStatus as
           | "verified"
@@ -60,7 +59,6 @@ export async function PATCH(
           | "revoked"
           | "provisional",
         reason: String(body.reason ?? ""),
-        now: new Date(),
       },
       createSupabaseVerificationDependencies(client!),
     );
