@@ -5,6 +5,7 @@ import { PageIntro } from "../../components/PageIntro";
 import { events } from "../../lib/data.ts";
 import { eventPath, formatCurrency } from "../../lib/events.ts";
 import type { EventEdition, EventHistory } from "../../lib/types.ts";
+import styles from "../event-tools.module.css";
 
 export const metadata: Metadata = {
   title: "행사 회차 아카이브",
@@ -107,6 +108,31 @@ export default function EventArchivePage() {
         </p>
       </aside>
 
+      <nav className={styles.archiveIndex} aria-labelledby="archive-index-title">
+        <div className="section-line-heading">
+          <h2 id="archive-index-title">행사 바로가기</h2>
+          <span>{archives.length} SERIES</span>
+        </div>
+        <ol>
+          {archives.map((archive, index) => (
+            <li key={archive.slug}>
+              <a href={`#archive-${archive.slug}`}>
+                <span className={styles.archiveNumber}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <strong>{archive.name}</strong>
+                <span className={styles.archiveMeta}>
+                  {archive.editions.length}회차 · {archive.verifiedAt} 확인
+                </span>
+                <span className={styles.archiveArrow} aria-hidden="true">
+                  ↓
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       <section aria-labelledby="archive-list-title">
         <div className="section-line-heading">
           <h2 id="archive-list-title">행사별 누적 기록</h2>
@@ -114,22 +140,36 @@ export default function EventArchivePage() {
             {archives.length} SERIES · {editionCount} EDITIONS
           </span>
         </div>
+        <p className={styles.scrollHint} data-ui="event-scroll-hint">
+          모바일에서는 각 회차 표를 좌우로 밀어 장소·부스·선정 정보를
+          확인하세요.
+        </p>
 
         {archives.map((archive) => (
           <section
-            className="history-section"
+            className={`history-section ${styles.archiveSection}`}
+            id={`archive-${archive.slug}`}
             key={archive.slug}
-            aria-labelledby={`archive-${archive.slug}`}
+            aria-labelledby={`archive-title-${archive.slug}`}
           >
             <div className="section-line-heading">
-              <h2 id={`archive-${archive.slug}`}>{archive.name}</h2>
+              <h2 id={`archive-title-${archive.slug}`}>{archive.name}</h2>
               <Link href={archive.latestPath}>최신 회차 보기</Link>
             </div>
             <p>
               {archive.organizer} · {archive.region} · {archive.verifiedAt} 확인
             </p>
-            <div className="table-scroll">
-              <table>
+            <div
+              aria-label={`${archive.name} 회차 비교표`}
+              className={`table-scroll ${styles.scrollRegion}`}
+              data-ui="event-data-scroll"
+              role="region"
+              tabIndex={0}
+            >
+              <table className={styles.archiveTable}>
+                <caption className="sr-only">
+                  {archive.name}의 회차별 일정, 장소, 참가비, 부스 수와 선정 방식
+                </caption>
                 <thead>
                   <tr>
                     <th scope="col">회차</th>
@@ -149,6 +189,9 @@ export default function EventArchivePage() {
                         ) : (
                           edition.edition
                         )}
+                        {edition.current ? (
+                          <span className={styles.currentEdition}>현재 회차</span>
+                        ) : null}
                       </th>
                       <td>{edition.dates}</td>
                       <td>{edition.venue}</td>
