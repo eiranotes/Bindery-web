@@ -6,8 +6,9 @@ import { events } from "./lib/data.ts";
 import { daysUntilDeadline } from "./lib/events.ts";
 
 export const metadata: Metadata = {
-  title: "만드는 사람의 다음 일정을, 한 장에",
-  description: "가장 가까운 행사 마감과 준비 기준을 확인하세요.",
+  title: "창작자 행사 마감·회차 아카이브",
+  description:
+    "한국 독립 창작자 행사의 신청 마감, 참가 조건과 회차별 변화를 비교하세요.",
 };
 
 export default function Home() {
@@ -34,7 +35,7 @@ export default function Home() {
       number: "01",
       href: "/events",
       title: "행사",
-      copy: "마감·회차 비교",
+      copy: "마감·비용·회차",
     },
     {
       number: "02",
@@ -58,7 +59,7 @@ export default function Home() {
       number: "05",
       href: "/community",
       title: "커뮤니티",
-      copy: "작가·모두의 게시판",
+      copy: "질문·경험",
     },
   ];
 
@@ -74,14 +75,14 @@ export default function Home() {
             <br />
             <em>1년을 기다립니다.</em>
           </h1>
-          <p>혼자 만드는 사람을 위한 행사 일정과 준비 기준.</p>
+          <p>창작자 행사의 회차·부스비·신청 조건을 쌓는 아카이브.</p>
           <div className="intro-actions">
-            <Link className="button button--primary" href="/events">
-              행사 전체 보기
+            <Link className="button button--primary" href="/events/compare">
+              행사 비교하기
             </Link>
-            <a className="button" href="/events/calendar.ics">
-              캘린더 구독하기
-            </a>
+            <Link className="button" href="/events/archive">
+              회차 아카이브 보기
+            </Link>
           </div>
         </div>
 
