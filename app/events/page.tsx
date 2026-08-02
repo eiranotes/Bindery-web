@@ -46,15 +46,18 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <PageIntro
         eyebrow="INDEX 01 / EVENTS"
         title="행사"
-        description="마감·참가비·조건을 비교합니다."
+        description="마감·참가비·조건과 회차 변화를 비교합니다."
       >
         <div className="intro-actions">
-          <Link className="button button--primary" href="/events/calendar">
+          <Link className="button button--primary" href="/events/compare">
+            행사 비교하기
+          </Link>
+          <Link className="button" href="/events/archive">
+            회차 아카이브
+          </Link>
+          <Link className="button" href="/events/calendar">
             달력으로 보기
           </Link>
-          <a className="button" href="/events/calendar.ics">
-            일정 구독하기
-          </a>
         </div>
       </PageIntro>
 

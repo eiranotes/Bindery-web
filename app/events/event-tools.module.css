@@ -1,0 +1,235 @@
+.picker.picker {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summary {
+  margin-top: var(--space-7);
+}
+
+.summaryList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
+}
+
+.summaryList > div {
+  min-width: 0;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--sheet);
+  padding: var(--space-5);
+}
+
+.summaryList dt {
+  font-family: var(--font-utility), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.summaryList dd {
+  margin-top: var(--space-3);
+  color: var(--ink-blue);
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.summaryList dd small {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--text-soft);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.summaryNote {
+  max-width: 48rem;
+  margin: var(--space-3) 0 0;
+  color: var(--text-soft);
+  font-size: 0.75rem;
+}
+
+.scrollHint {
+  display: none;
+  margin: var(--space-3) 0 0;
+  color: var(--text-soft);
+  font-family: var(--font-utility), monospace;
+  font-size: 0.6875rem;
+}
+
+.scrollRegion {
+  margin-top: var(--space-3);
+  border-inline: 1px solid var(--rule);
+  scrollbar-gutter: stable both-edges;
+  scroll-padding-inline-start: 10rem;
+}
+
+.scrollRegion:focus-visible {
+  outline-offset: 2px;
+}
+
+.comparisonTable {
+  min-width: 58rem;
+  table-layout: fixed;
+}
+
+.comparisonTable th:first-child {
+  width: 10rem;
+}
+
+.comparisonTable thead th:not(:first-child) {
+  width: 16rem;
+}
+
+.archiveTable {
+  min-width: 46rem;
+}
+
+.comparisonTable thead th:first-child,
+.comparisonTable tbody th,
+.archiveTable thead th:first-child,
+.archiveTable tbody th {
+  position: sticky;
+  left: 0;
+  box-shadow: 1px 0 0 var(--rule);
+}
+
+.comparisonTable thead th:first-child,
+.archiveTable thead th:first-child {
+  z-index: 3;
+  background: var(--ink-blue);
+}
+
+.comparisonTable tbody th,
+.archiveTable tbody th {
+  z-index: 2;
+  background: var(--sheet);
+}
+
+.comparisonTable tbody tr:nth-child(even) td,
+.comparisonTable tbody tr:nth-child(even) th,
+.archiveTable tbody tr:nth-child(even) td,
+.archiveTable tbody tr:nth-child(even) th {
+  background: color-mix(in srgb, var(--sheet) 72%, var(--stock));
+}
+
+.archiveIndex {
+  margin-top: var(--space-7);
+}
+
+.archiveIndex ol {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.archiveIndex li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.archiveIndex a {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto auto;
+  gap: var(--space-4);
+  min-height: 4.5rem;
+  align-items: center;
+  padding: var(--space-3) var(--space-2);
+  text-decoration: none;
+}
+
+.archiveIndex a:hover {
+  background: var(--sheet);
+}
+
+.archiveNumber,
+.archiveMeta,
+.archiveArrow {
+  font-family: var(--font-utility), monospace;
+  font-size: 0.6875rem;
+}
+
+.archiveNumber,
+.archiveArrow {
+  color: var(--ink-blue);
+}
+
+.archiveIndex strong {
+  color: var(--ink-blue);
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+}
+
+.archiveMeta {
+  color: var(--text-soft);
+  text-align: right;
+}
+
+.archiveSection {
+  scroll-margin-top: 6rem;
+}
+
+.archiveSection > p {
+  margin: var(--space-3) 0 0;
+  color: var(--text-soft);
+  font-size: 0.8125rem;
+}
+
+.currentEdition {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
+  margin-left: var(--space-2);
+  border: 1px solid var(--ink-blue);
+  padding-inline: var(--space-2);
+  color: var(--ink-blue);
+  font-family: var(--font-utility), monospace;
+  font-size: 0.625rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+@media (max-width: 1040px) {
+  .picker.picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .picker.picker {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryList {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryList > div {
+    border-right: 0;
+  }
+
+  .scrollHint {
+    display: block;
+  }
+
+  .archiveIndex a {
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .archiveMeta {
+    grid-column: 2 / -1;
+    text-align: left;
+  }
+
+  .archiveArrow {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}

@@ -62,10 +62,46 @@
   revision bodies, deterministic Note provenance, and configured error states.
 - [x] Audit the full public UI, remove redundant product-explanation copy, and
   retain only actionable source, safety, permission, and storage guidance.
-- [x] Create and connect the private `eiranotes/Bindery-web` GitHub source
-  repository for the validated nested `website/` checkout.
+- [x] Create and connect the `eiranotes/Bindery-web` GitHub source repository for
+  the validated nested `website/` checkout.
+- [x] Reframe the product strategy around a verified creator-event database,
+  with Community and editorial surfaces as supporting knowledge layers.
+- [x] Add a shareable, server-rendered three-event comparison route.
+- [x] Add an event-series edition archive derived from the maintained event
+  collection and its history records.
+- [x] Move Home and Events entry actions toward comparison, archive, and current
+  deadline decisions while preserving the calm five-index home.
+- [x] Add comparison and archive routes to the sitemap and repository README.
+- [x] Record the data operating model, metrics, phased roadmap, launch gates,
+  monetization boundaries, and AI prerequisites.
+- [x] Complete a source-based UI/UX audit across the design system, primary
+  routes, trust boundaries, responsive contracts, and event decision flows.
+- [x] Add comparison decision summaries, early data-state disclosure,
+  keyboard-focusable table regions, mobile scroll cues, and sticky row labels.
+- [x] Add scalable archive wayfinding, current-edition labels, and UI release
+  gates in `docs/UI_UX_AUDIT_2026-08-02.md`.
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
   runtime binding, backup/restore rehearsal, and authenticated production E2E.
+
+## Event-data roadmap
+
+- [ ] Split `EventMaster`, `EventEdition`, and `SourceRecord` into explicit
+  domain types and canonical data collections.
+- [ ] Separate product-validation examples from verified public event records.
+- [ ] Add the first verified batch of 20 real event masters and their available
+  historical editions.
+- [ ] Reach 50 event masters and 120 editions with official-source coverage and
+  freshness tracking.
+- [ ] Add domain tests for archive deduplication, edition ordering, and compare
+  selection normalization.
+- [x] Add Playwright coverage for `/events/compare` and `/events/archive` at
+  360px, 768px, and 1280px, including local table scrolling.
+- [ ] Add event-data status labels for example, verified, stale, superseded, and
+  archived records.
+- [ ] Add operator source-review and correction workflows before automated
+  event ingestion.
+- [ ] Add image provenance and rights metadata before publishing posters or
+  venue photographs.
 
 ## Deferred by product policy
 
@@ -76,5 +112,6 @@
 - Live advertising, consent, tracking, and provider integration.
 - Identity-document and private attachment collection.
 - Member-issued invitations and referral rewards.
-- Automated scraping of event organizers.
+- Automated scraping that publishes event facts without operator review.
+- Generic AI recommendations before verified event coverage and evaluation data.
 - Final legal terms, privacy policy, and a permanent domain.

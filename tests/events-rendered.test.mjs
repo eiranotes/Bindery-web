@@ -12,6 +12,8 @@ test("home follows the checked-in HTML mockup language at reduced density", asyn
   assert.match(html, /1년을 기다립니다/);
   assert.match(html, /오늘 · <time dateTime="\d{4}-\d{2}-\d{2}">/);
   assert.match(html, /신청 마감 임박/);
+  assert.match(html, /행사 비교하기/);
+  assert.match(html, /회차 아카이브 보기/);
   assert.match(html, /class="colorbar"/);
   assert.equal((html.match(/class="d-day"/g) ?? []).length, 3);
   assert.equal((html.match(/class="list-number"/g) ?? []).length, 5);
@@ -28,6 +30,50 @@ test("event filters survive in the URL and narrow the server-rendered list", asy
   assert.match(text, /문구인더박스 8회/);
   assert.match(text, /1 RESULTS/);
   assert.doesNotMatch(text, /서울일러스트레이션페어 V\.20/);
+});
+
+test("event comparison normalizes duplicates, allows empty slots, and keeps decision context", async () => {
+  const response = await render(
+    "/events/compare?event1=illustar-2026-winter&event2=mungu-box-2026-8&event3=illustar-2026-winter",
+  );
+  const html = await response.text();
+  const text = html.replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /행사 비교/);
+  assert.match(text, /2 EVENTS/);
+  assert.match(text, /일러스타페어 겨울/);
+  assert.match(text, /문구인더박스 8회/);
+  assert.match(text, /예시 데이터/);
+  assert.match(text, /비교 요약/);
+  assert.match(text, /가장 이른 마감/);
+  assert.match(text, /낮은 참가비/);
+  assert.match(text, /사업자 없이 신청/);
+  assert.match(text, /공식 원문/);
+  assert.match(text, /제출 자료/);
+  assert.match(text, /선택 안 함/);
+  assert.match(text, /모바일에서는 비교표를 좌우로 밀어/);
+  assert.match(html, /data-ui="event-data-scroll"/);
+  assert.match(html, /tabindex="0"/i);
+});
+
+test("event archive groups edition history and exposes scalable wayfinding", async () => {
+  const response = await render("/events/archive");
+  const html = await response.text();
+  const text = html.replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /행사 회차 아카이브/);
+  assert.match(text, /행사 바로가기/);
+  assert.match(text, /행사별 누적 기록/);
+  assert.match(text, /일러스타페어 겨울/);
+  assert.match(text, /2025 여름/);
+  assert.match(text, /₩120,000/);
+  assert.match(text, /현재 회차/);
+  assert.match(text, /최신 회차 보기/);
+  assert.match(text, /모바일에서는 각 회차 표를 좌우로 밀어/);
+  assert.match(html, /href="#archive-illustar-fair"/);
+  assert.match(html, /data-ui="event-data-scroll"/);
 });
 
 test("event detail keeps official-source, missing-data, history, and review gates", async () => {

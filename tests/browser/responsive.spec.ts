@@ -9,6 +9,8 @@ const viewports = [
 const primaryRoutes = [
   "/",
   "/events",
+  "/events/compare",
+  "/events/archive",
   "/events/calendar",
   "/events/illustar-fair/2026-winter",
   "/notes",
@@ -77,25 +79,34 @@ test("360px primary controls meet the touch target floor", async ({ page }) => {
   ).toEqual([]);
 });
 
-test("wide event and calendar data scroll inside their own sheets", async ({
+test("wide event, comparison, archive, and calendar data scroll inside their own sheets", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto("/events/illustar-fair/2026-winter");
 
-  const detail = await page.evaluate(() => {
-    const tableSheet = document.querySelector(".table-scroll");
-    return {
-      pageOverflow:
-        document.documentElement.scrollWidth -
-        document.documentElement.clientWidth,
-      sheetClientWidth: tableSheet?.clientWidth ?? 0,
-      sheetScrollWidth: tableSheet?.scrollWidth ?? 0,
-    };
-  });
+  for (const route of [
+    "/events/illustar-fair/2026-winter",
+    "/events/compare",
+    "/events/archive",
+  ]) {
+    await page.goto(route);
+    const metrics = await page.evaluate(() => {
+      const tableSheet = document.querySelector(".table-scroll");
+      return {
+        pageOverflow:
+          document.documentElement.scrollWidth -
+          document.documentElement.clientWidth,
+        sheetClientWidth: tableSheet?.clientWidth ?? 0,
+        sheetScrollWidth: tableSheet?.scrollWidth ?? 0,
+      };
+    });
 
-  expect(detail.pageOverflow).toBe(0);
-  expect(detail.sheetScrollWidth).toBeGreaterThan(detail.sheetClientWidth);
+    expect(metrics.pageOverflow, `${route} page overflow`).toBe(0);
+    expect(
+      metrics.sheetScrollWidth,
+      `${route} local table scroll width`,
+    ).toBeGreaterThan(metrics.sheetClientWidth);
+  }
 
   await page.goto("/events/calendar");
   const calendar = await page.evaluate(() => {
@@ -111,6 +122,38 @@ test("wide event and calendar data scroll inside their own sheets", async ({
 
   expect(calendar.pageOverflow).toBe(0);
   expect(calendar.sheetScrollWidth).toBeGreaterThan(calendar.sheetClientWidth);
+});
+
+test("comparison and archive expose keyboard-scrollable tables with sticky row labels", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+
+  for (const route of ["/events/compare", "/events/archive"]) {
+    await page.goto(route);
+
+    const region = page.locator('[data-ui="event-data-scroll"]').first();
+    await expect(region).toBeVisible();
+    await expect(region).toHaveAttribute("tabindex", "0");
+    await region.focus();
+    await expect(region).toBeFocused();
+
+    const metrics = await region.evaluate((element) => {
+      const firstRowHeader = element.querySelector("tbody th");
+      const hint = document.querySelector('[data-ui="event-scroll-hint"]');
+      return {
+        rowHeaderPosition: firstRowHeader
+          ? getComputedStyle(firstRowHeader).position
+          : null,
+        hintDisplay: hint ? getComputedStyle(hint).display : null,
+      };
+    });
+
+    expect(metrics.rowHeaderPosition, `${route} sticky row header`).toBe(
+      "sticky",
+    );
+    expect(metrics.hintDisplay, `${route} mobile scroll hint`).not.toBe("none");
+  }
 });
 
 test("primary routes keep text out of avoidably narrow columns", async ({
