@@ -124,6 +124,38 @@ test("wide event, comparison, archive, and calendar data scroll inside their own
   expect(calendar.sheetScrollWidth).toBeGreaterThan(calendar.sheetClientWidth);
 });
 
+test("comparison and archive expose keyboard-scrollable tables with sticky row labels", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+
+  for (const route of ["/events/compare", "/events/archive"]) {
+    await page.goto(route);
+
+    const region = page.locator('[data-ui="event-data-scroll"]').first();
+    await expect(region).toBeVisible();
+    await expect(region).toHaveAttribute("tabindex", "0");
+    await region.focus();
+    await expect(region).toBeFocused();
+
+    const metrics = await region.evaluate((element) => {
+      const firstRowHeader = element.querySelector("tbody th");
+      const hint = document.querySelector('[data-ui="event-scroll-hint"]');
+      return {
+        rowHeaderPosition: firstRowHeader
+          ? getComputedStyle(firstRowHeader).position
+          : null,
+        hintDisplay: hint ? getComputedStyle(hint).display : null,
+      };
+    });
+
+    expect(metrics.rowHeaderPosition, `${route} sticky row header`).toBe(
+      "sticky",
+    );
+    expect(metrics.hintDisplay, `${route} mobile scroll hint`).not.toBe("none");
+  }
+});
+
 test("primary routes keep text out of avoidably narrow columns", async ({
   page,
 }) => {
