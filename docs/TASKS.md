@@ -88,7 +88,7 @@
   freshness tracking.
 - [ ] Add domain tests for archive deduplication, edition ordering, and compare
   selection normalization.
-- [ ] Add Playwright coverage for `/events/compare` and `/events/archive` at
+- [x] Add Playwright coverage for `/events/compare` and `/events/archive` at
   360px, 768px, and 1280px, including local table scrolling.
 - [ ] Add event-data status labels for example, verified, stale, superseded, and
   archived records.
