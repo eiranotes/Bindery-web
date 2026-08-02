@@ -32,7 +32,7 @@ test("event filters survive in the URL and narrow the server-rendered list", asy
   assert.doesNotMatch(text, /서울일러스트레이션페어 V\.20/);
 });
 
-test("event comparison normalizes duplicate selections and keeps official-source context", async () => {
+test("event comparison normalizes duplicates, allows empty slots, and keeps source context", async () => {
   const response = await render(
     "/events/compare?event1=illustar-2026-winter&event2=mungu-box-2026-8&event3=illustar-2026-winter",
   );
@@ -46,6 +46,7 @@ test("event comparison normalizes duplicate selections and keeps official-source
   assert.match(text, /문구인더박스 8회/);
   assert.match(text, /공식 원문/);
   assert.match(text, /제출 자료/);
+  assert.match(text, /선택 안 함/);
 });
 
 test("event archive groups edition history under each maintained event series", async () => {
