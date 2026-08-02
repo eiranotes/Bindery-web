@@ -1,0 +1,58 @@
+name: Site screenshots
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "app/**"
+      - "public/**"
+      - "tests/screenshots/**"
+      - "playwright.screenshots.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/site-screenshots.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22.13.0"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture site screenshots
+        run: npm run screenshots
+
+      - name: Upload screenshot gallery
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: bindery-site-screenshots-${{ github.run_number }}
+          path: artifacts/site-screenshots
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: bindery-screenshot-traces-${{ github.run_number }}
+          path: artifacts/playwright-results
+          if-no-files-found: ignore
+          retention-days: 7
