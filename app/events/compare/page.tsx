@@ -10,6 +10,7 @@ import {
   formatDateRange,
 } from "../../lib/events.ts";
 import type { EventEdition } from "../../lib/types.ts";
+import styles from "../event-tools.module.css";
 
 export const metadata: Metadata = {
   title: "행사 비교",
@@ -55,12 +56,31 @@ function selectedEvents(requestedIds: readonly string[]): EventEdition[] {
   return selected.length ? selected : events.slice(0, 3);
 }
 
+function earliestDeadline(eventsToCompare: EventEdition[]) {
+  return [...eventsToCompare].sort(
+    (left, right) =>
+      new Date(left.applicationDeadline).getTime() -
+      new Date(right.applicationDeadline).getTime(),
+  )[0];
+}
+
+function lowestFee(eventsToCompare: EventEdition[]) {
+  return [...eventsToCompare].sort(
+    (left, right) => left.boothFee - right.boothFee,
+  )[0];
+}
+
 export default async function EventComparePage({
   searchParams,
 }: EventComparePageProps) {
   const query = await searchParams;
   const requestedIds = requestedEventIds(query);
   const selected = selectedEvents(requestedIds);
+  const deadlineLeader = earliestDeadline(selected);
+  const feeLeader = lowestFee(selected);
+  const noBusinessRequired = selected.filter(
+    (event) => !event.businessRequired,
+  );
 
   return (
     <div className="page-shell">
@@ -84,7 +104,11 @@ export default async function EventComparePage({
           <h2 id="compare-picker-title">비교할 행사 선택</h2>
           <span>UP TO 3 EVENTS</span>
         </div>
-        <form action="/events/compare" method="get">
+        <form
+          action="/events/compare"
+          className={styles.picker}
+          method="get"
+        >
           {["첫 번째 행사", "두 번째 행사", "세 번째 행사"].map(
             (label, index) => (
               <label key={label}>
@@ -114,13 +138,76 @@ export default async function EventComparePage({
         </form>
       </section>
 
+      <aside className="source-notice source-notice--strong">
+        <strong>예시 데이터</strong>
+        <p>
+          비교값은 제품 검증용 예시입니다. 신청, 결제와 환불을 결정하기 전
+          각 행사의 공식 원문과 확인 날짜를 다시 확인하세요.
+        </p>
+      </aside>
+
+      <section className={styles.summary} aria-labelledby="comparison-summary-title">
+        <div className="section-line-heading">
+          <h2 id="comparison-summary-title">비교 요약</h2>
+          <span>DECISION SIGNALS</span>
+        </div>
+        <dl className={styles.summaryList}>
+          <div>
+            <dt>가장 이른 마감</dt>
+            <dd>
+              {deadlineLeader.shortName}
+              <small>
+                {formatDate(deadlineLeader.applicationDeadline, {
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </small>
+            </dd>
+          </div>
+          <div>
+            <dt>낮은 참가비</dt>
+            <dd>
+              {feeLeader.shortName}
+              <small>{formatCurrency(feeLeader.boothFee)}</small>
+            </dd>
+          </div>
+          <div>
+            <dt>사업자 없이 신청</dt>
+            <dd>
+              {noBusinessRequired.length
+                ? noBusinessRequired.map((event) => event.shortName).join(" · ")
+                : "해당 없음"}
+              <small>선택한 회차의 현재 입력값 기준</small>
+            </dd>
+          </div>
+        </dl>
+        <p className={styles.summaryNote}>
+          이 요약은 값의 차이만 보여 주며 행사 품질이나 적합도를 평가하지
+          않습니다.
+        </p>
+      </section>
+
       <section className="history-section" aria-labelledby="comparison-title">
         <div className="section-line-heading">
           <h2 id="comparison-title">조건 비교표</h2>
           <span>{selected.length} EVENTS</span>
         </div>
-        <div className="table-scroll">
-          <table>
+        <p className={styles.scrollHint} data-ui="event-scroll-hint">
+          모바일에서는 비교표를 좌우로 밀어 모든 행사 열을 확인하세요.
+        </p>
+        <div
+          aria-label="선택한 행사 조건 비교표"
+          className={`table-scroll ${styles.scrollRegion}`}
+          data-ui="event-data-scroll"
+          role="region"
+          tabIndex={0}
+        >
+          <table className={styles.comparisonTable}>
+            <caption className="sr-only">
+              선택한 행사의 마감, 비용, 참가 조건과 공식 정보 확인일 비교
+            </caption>
             <thead>
               <tr>
                 <th scope="col">비교 항목</th>
@@ -222,14 +309,6 @@ export default async function EventComparePage({
           </table>
         </div>
       </section>
-
-      <aside className="source-notice">
-        <strong>정보 경계</strong>
-        <p>
-          현재 비교표는 제품 검증용 예시 데이터입니다. 신청, 결제와 환불을
-          결정하기 전 각 열의 공식 원문과 확인 날짜를 기준으로 다시 확인하세요.
-        </p>
-      </aside>
     </div>
   );
 }
