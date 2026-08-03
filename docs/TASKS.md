@@ -92,6 +92,8 @@
   verify its isolated Python environment, and compare maintained alternatives.
 - [x] Build a GitHub Pages static preview artifact and main-branch deployment
   workflow with explicit non-functional server/user-action boundaries.
+- [x] Deploy the public Pages preview and smoke-test the hosted home, event list,
+  comparison, archive, ICS, desktop, and mobile surfaces.
 - [ ] Restore owner management access to the existing GPT Sites project and
   deploy the current `main` without changing its owner-only access policy.
 - [ ] Add an approved X account cookie interactively to the ignored twscrape DB

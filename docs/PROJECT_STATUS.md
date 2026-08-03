@@ -23,13 +23,14 @@ rather than the five product-validation fixtures. The first editor-checked
 batch contains three 2026 Illustration Korea editions backed by 11 accessible
 S1/S2 source records. Participant and seller material is physically separated
 under a Git-ignored local review store and does not enter public generation.
-This source is committed at `3fffb0d`, but it is not yet deployed: the persisted
-Sites project ID returns `project not found`, the current Pro account's Sites
-dashboard lists no managed sites, and the existing owner-only URL still renders
-the five fixture events. A GitHub Pages static preview exporter and deployment
-workflow now provide a public fallback target at
-<https://eiranotes.github.io/Bindery-web/>; the checked-out state has passed its
-local artifact and browser gates, while the first hosted workflow run is pending.
+The persisted Sites project ID still returns `project not found`, the current Pro
+account's Sites dashboard lists no managed sites, and the existing owner-only URL
+still renders the five fixture events. The combined official catalog,
+comparison/archive release, and static fallback are now public at
+<https://eiranotes.github.io/Bindery-web/>. GitHub Pages run `30775916113`
+successfully built and deployed commit `f836f0f`; the hosted home, event list,
+comparison, archive, and ICS routes return 200, and the live comparison passed
+desktop/mobile Chrome checks without missing assets, console errors, or page overflow.
 
 ## Completed
 
@@ -201,13 +202,13 @@ local artifact and browser gates, while the first hosted workflow run is pending
   helper copy, and replaced accent-stripe notices with the existing flat rule
   vocabulary. Placeholder text now uses a verified AA theme token; safety,
   source, permission, and local-storage boundaries remain explicit.
-- Created the private `eiranotes/Bindery-web` GitHub repository as the source
-  remote for this nested `website/` checkout.
+- Created and connected `eiranotes/Bindery-web` as the source remote for this
+  nested `website/` checkout; it is now public for the Pages preview.
 
 ## Next
 
-- Complete the first GitHub Pages workflow run and hosted desktop/mobile smoke
-  check before claiming the public fallback is live.
+- Review the public Pages preview as a product-direction sample and decide which
+  information surfaces should move into the later server-backed custom domain.
 - Restore management access to the existing owner-only Sites project only if the
   Sites-hosted preview is still needed; the future real domain requires a server runtime.
 - Expand the official registry one event family at a time and review every
