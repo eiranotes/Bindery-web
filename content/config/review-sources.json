@@ -11,6 +11,17 @@
       "query": "(\"일러스트코리아\" OR \"서울 일러스트코리아\" OR \"인천 일러스트코리아\" OR \"수원 일러스트코리아\") (참가 OR 부스 OR 셀러 OR 작가) lang:ko -is:retweet",
       "maxResults": 100,
       "retentionDays": 365
+    },
+    {
+      "id": "x-twscrape-latest",
+      "provider": "twscrape",
+      "enabled": false,
+      "manualOnly": true,
+      "eventMasterId": "illustration-korea",
+      "query": "(\"일러스트코리아\" OR \"서울 일러스트코리아\" OR \"인천 일러스트코리아\" OR \"수원 일러스트코리아\") (참가 OR 부스 OR 셀러 OR 작가) lang:ko -filter:retweets",
+      "maxResults": 100,
+      "database": "content-local/reviews/twscrape/accounts.db",
+      "retentionDays": 365
     }
   ]
 }

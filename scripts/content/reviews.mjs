@@ -1,5 +1,7 @@
+import { execFile } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { promisify } from "node:util";
 import {
   contentDirectory,
   ensureDirectory,
@@ -13,6 +15,7 @@ import {
   writeText,
 } from "./lib.mjs";
 
+const execFileAsync = promisify(execFile);
 const args = parseArguments(process.argv.slice(2));
 const command = args._[0] ?? "report";
 const config = await readJson(path.join(contentDirectory, "config", "review-sources.json"));
@@ -104,16 +107,91 @@ async function collectX(collector) {
   }));
 }
 
+async function normalizeExternalRows(rows, collector, provider) {
+  const pepper = await getOrCreateReviewPepper();
+  const collectedAt = new Date().toISOString();
+  return rows.map((item) => {
+    if (!item.id || !item.url || !item.text) {
+      throw new Error(`${provider} returned a row without id, url, or text`);
+    }
+    return {
+      provider,
+      providerId: String(item.id),
+      eventMasterId: collector.eventMasterId,
+      sourceUrl: publicHttpsUrl(item.url),
+      publishedAt: item.createdAt ?? null,
+      collectedAt,
+      authorHash: item.authorId ? sha256(`${pepper}:${item.authorId}`) : null,
+      text: item.text,
+      categories: classify(item.text),
+      metricsAtCollection: item.metrics ?? null,
+      publicOutput: false,
+    };
+  });
+}
+
+async function collectTwscrape(collector) {
+  const python = path.resolve(
+    args.python ??
+      process.env.TWSCRAPE_PYTHON ??
+      path.join(privateReviewDirectory, "twscrape", ".venv", "bin", "python"),
+  );
+  const database = path.resolve(
+    args.database ?? collector.database ?? path.join(privateReviewDirectory, "twscrape", "accounts.db"),
+  );
+  const adapter = path.join(process.cwd(), "tools", "review-collectors", "twscrape", "collect.py");
+
+  if (!(await pathExists(python))) {
+    throw new Error("twscrape Python environment is missing; run npm run reviews:twscrape:setup");
+  }
+  if (!(await pathExists(database))) {
+    throw new Error(
+      "twscrape account database is missing; add a cookie to the Git-ignored local database first",
+    );
+  }
+
+  const { stdout } = await execFileAsync(
+    python,
+    [
+      adapter,
+      "--db",
+      database,
+      "--query",
+      collector.query,
+      "--limit",
+      String(Math.max(1, Math.min(500, collector.maxResults ?? 100))),
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      maxBuffer: 16 * 1024 * 1024,
+      timeout: 120_000,
+    },
+  );
+  const rows = stdout
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+  return normalizeExternalRows(rows, collector, "twscrape");
+}
+
 async function collect() {
-  const enabled = config.collectors.filter((collector) => collector.enabled);
-  if (!enabled.length) {
+  const selected = args.collector
+    ? config.collectors.filter((collector) => collector.id === args.collector)
+    : config.collectors.filter((collector) => collector.enabled);
+  if (args.collector && !selected.length) {
+    throw new Error(`unknown review collector: ${args.collector}`);
+  }
+  if (!selected.length) {
     console.log("후기 수집기 0건 활성화: 공식 X API 토큰과 운영 승인 전까지 로컬 파이프라인만 준비됩니다.");
     return;
   }
   const existing = await readRecords();
   const additions = [];
-  for (const collector of enabled) {
+  for (const collector of selected) {
     if (collector.provider === "x-api-v2") additions.push(...(await collectX(collector)));
+    else if (collector.provider === "twscrape") additions.push(...(await collectTwscrape(collector)));
+    else throw new Error(`unsupported review collector provider: ${collector.provider}`);
   }
   const saved = await saveRecords([...existing, ...additions]);
   console.log(`로컬 후기 ${additions.length}건 수집, 중복 제거 후 ${saved.length}건 보관`);
@@ -123,25 +201,12 @@ async function importJsonl() {
   if (!args.input || !args.provider || !args["event-master"]) {
     throw new Error("import requires --input, --provider, and --event-master");
   }
-  const pepper = await getOrCreateReviewPepper();
   const sourceLines = (await readFile(path.resolve(args.input), "utf8")).split(/\r?\n/).filter(Boolean);
-  const imported = sourceLines.map((line) => {
-    const item = JSON.parse(line);
-    if (!item.id || !item.url || !item.text) throw new Error("each import row needs id, url, and text");
-    return {
-      provider: args.provider,
-      providerId: String(item.id),
-      eventMasterId: args["event-master"],
-      sourceUrl: publicHttpsUrl(item.url),
-      publishedAt: item.createdAt ?? null,
-      collectedAt: new Date().toISOString(),
-      authorHash: item.authorId ? sha256(`${pepper}:${item.authorId}`) : null,
-      text: item.text,
-      categories: classify(item.text),
-      metricsAtCollection: item.metrics ?? null,
-      publicOutput: false,
-    };
-  });
+  const imported = await normalizeExternalRows(
+    sourceLines.map((line) => JSON.parse(line)),
+    { eventMasterId: args["event-master"] },
+    args.provider,
+  );
   const saved = await saveRecords([...(await readRecords()), ...imported]);
   console.log(`외부 공개 URL 자료 ${imported.length}건 가져오기, 총 ${saved.length}건 보관`);
 }

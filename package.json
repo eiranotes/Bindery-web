@@ -19,6 +19,8 @@
     "reviews:collect": "node scripts/content/reviews.mjs collect",
     "reviews:report": "node scripts/content/reviews.mjs report",
     "reviews:archive": "node scripts/content/reviews.mjs archive",
+    "reviews:twscrape:setup": "${TWSCRAPE_SETUP_PYTHON:-python3.11} -m venv --clear content-local/reviews/twscrape/.venv && content-local/reviews/twscrape/.venv/bin/python -m pip install --disable-pip-version-check -r tools/review-collectors/twscrape/requirements.txt",
+    "pages:build": "npm run build && node scripts/build-pages-preview.mjs",
     "test": "npm run content:guard && npm run content:validate && npm run content:check-generated && npm run typecheck && npm run build && node --test tests/*.test.mjs tests/*.test.ts && vitest run --config vitest.config.ts && npm run test:browser",
     "test:community-db": "bash scripts/test-community-db.sh supabase/tests/community_rls.test.sql",
     "test:browser": "playwright test --config playwright.config.ts",

@@ -339,3 +339,21 @@ from the runtime because they automate non-API site endpoints. ArchiveBox is a
 separate local evidence vault for already acquired public URLs, not an alternate
 X collector. Collector activation, API credentials, public use, or quotation
 requires a separate operating decision.
+
+## D-030 — Approved local twscrape and static GitHub Pages preview
+
+The product owner's 2026-08-03 approval supersedes D-029 only where it limited X
+collection to the official API. Pin `twscrape==0.19.2` in a Python 3.10+ local
+environment and run it only through the explicitly named `manualOnly` collector.
+Its account SQLite database, cookies, raw text, author pepper, normalized records,
+and reports remain under Git-ignored `content-local/reviews`. They never enter the
+official generator, public counts, search index, GitHub Actions, or Pages artifact.
+The official X API remains available as the lower-policy-risk alternative.
+
+Because the current vinext application requires a server runtime, GitHub Pages is
+a static product preview rather than a substitute production deployment. Export
+public information pages, assets, ICS, RSS, robots, and sitemap under the
+`/Bindery-web` project path; remove application JavaScript and visibly label
+login, save, write, and server mutations as unavailable. A later custom-domain
+production deployment must restore an actual server runtime and re-run hosted
+authentication, authorization, and mutation proof.

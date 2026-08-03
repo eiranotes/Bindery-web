@@ -87,11 +87,15 @@
 - [x] Collect and publish the first official batch: 2026 Illustration Korea
   Seoul aT, Incheon, and Suwon, backed by 11 S1/S2 source records.
 - [x] Build the separate local-only X API/JSONL review pipeline and ArchiveBox
-  handoff without enabling unofficial website scraping or public output.
+  handoff without public output.
+- [x] Pin and integrate `twscrape` as a manually selected local-only collector,
+  verify its isolated Python environment, and compare maintained alternatives.
+- [x] Build a GitHub Pages static preview artifact and main-branch deployment
+  workflow with explicit non-functional server/user-action boundaries.
 - [ ] Restore owner management access to the existing GPT Sites project and
   deploy the current `main` without changing its owner-only access policy.
-- [ ] Provision an approved X API token, enable reviewed queries, and initialize
-  the local ArchiveBox vault before the first private review collection.
+- [ ] Add an approved X account cookie interactively to the ignored twscrape DB
+  (or provision an X API token), then perform the first private review collection.
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
   runtime binding, backup/restore rehearsal, and authenticated production E2E.
 

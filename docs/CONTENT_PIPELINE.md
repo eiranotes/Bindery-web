@@ -7,7 +7,7 @@ Bindery 사이트에는 확인된 행사 공식 정보만 생성합니다. 참�
 
 ```text
 공식 허용 목록 → 원문 캐시 → SourceRecord → FieldEvidence → 편집자 확인 → 사이트 생성
-커뮤니티 URL → 공식 API/수동 import → 익명화 JSONL → 로컬 ArchiveBox (공개 경로 없음)
+커뮤니티 URL → 공식 API/twscrape/수동 import → 익명화 JSONL → 로컬 ArchiveBox (공개 경로 없음)
 ```
 
 ## 공식 정보 신뢰도
@@ -45,15 +45,27 @@ npm run content:check-generated
 
 ## 후기 수집과 보관
 
-`scripts/content/reviews.mjs`는 X API v2 Recent Search와 공개 JSONL import만
-지원합니다. 작성자 ID는 저장소별 pepper로 해시하고, 원문·URL·수집 시각·규칙 기반
-주제를 `content-local/reviews/`에 보관합니다. 이 디렉터리와 `.content-cache/`는 Git에서
-제외됩니다.
+`scripts/content/reviews.mjs`는 X API v2 Recent Search, 수동 JSONL import와 승인된
+`twscrape==0.19.2` Latest 검색 어댑터를 지원합니다. 작성자 ID는 저장소별 pepper로
+해시하고, 원문·URL·수집 시각·규칙 기반 주제를 `content-local/reviews/`에 보관합니다.
+이 디렉터리와 `.content-cache/`는 Git과 Pages 빌드에서 제외됩니다.
 
-X는 2026년 4월 자동화 정책에서 비API 웹사이트 스크립팅을 금지하고 있어, 유지보수
-신호가 좋은 비공식 크롤러도 실행 경로에 넣지 않았습니다. 수집 토큰과 운영 승인 전에는
-collector를 비활성 상태로 유지합니다. URL 스냅샷 보관 절차는
-`tools/review-vault/README.md`를 따릅니다.
+`twscrape`는 비공식 X GraphQL에 의존하므로 기본 자동 실행하지 않는 `manualOnly`
+collector입니다. 별도 Python 3.10+ 가상환경과 `content-local/reviews/twscrape/accounts.db`
+만 사용하고, 쿠키·계정 DB·원문은 저장소에 넣지 않습니다. 기본 수집 명령은 활성화된
+공식 collector만 실행하고, `twscrape`는 운영자가 ID를 지정할 때만 실행됩니다.
+
+```bash
+npm run reviews:twscrape:setup
+content-local/reviews/twscrape/.venv/bin/twscrape \
+  --db content-local/reviews/twscrape/accounts.db add_cookie bindery_local
+npm run reviews:collect -- --collector x-twscrape-latest
+npm run reviews:report
+```
+
+`add_cookie`는 값을 인자에 쓰지 않으면 대화형으로 입력받아 셸 기록 노출을 피합니다.
+별도 X 계정과 접근 권한은 운영자가 준비해야 하며, 계정 제한·엔드포인트 변경·서비스
+정책 위험은 남습니다. URL 스냅샷 보관 절차는 `tools/review-vault/README.md`를 따릅니다.
 
 ## 1차 데이터셋 (2026-08-03)
 
@@ -61,6 +73,6 @@ collector를 비활성 상태로 유지합니다. URL 스냅샷 보관 절차는
 - 일러스트코리아 2026 인천 송도컨벤시아: 2026-10-30–11-01
 - 일러스트코리아 2026 수원 수원메쎄: 2026-12-11–12-13
 - 공식 출처 11건, S1/S2만 공개 필드 근거로 사용
-- 로컬 후기 0건: X API 토큰과 명시적 collector 활성화 전까지 미수집
+- 로컬 후기 0건: twscrape 어댑터 설치·상태 확인 완료, 로컬 계정 DB 입력 전까지 미수집
 
 상세 출처·필드 근거·미확인 값은 `content/reports/latest.md`에서 확인합니다.

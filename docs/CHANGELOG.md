@@ -20,6 +20,12 @@
   generation and reports.
 - Added the three official event IDs to the append-only Community allowlist
   while preserving existing legacy event references.
+- Added a pinned `twscrape==0.19.2` local collector with an isolated account DB,
+  explicit manual selection, Latest search, hashed author IDs, and no public or
+  CI output; documented current Twikit, Node scraper, Tweety, and snscrape signals.
+- Added a GitHub Pages static preview exporter and Actions deployment workflow.
+  The artifact includes 24 read-only screens plus feeds, removes application
+  JavaScript, uses the `/Bindery-web` base path, and labels server actions as unavailable.
 
 ## 2026-07-28
 

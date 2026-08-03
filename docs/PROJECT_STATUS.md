@@ -15,7 +15,7 @@ artist applications, later admin review, single-use operator invitations,
 durable split boards, moderation and audit, knowledge promotion, authorized
 search, recipient notifications, and explicit Binder account merge. No
 production Supabase project or Sites runtime configuration has been created.
-The validated source is maintained in the private GitHub repository
+The validated source is maintained in the public GitHub repository
 <https://github.com/eiranotes/Bindery-web>.
 
 The event catalog now comes from a deterministic official-content pipeline
@@ -26,7 +26,10 @@ under a Git-ignored local review store and does not enter public generation.
 This source is committed at `3fffb0d`, but it is not yet deployed: the persisted
 Sites project ID returns `project not found`, the current Pro account's Sites
 dashboard lists no managed sites, and the existing owner-only URL still renders
-the five fixture events. No replacement site or access-policy change was made.
+the five fixture events. A GitHub Pages static preview exporter and deployment
+workflow now provide a public fallback target at
+<https://eiranotes.github.io/Bindery-web/>; the checked-out state has passed its
+local artifact and browser gates, while the first hosted workflow run is pending.
 
 ## Completed
 
@@ -40,7 +43,14 @@ the five fixture events. No replacement site or access-policy change was made.
   public event fixtures with generated official data.
 - Added a disabled-by-default X API v2 review collector, hashed local author
   identifiers, rule-based topics, JSONL import, and ArchiveBox URL handoff;
-  unofficial X website automation remains outside the execution path.
+  `twscrape==0.19.2` is now an explicitly approved, manually selected local-only
+  collector with its account DB and records excluded from Git and deployment.
+- Compared current twscrape, Twikit, the-convocation Node scraper, Tweety, and
+  snscrape maintenance signals; installed twscrape in an isolated Python 3.11
+  environment and proved its health and empty-account failure boundary.
+- Added a 24-screen GitHub Pages static preview plus ICS/RSS/robots/sitemap,
+  project-path URL rewriting, executable-script removal, a visible static
+  limitation banner, and a main-branch Actions deployment workflow.
 - Added the three official catalog IDs to the append-only Community event
   allowlist while preserving legacy Binder links.
 
@@ -191,13 +201,15 @@ the five fixture events. No replacement site or access-policy change was made.
 
 ## Next
 
-- Restore management access to the existing owner-only Sites project (or have
-  its owner deploy the current `main`) before claiming the official batch is live.
+- Complete the first GitHub Pages workflow run and hosted desktop/mobile smoke
+  check before claiming the public fallback is live.
+- Restore management access to the existing owner-only Sites project only if the
+  Sites-hosted preview is still needed; the future real domain requires a server runtime.
 - Expand the official registry one event family at a time and review every
   changed hash before publishing regenerated fields.
-- Supply an approved X API token and explicitly enable a collector before any
-  local review capture; initialize the separate local ArchiveBox vault if
-  snapshots are required.
+- Add an approved X cookie interactively to the ignored twscrape account DB (or
+  supply an X API token) before the first local review capture; initialize the
+  separate local ArchiveBox vault if snapshots are required.
 - Replace remaining non-event curated sample content with product-owner data
   and complete legal/privacy policy work.
 - Request a separate commit checkpoint for the completed post-`d44a6d2`
@@ -216,15 +228,16 @@ the five fixture events. No replacement site or access-policy change was made.
 - The current owner-only production URL is stale relative to `main`. The signed-in
   URL is viewable from the current account, but its Sites management project is
   not available through the current connector/session, so version save and
-  production deployment are blocked without owner-side access recovery.
+  production deployment are blocked without owner-side access recovery. The Pages
+  fallback is deliberately static and does not supply that missing server runtime.
 
 - The first official batch covers one event family and three editions, not the
   wider Korean creator-event market. Unknown booth counts, business-registration
   requirements, and logistics remain intentionally blank.
 - X/local review collection is prepared but contains zero records because no
-  bearer token or collector activation was authorized. Repository activity is
-  only a maintenance signal, not a trust guarantee, and unofficial site
-  scraping is excluded to follow X policy.
+  local twscrape account DB or bearer token is configured. Repository activity is
+  only a maintenance signal, not a trust guarantee; unofficial endpoints may
+  break without notice and can create service-policy or account restrictions.
 
 - The Bindery name conflicts with an existing desktop writing app; the private production site keeps the working name but does not claim a final domain.
 - Real event data, legal terms, privacy policy, and Groupbuy policy remain product-owner inputs.
