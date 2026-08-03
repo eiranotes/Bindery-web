@@ -23,6 +23,10 @@ rather than the five product-validation fixtures. The first editor-checked
 batch contains three 2026 Illustration Korea editions backed by 11 accessible
 S1/S2 source records. Participant and seller material is physically separated
 under a Git-ignored local review store and does not enter public generation.
+This source is committed at `3fffb0d`, but it is not yet deployed: the persisted
+Sites project ID returns `project not found`, the current Pro account's Sites
+dashboard lists no managed sites, and the existing owner-only URL still renders
+the five fixture events. No replacement site or access-policy change was made.
 
 ## Completed
 
@@ -187,6 +191,8 @@ under a Git-ignored local review store and does not enter public generation.
 
 ## Next
 
+- Restore management access to the existing owner-only Sites project (or have
+  its owner deploy the current `main`) before claiming the official batch is live.
 - Expand the official registry one event family at a time and review every
   changed hash before publishing regenerated fields.
 - Supply an approved X API token and explicitly enable a collector before any
@@ -206,6 +212,11 @@ under a Git-ignored local review store and does not enter public generation.
 - Decide whether to keep owner-only access or explicitly approve a wider audience.
 
 ## Known risks
+
+- The current owner-only production URL is stale relative to `main`. The signed-in
+  URL is viewable from the current account, but its Sites management project is
+  not available through the current connector/session, so version save and
+  production deployment are blocked without owner-side access recovery.
 
 - The first official batch covers one event family and three editions, not the
   wider Korean creator-event market. Unknown booth counts, business-registration

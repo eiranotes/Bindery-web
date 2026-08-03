@@ -88,6 +88,8 @@
   Seoul aT, Incheon, and Suwon, backed by 11 S1/S2 source records.
 - [x] Build the separate local-only X API/JSONL review pipeline and ArchiveBox
   handoff without enabling unofficial website scraping or public output.
+- [ ] Restore owner management access to the existing GPT Sites project and
+  deploy the current `main` without changing its owner-only access policy.
 - [ ] Provision an approved X API token, enable reviewed queries, and initialize
   the local ArchiveBox vault before the first private review collection.
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
