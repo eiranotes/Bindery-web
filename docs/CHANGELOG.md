@@ -24,8 +24,10 @@
   explicit manual selection, Latest search, hashed author IDs, and no public or
   CI output; documented current Twikit, Node scraper, Tweety, and snscrape signals.
 - Added a GitHub Pages static preview exporter and Actions deployment workflow.
-  The artifact includes 24 read-only screens plus feeds, removes application
+  The artifact includes 26 read-only screens plus feeds, removes application
   JavaScript, uses the `/Bindery-web` base path, and labels server actions as unavailable.
+- Integrated the new comparison and edition-archive screens with verified event
+  data so unknown booth counts and business requirements stay visibly unknown.
 
 ## 2026-07-28
 

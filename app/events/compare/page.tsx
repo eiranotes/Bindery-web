@@ -70,6 +70,11 @@ function lowestFee(eventsToCompare: EventEdition[]) {
   )[0];
 }
 
+function businessRequirement(value: boolean | null) {
+  if (value === null) return "정보 없음";
+  return value ? "필요" : "필수 아님";
+}
+
 export default async function EventComparePage({
   searchParams,
 }: EventComparePageProps) {
@@ -79,7 +84,7 @@ export default async function EventComparePage({
   const deadlineLeader = earliestDeadline(selected);
   const feeLeader = lowestFee(selected);
   const noBusinessRequired = selected.filter(
-    (event) => !event.businessRequired,
+    (event) => event.businessRequired === false,
   );
 
   return (
@@ -139,10 +144,11 @@ export default async function EventComparePage({
       </section>
 
       <aside className="source-notice source-notice--strong">
-        <strong>예시 데이터</strong>
+        <strong>공식 정보 비교</strong>
         <p>
-          비교값은 제품 검증용 예시입니다. 신청, 결제와 환불을 결정하기 전
-          각 행사의 공식 원문과 확인 날짜를 다시 확인하세요.
+          편집자가 공식 원문과 연결한 현재 입력값입니다. 확인되지 않은 값은
+          추정하지 않고 정보 없음으로 표시하며, 신청 전 원문과 확인 날짜를
+          다시 확인하세요.
         </p>
       </aside>
 
@@ -153,10 +159,11 @@ export default async function EventComparePage({
         </div>
         <dl className={styles.summaryList}>
           <div>
-            <dt>가장 이른 마감</dt>
+            <dt>가장 이른 신청 일정</dt>
             <dd>
               {deadlineLeader.shortName}
               <small>
+                {deadlineLeader.applicationDeadlineLabel ?? "접수 마감"} ·{" "}
                 {formatDate(deadlineLeader.applicationDeadline, {
                   month: "2-digit",
                   day: "2-digit",
@@ -178,8 +185,8 @@ export default async function EventComparePage({
             <dd>
               {noBusinessRequired.length
                 ? noBusinessRequired.map((event) => event.shortName).join(" · ")
-                : "해당 없음"}
-              <small>선택한 회차의 현재 입력값 기준</small>
+                : "확인된 회차 없음"}
+              <small>정보 없음은 불필요로 간주하지 않음</small>
             </dd>
           </div>
         </dl>
@@ -257,7 +264,10 @@ export default async function EventComparePage({
                 <th scope="row">부스</th>
                 {selected.map((event) => (
                   <td key={event.id}>
-                    {event.boothSize} · {event.boothCount.toLocaleString("ko-KR")}개
+                    {event.boothSize} ·{" "}
+                    {event.boothCount === null
+                      ? "정보 없음"
+                      : `${event.boothCount.toLocaleString("ko-KR")}개`}
                   </td>
                 ))}
               </tr>
@@ -271,7 +281,7 @@ export default async function EventComparePage({
                 <th scope="row">사업자</th>
                 {selected.map((event) => (
                   <td key={event.id}>
-                    {event.businessRequired ? "필요" : "필수 아님"}
+                    {businessRequirement(event.businessRequired)}
                   </td>
                 ))}
               </tr>

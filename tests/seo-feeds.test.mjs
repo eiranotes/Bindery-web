@@ -9,7 +9,7 @@ test("home metadata contains product identity and no starter markers", async () 
 
   assert.match(
     html,
-    /<title>만드는 사람의 다음 일정을, 한 장에 — BINDERY<\/title>/,
+    /<title>창작자 행사 마감·회차 아카이브 — BINDERY<\/title>/,
   );
   assert.match(html, /property="og:image"/);
   assert.doesNotMatch(

@@ -48,9 +48,14 @@ local artifact and browser gates, while the first hosted workflow run is pending
 - Compared current twscrape, Twikit, the-convocation Node scraper, Tweety, and
   snscrape maintenance signals; installed twscrape in an isolated Python 3.11
   environment and proved its health and empty-account failure boundary.
-- Added a 24-screen GitHub Pages static preview plus ICS/RSS/robots/sitemap,
+- Added a 26-screen GitHub Pages static preview plus ICS/RSS/robots/sitemap,
   project-path URL rewriting, executable-script removal, a visible static
   limitation banner, and a main-branch Actions deployment workflow.
+- Reconciled the concurrent comparison/archive release with the official event
+  catalog: unknown booth counts and business requirements remain `정보 없음`
+  instead of becoming zero or false. The combined branch passes 108 Node tests,
+  30 client tests, 31 Playwright tests, lint, typecheck, production build, and
+  desktop/mobile static-preview checks.
 - Added the three official catalog IDs to the append-only Community event
   allowlist while preserving legacy Binder links.
 

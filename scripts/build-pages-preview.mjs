@@ -23,6 +23,8 @@ const generatedEvents = JSON.parse(
 const pageRoutes = [
   "/",
   "/events",
+  "/events/compare",
+  "/events/archive",
   "/events/calendar",
   ...generatedEvents.map((event) => `/events/${event.slug}/${event.edition}`),
   "/notes",
