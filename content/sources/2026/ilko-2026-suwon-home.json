@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-suwon-home",
+  "url": "https://illustrationkorea.co.kr/suwon/",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-edition",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 7,
+  "checkedAt": "2026-08-03T00:07:11.731Z",
+  "recheckDueAt": "2026-08-10T00:07:11.731Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "3f13998c924a23055f2c9510a47bb578a3bc449763e74311abf317bc2f04d81c",
+  "payloadHash": "3713231a4b94f19a9a7a45de647b19b0449ceb266fb283a31062c9ebbb1a00da",
+  "previousContentHash": "3f13998c924a23055f2c9510a47bb578a3bc449763e74311abf317bc2f04d81c",
+  "changeStatus": "unchanged",
+  "title": "2026 수원 일러스트코리아 - 일러스트레이션 - 수원",
+  "bytes": 1884745,
+  "normalizedTextBytes": 8911,
+  "cachePath": ".content-cache/official/ilko-2026-suwon-home.html"
+}

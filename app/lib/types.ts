@@ -4,10 +4,13 @@ export type EventStatus =
   | "urgent"
   | "closed"
   | "soon"
+  | "ongoing"
   | "ended";
 
 export type EventGenre = "문구" | "일러스트" | "서브컬처" | "복합";
-export type EventScale = "소형" | "중형" | "대형";
+export type EventScale = "소형" | "중형" | "대형" | "확인 중";
+export type ApplicationDeadlineKind = "final" | "early-bird" | "capacity";
+export type ApplicationStatus = "scheduled" | "open" | "capacity" | "closed";
 
 export interface EventHistory {
   edition: string;
@@ -15,7 +18,7 @@ export interface EventHistory {
   venue: string;
   boothFee: number;
   previousBoothFee?: number;
-  booths: number;
+  booths: number | null;
   selection: string;
 }
 
@@ -33,22 +36,29 @@ export interface EventEdition {
   endDate: string;
   applicationOpen: string;
   applicationDeadline: string;
+  applicationDeadlineKind?: ApplicationDeadlineKind;
+  applicationDeadlineLabel?: string;
+  applicationStatus?: ApplicationStatus;
   boothFee: number;
+  boothFeeIncludesVat?: boolean;
   boothSize: string;
-  boothCount: number;
+  boothCount: number | null;
   selection: "선착순" | "추첨" | "심사";
-  businessRequired: boolean;
+  businessRequired: boolean | null;
   genre: EventGenre;
   scale: EventScale;
   sourceUrl: string;
   sourceLabel: string;
+  sourceCount?: number;
+  evidenceCoverage?: number;
+  dataStatus?: "official" | "example";
   verifiedAt: string;
   summary: string;
   application: {
     documents: string[];
-    resalePolicy: string;
-    refundPolicy: string;
-    note: string;
+    resalePolicy: string | null;
+    refundPolicy: string | null;
+    note: string | null;
   };
   onsite: {
     loadIn: string | null;

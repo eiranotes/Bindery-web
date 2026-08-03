@@ -3,13 +3,13 @@ import Link from "next/link";
 import { DDay } from "../components/DDay";
 import { PageIntro } from "../components/PageIntro";
 import { StatusStamp } from "../components/StatusStamp";
-import { events } from "../lib/data.ts";
+import { events, genres, regions, scales } from "../lib/data.ts";
 import {
-  daysUntilDeadline,
   deriveEventStatus,
   eventPath,
   filterEvents,
   formatDate,
+  nextEventMilestone,
 } from "../lib/events.ts";
 import type { EventFilters } from "../lib/types.ts";
 
@@ -70,7 +70,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           <label>
             지역
             <select name="region" defaultValue={filters.region}>
-              {["전체", "서울", "부산", "대구"].map((option) => (
+              {regions.map((option) => (
                 <option key={option}>{option}</option>
               ))}
             </select>
@@ -78,7 +78,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           <label>
             장르
             <select name="genre" defaultValue={filters.genre}>
-              {["전체", "문구", "일러스트", "서브컬처", "복합"].map(
+              {genres.map(
                 (option) => (
                   <option key={option}>{option}</option>
                 ),
@@ -88,7 +88,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           <label>
             규모
             <select name="scale" defaultValue={filters.scale}>
-              {["전체", "소형", "중형", "대형"].map((option) => (
+              {scales.map((option) => (
                 <option key={option}>{option}</option>
               ))}
             </select>
@@ -99,12 +99,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
               <option value="전체">전체</option>
               <option value="true">필요</option>
               <option value="false">불필요</option>
+              <option value="null">확인 중</option>
             </select>
           </label>
           <label>
             정렬
             <select name="sort" defaultValue={filters.sort}>
-              <option value="deadline">마감 가까운 순</option>
+              <option value="deadline">다음 일정 가까운 순</option>
               <option value="date">개최일 순</option>
             </select>
           </label>
@@ -128,6 +129,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           <ol>
             {filtered.map((event, index) => {
               const status = deriveEventStatus(event, now);
+              const milestone = nextEventMilestone(event, now);
               return (
                 <li key={event.id}>
                   <span className="event-ledger__number">
@@ -142,9 +144,9 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                   </div>
                   <dl>
                     <div>
-                      <dt>접수 마감</dt>
+                      <dt>{milestone.label}</dt>
                       <dd>
-                        {formatDate(event.applicationDeadline, {
+                        {formatDate(milestone.date, {
                           year: "numeric",
                           month: "2-digit",
                           day: "2-digit",
@@ -161,8 +163,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                     </div>
                   </dl>
                   <DDay
-                    days={daysUntilDeadline(event, now)}
-                    label={`${event.shortName} 신청`}
+                    days={milestone.days}
+                    label={`${event.shortName} ${milestone.label}`}
                   />
                 </li>
               );
@@ -181,7 +183,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <aside className="source-notice">
         <strong>정보 경계</strong>
         <p>
-          예시 데이터입니다. 신청 전 공식 원문과 확인 날짜를 확인하세요.
+          공식 원문에서 확인한 1차 수집 데이터입니다. 신청 전 회차별 원문과
+          확인 날짜를 다시 확인하세요.
         </p>
       </aside>
     </div>

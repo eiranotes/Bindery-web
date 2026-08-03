@@ -7,30 +7,33 @@ import {
   deriveEventStatus,
   filterEvents,
   getEventByPath,
+  nextEventMilestone,
 } from "../app/lib/events.ts";
 
-const referenceNow = new Date("2026-07-26T12:00:00+09:00");
-const illustar = events.find((event) => event.id === "illustar-2026-winter");
+const referenceNow = new Date("2026-08-20T12:00:00+09:00");
+const incheon = events.find(
+  (event) => event.id === "illustration-korea-2026-incheon",
+);
 
 test("derives event status and D-day from dates", () => {
-  assert.ok(illustar);
-  assert.equal(deriveEventStatus(illustar, referenceNow), "urgent");
-  assert.equal(daysUntilDeadline(illustar, referenceNow), 12);
+  assert.ok(incheon);
+  assert.equal(deriveEventStatus(incheon, referenceNow), "urgent");
+  assert.equal(daysUntilDeadline(incheon, referenceNow), 11);
 
   assert.equal(
-    deriveEventStatus(illustar, new Date("2026-07-01T12:00:00+09:00")),
-    "upcoming",
+    deriveEventStatus(incheon, new Date("2026-08-01T12:00:00+09:00")),
+    "open",
   );
   assert.equal(
-    deriveEventStatus(illustar, new Date("2026-08-20T12:00:00+09:00")),
-    "closed",
+    deriveEventStatus(incheon, new Date("2026-09-01T12:00:00+09:00")),
+    "open",
   );
   assert.equal(
-    deriveEventStatus(illustar, new Date("2026-11-10T12:00:00+09:00")),
-    "soon",
+    deriveEventStatus(incheon, new Date("2026-10-30T12:00:00+09:00")),
+    "ongoing",
   );
   assert.equal(
-    deriveEventStatus(illustar, new Date("2026-11-17T12:00:00+09:00")),
+    deriveEventStatus(incheon, new Date("2026-11-02T12:00:00+09:00")),
     "ended",
   );
 });
@@ -39,7 +42,7 @@ test("filters and sorts using shareable query values", () => {
   const filtered = filterEvents(
     events,
     {
-      region: "부산",
+      region: "인천",
       genre: "전체",
       scale: "전체",
       business: "전체",
@@ -50,7 +53,7 @@ test("filters and sorts using shareable query values", () => {
 
   assert.deepEqual(
     filtered.map((event) => event.region),
-    ["부산"],
+    ["인천"],
   );
 
   const upcoming = filterEvents(
@@ -66,18 +69,20 @@ test("filters and sorts using shareable query values", () => {
   );
 
   assert.ok(
-    new Date(upcoming[0].applicationDeadline).getTime() <=
-      new Date(upcoming[1].applicationDeadline).getTime(),
+    new Date(nextEventMilestone(upcoming[0], referenceNow).date).getTime() <=
+      new Date(nextEventMilestone(upcoming[1], referenceNow).date).getTime(),
   );
 });
 
 test("resolves stable event paths and preserves missing information", () => {
   assert.equal(
-    getEventByPath("illustar-fair", "2026-winter")?.id,
-    "illustar-2026-winter",
+    getEventByPath("illustration-korea", "2026-incheon")?.id,
+    "illustration-korea-2026-incheon",
   );
   assert.equal(
-    getEventByPath("illustar-fair", "2026-winter")?.onsite.wallUse,
+    getEventByPath("illustration-korea", "2026-incheon")?.onsite.wallUse,
     null,
   );
+  assert.equal(incheon?.boothCount, null);
+  assert.equal(incheon?.businessRequired, null);
 });

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AdSlot } from "./components/AdSlot";
 import { DDay } from "./components/DDay";
 import { events } from "./lib/data.ts";
-import { daysUntilDeadline } from "./lib/events.ts";
+import { nextEventMilestone } from "./lib/events.ts";
 
 export const metadata: Metadata = {
   title: "창작자 행사 마감·회차 아카이브",
@@ -22,14 +22,13 @@ export default function Home() {
   const todayIso = now.toLocaleDateString("sv-SE", {
     timeZone: "Asia/Seoul",
   });
-  const upcoming = [...events]
-    .filter((event) => new Date(event.applicationDeadline) >= now)
+  const deadlines = [...events]
     .sort(
       (left, right) =>
-        new Date(left.applicationDeadline).getTime() -
-        new Date(right.applicationDeadline).getTime(),
-    );
-  const deadlines = (upcoming.length >= 3 ? upcoming : events).slice(0, 3);
+        new Date(nextEventMilestone(left, now).date).getTime() -
+        new Date(nextEventMilestone(right, now).date).getTime(),
+    )
+    .slice(0, 3);
   const indexes = [
     {
       number: "01",
@@ -87,19 +86,20 @@ export default function Home() {
         </div>
 
         <aside className="mockup-deadline" aria-labelledby="deadline-title">
-          <h2 id="deadline-title">신청 마감 임박</h2>
+          <h2 id="deadline-title">다가오는 신청·행사 일정</h2>
           <ol className="deadline-list">
-            {deadlines.map((event) => (
-              <li key={event.id}>
-                <DDay days={daysUntilDeadline(event, now)} />
+            {deadlines.map((event) => {
+              const milestone = nextEventMilestone(event, now);
+              return <li key={event.id}>
+                <DDay days={milestone.days} label={`${event.shortName} ${milestone.label}`} />
                 <Link href={`/events/${event.slug}/${event.edition}`}>
                   <strong>{event.shortName}</strong>
                   <span>
-                    {event.region} {event.venue} · {event.selection}
+                    {milestone.label} · {event.region} {event.venue}
                   </span>
                 </Link>
-              </li>
-            ))}
+              </li>;
+            })}
           </ol>
           <p className="mockup-deadline__note">
             신청 전 공식 공지를 확인하세요.

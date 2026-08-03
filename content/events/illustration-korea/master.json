@@ -1,0 +1,10 @@
+{
+  "id": "illustration-korea",
+  "canonicalName": "일러스트코리아",
+  "aliases": ["ILKO", "Illustration Korea"],
+  "organizerId": "messe-esang",
+  "organizerName": "일러스트코리아 사무국 · ㈜메쎄이상",
+  "formats": ["illustration-fair"],
+  "genres": ["일러스트", "캐릭터", "디자인 문구", "창작 굿즈", "북아트"],
+  "officialSourceIds": ["ilko-2026-series-home", "ilko-2026-brochure"]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-at-home",
+  "url": "https://illustrationkorea.co.kr/at/",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-edition",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 7,
+  "checkedAt": "2026-08-03T00:07:11.380Z",
+  "recheckDueAt": "2026-08-10T00:07:11.380Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "a188449f1157cefeeb2a1af7c118715d2ea2780effa50929330fb19eaa3cf5cd",
+  "payloadHash": "7048012ae662991a21fa51ad9e8f30a3cc39565e000688408d8d811f8751b69e",
+  "previousContentHash": "a188449f1157cefeeb2a1af7c118715d2ea2780effa50929330fb19eaa3cf5cd",
+  "changeStatus": "unchanged",
+  "title": "2026 일러스트레이션 aT - 일러스트레이션 - at",
+  "bytes": 1859033,
+  "normalizedTextBytes": 7551,
+  "cachePath": ".content-cache/official/ilko-2026-at-home.html"
+}

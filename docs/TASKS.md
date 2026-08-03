@@ -80,6 +80,16 @@
   keyboard-focusable table regions, mobile scroll cues, and sticky row labels.
 - [x] Add scalable archive wayfinding, current-edition labels, and UI release
   gates in `docs/UI_UX_AUDIT_2026-08-02.md`.
+- [x] Review the existing WebGPT Pro content-categorization plan and obtain a
+  fresh Pro boundary review for the concrete repository.
+- [x] Build official-source collection, evidence classification, validation,
+  deterministic generation, recheck queue, Markdown reporting, and leak guards.
+- [x] Collect and publish the first official batch: 2026 Illustration Korea
+  Seoul aT, Incheon, and Suwon, backed by 11 S1/S2 source records.
+- [x] Build the separate local-only X API/JSONL review pipeline and ArchiveBox
+  handoff without enabling unofficial website scraping or public output.
+- [ ] Provision an approved X API token, enable reviewed queries, and initialize
+  the local ArchiveBox vault before the first private review collection.
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
   runtime binding, backup/restore rehearsal, and authenticated production E2E.
 
@@ -114,4 +124,5 @@
 - Member-issued invitations and referral rewards.
 - Automated scraping that publishes event facts without operator review.
 - Generic AI recommendations before verified event coverage and evaluation data.
+- Discovery crawling outside the explicit official-source allowlist.
 - Final legal terms, privacy policy, and a permanent domain.

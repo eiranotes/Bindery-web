@@ -1,0 +1,25 @@
+{
+  "id": "venue-songdo-convensia",
+  "url": "https://songdoconvensia.visitincheon.or.kr/",
+  "publisher": "인천관광공사",
+  "tier": "S2",
+  "kind": "official-venue",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 90,
+  "checkedAt": "2026-08-03T00:07:12.415Z",
+  "recheckDueAt": "2026-11-01T00:07:12.415Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "7b6e03081809ad128266b261a70efca5955528cb2b8dcb303f2f06f81d1d9dc5",
+  "payloadHash": "2cfee013cc9b0de9cb00df3bc51ca1a0b06dbbcbff822f1718b1c415fafc9367",
+  "previousContentHash": "7b6e03081809ad128266b261a70efca5955528cb2b8dcb303f2f06f81d1d9dc5",
+  "changeStatus": "unchanged",
+  "title": "송도컨벤시아",
+  "bytes": 59820,
+  "normalizedTextBytes": 2925,
+  "cachePath": ".content-cache/official/venue-songdo-convensia.html"
+}

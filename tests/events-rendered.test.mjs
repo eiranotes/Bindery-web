@@ -11,7 +11,7 @@ test("home follows the checked-in HTML mockup language at reduced density", asyn
   assert.match(html, /신청 마감을 놓치면/);
   assert.match(html, /1년을 기다립니다/);
   assert.match(html, /오늘 · <time dateTime="\d{4}-\d{2}-\d{2}">/);
-  assert.match(html, /신청 마감 임박/);
+  assert.match(html, /다가오는 신청·행사 일정/);
   assert.match(html, /행사 비교하기/);
   assert.match(html, /회차 아카이브 보기/);
   assert.match(html, /class="colorbar"/);
@@ -22,14 +22,14 @@ test("home follows the checked-in HTML mockup language at reduced density", asyn
 });
 
 test("event filters survive in the URL and narrow the server-rendered list", async () => {
-  const response = await render("/events?region=부산");
+  const response = await render("/events?region=인천");
   const html = await response.text();
   const text = html.replaceAll("<!-- -->", "");
 
   assert.equal(response.status, 200);
-  assert.match(text, /문구인더박스 8회/);
+  assert.match(text, /2026 인천 일러스트코리아/);
   assert.match(text, /1 RESULTS/);
-  assert.doesNotMatch(text, /서울일러스트레이션페어 V\.20/);
+  assert.doesNotMatch(text, /2026 수원 일러스트코리아/);
 });
 
 test("event comparison normalizes duplicates, allows empty slots, and keeps decision context", async () => {
@@ -77,7 +77,7 @@ test("event archive groups edition history and exposes scalable wayfinding", asy
 });
 
 test("event detail keeps official-source, missing-data, history, and review gates", async () => {
-  const response = await render("/events/illustar-fair/2026-winter");
+  const response = await render("/events/illustration-korea/2026-incheon");
   const html = await response.text();
   const text = html.replaceAll("<!-- -->", "");
 
@@ -85,8 +85,9 @@ test("event detail keeps official-source, missing-data, history, and review gate
   assert.match(text, /공식 정보 원본/);
   assert.match(text, /정보 없음/);
   assert.match(text, /지난 회차 비교/);
-  assert.match(text, /현재 응답\s*3건/);
-  assert.doesNotMatch(text, /비용 대비 만족/);
+  assert.match(text, /공식 출처 5건/);
+  assert.match(text, /LOCAL ONLY/);
+  assert.doesNotMatch(text, /현재 응답|비용 대비 만족|reviewAggregate/);
   assert.match(text, /내 바인더에 넣기/);
 });
 
@@ -94,14 +95,14 @@ test("calendar route and ICS feed expose both event and deadline semantics", asy
   const calendar = await render("/events/calendar?month=2026-08");
   const calendarHtml = await calendar.text();
   assert.equal(calendar.status, 200);
-  assert.match(calendarHtml, /신청 마감/);
-  assert.match(calendarHtml, /행사 시작/);
+  assert.match(calendarHtml, /인천 일러스트코리아 조기 신청 할인 마감/);
 
   const ics = await render("/events/calendar.ics");
   const icsText = await ics.text();
   assert.equal(ics.status, 200);
   assert.match(ics.headers.get("content-type") ?? "", /^text\/calendar/);
   assert.match(icsText, /BEGIN:VCALENDAR/);
-  assert.match(icsText, /일러스타페어 2026 겨울/);
-  assert.match(icsText, /신청 마감/);
+  assert.match(icsText, /2026 인천 일러스트코리아/);
+  assert.match(icsText, /조기 신청 할인 마감/);
+  assert.match(icsText, /DTSTART;VALUE=DATE:20260830/);
 });

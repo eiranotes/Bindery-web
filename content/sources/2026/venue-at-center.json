@@ -1,0 +1,25 @@
+{
+  "id": "venue-at-center",
+  "url": "https://www.at.or.kr/contents/acko364000/view.action",
+  "publisher": "한국농수산식품유통공사",
+  "tier": "S2",
+  "kind": "official-venue",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 90,
+  "checkedAt": "2026-08-03T00:07:12.049Z",
+  "recheckDueAt": "2026-11-01T00:07:12.049Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "3267347ed08891599564830b8cd9486a47a57b5ed74a3c3e4e0045398d71e38a",
+  "payloadHash": "f9932affa3c4c6ac1791e73752e9a17bf13bfd7d308d6a4e6c5e172d03764c0e",
+  "previousContentHash": "3267347ed08891599564830b8cd9486a47a57b5ed74a3c3e4e0045398d71e38a",
+  "changeStatus": "unchanged",
+  "title": "aT Center - 주요사업",
+  "bytes": 46112,
+  "normalizedTextBytes": 5454,
+  "cachePath": ".content-cache/official/venue-at-center.html"
+}

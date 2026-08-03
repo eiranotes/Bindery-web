@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-incheon-home",
+  "url": "https://illustrationkorea.co.kr/incheon/",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-edition",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 7,
+  "checkedAt": "2026-08-03T00:07:11.582Z",
+  "recheckDueAt": "2026-08-10T00:07:11.582Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "8d1ba5146e05cf7e46ec49c3d871dffb50b840a093ac38e0edb95adcc53ba7d0",
+  "payloadHash": "5926501658d9deb13d986be8d7685eb8ac2fae2c16b6dea0df17f85f5f9a2e87",
+  "previousContentHash": "8d1ba5146e05cf7e46ec49c3d871dffb50b840a093ac38e0edb95adcc53ba7d0",
+  "changeStatus": "unchanged",
+  "title": "2026 인천 일러스트코리아 - 일러스트레이션 - 인천",
+  "bytes": 1762580,
+  "normalizedTextBytes": 8693,
+  "cachePath": ".content-cache/official/ilko-2026-incheon-home.html"
+}

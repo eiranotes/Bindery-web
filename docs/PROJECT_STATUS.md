@@ -18,7 +18,27 @@ production Supabase project or Sites runtime configuration has been created.
 The validated source is maintained in the private GitHub repository
 <https://github.com/eiranotes/Bindery-web>.
 
+The event catalog now comes from a deterministic official-content pipeline
+rather than the five product-validation fixtures. The first editor-checked
+batch contains three 2026 Illustration Korea editions backed by 11 accessible
+S1/S2 source records. Participant and seller material is physically separated
+under a Git-ignored local review store and does not enter public generation.
+
 ## Completed
+
+- Reviewed the existing WebGPT conversation `웹 콘텐츠 카테고리화 계획` and
+  obtained a fresh Pro-model boundary review before implementation.
+- Added an allowlisted official collector with robots/HTTP checks, local raw
+  cache, normalized SHA-256 records, recheck scheduling, field-level evidence,
+  deterministic generation, Markdown reporting, and publication guards.
+- Collected and editor-checked the 2026 Illustration Korea Seoul aT, Incheon,
+  and Suwon editions from 11 official organizer/venue sources and replaced the
+  public event fixtures with generated official data.
+- Added a disabled-by-default X API v2 review collector, hashed local author
+  identifiers, rule-based topics, JSONL import, and ArchiveBox URL handoff;
+  unofficial X website automation remains outside the execution path.
+- Added the three official catalog IDs to the append-only Community event
+  allowlist while preserving legacy Binder links.
 
 - Read all Markdown and HTML documents in the source package.
 - Established v1.0 information-first planning as product authority.
@@ -167,7 +187,13 @@ The validated source is maintained in the private GitHub repository
 
 ## Next
 
-- Replace curated sample content with product-owner data and complete legal/privacy policy work.
+- Expand the official registry one event family at a time and review every
+  changed hash before publishing regenerated fields.
+- Supply an approved X API token and explicitly enable a collector before any
+  local review capture; initialize the separate local ArchiveBox vault if
+  snapshots are required.
+- Replace remaining non-event curated sample content with product-owner data
+  and complete legal/privacy policy work.
 - Request a separate commit checkpoint for the completed post-`d44a6d2`
   backend slices if they should be recorded in Git.
 - Provision and bind an external Supabase/Turnstile environment only after an
@@ -180,6 +206,14 @@ The validated source is maintained in the private GitHub repository
 - Decide whether to keep owner-only access or explicitly approve a wider audience.
 
 ## Known risks
+
+- The first official batch covers one event family and three editions, not the
+  wider Korean creator-event market. Unknown booth counts, business-registration
+  requirements, and logistics remain intentionally blank.
+- X/local review collection is prepared but contains zero records because no
+  bearer token or collector activation was authorized. Repository activity is
+  only a maintenance signal, not a trust guarantee, and unofficial site
+  scraping is excluded to follow X policy.
 
 - The Bindery name conflicts with an existing desktop writing app; the private production site keeps the working name but does not claim a final domain.
 - Real event data, legal terms, privacy policy, and Groupbuy policy remain product-owner inputs.

@@ -24,7 +24,7 @@ test("sitemap and robots expose public routes", async () => {
   assert.equal(sitemap.status, 200);
   assert.match(
     sitemapText,
-    /http:\/\/localhost:3000\/events\/illustar-fair\/2026-winter/,
+    /http:\/\/localhost:3000\/events\/illustration-korea\/2026-incheon/,
   );
   assert.match(
     sitemapText,

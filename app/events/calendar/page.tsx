@@ -6,7 +6,7 @@ import { eventPath } from "../../lib/events.ts";
 
 export const metadata: Metadata = {
   title: "행사 달력",
-  description: "행사 신청 마감과 개최일을 월별로 확인합니다.",
+  description: "행사 신청 일정과 개최일을 월별로 확인합니다.",
 };
 
 type CalendarPageProps = {
@@ -54,7 +54,7 @@ export default async function CalendarPage({
       ) {
         entries.push({
           kind: "deadline",
-          label: `${event.shortName} 마감`,
+          label: `${event.shortName} ${event.applicationDeadlineLabel ?? "신청 마감"}`,
           href: eventPath(event),
         });
       }
@@ -77,7 +77,7 @@ export default async function CalendarPage({
       <PageIntro
         eyebrow="EVENTS / CALENDAR"
         title="일정 달력"
-        description="신청 마감과 개최일을 함께 봅니다."
+        description="신청 일정과 개최일을 함께 봅니다."
       >
         <div className="intro-actions">
           <a className="button button--primary" href="/events/calendar.ics">
@@ -96,7 +96,7 @@ export default async function CalendarPage({
           <Link href={monthHref(year, monthIndex + 1)}>다음 달 →</Link>
         </div>
         <div className="calendar-legend" aria-label="일정 범례">
-          <span className="calendar-legend__deadline">신청 마감</span>
+          <span className="calendar-legend__deadline">신청 일정</span>
           <span className="calendar-legend__event">행사 시작</span>
         </div>
         <div className="calendar-grid" role="group" aria-label={`${title} 달력`}>

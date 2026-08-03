@@ -14,7 +14,7 @@ export function SiteFooter() {
           <Link href="/rss.xml">RSS</Link>
         </nav>
         <p className="site-footer__note">
-          예시 데이터입니다. 신청 전 공식 원문을 확인하세요.
+          행사 정보는 공식 원문과 확인 날짜를 함께 제공합니다. 신청 전 원문을 다시 확인하세요.
         </p>
       </div>
     </footer>

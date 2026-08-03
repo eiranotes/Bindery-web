@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "tiers": {
+    "S1": {
+      "label": "행사 주최자 공식 원문",
+      "publishableFields": [
+        "eventDates",
+        "application",
+        "boothFees",
+        "selection",
+        "refunds",
+        "onsite"
+      ]
+    },
+    "S2": {
+      "label": "전시장·공공기관 공식 원문",
+      "publishableFields": ["eventDates", "venue", "address", "organizer"]
+    },
+    "S3": {
+      "label": "주최자 공식 소셜 채널",
+      "publishableFields": ["urgentChanges", "applicationNotice"]
+    },
+    "S4": {
+      "label": "공식 판매처·협력사·보도자료",
+      "publishableFields": ["visitorInfo"]
+    },
+    "S5": {
+      "label": "참가자·판매자 경험 자료",
+      "publishableFields": []
+    }
+  }
+}

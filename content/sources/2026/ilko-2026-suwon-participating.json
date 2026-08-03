@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-suwon-participating",
+  "url": "https://illustrationkorea.co.kr/suwon/participating/participating_12/",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-application",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 3,
+  "checkedAt": "2026-08-03T00:07:11.965Z",
+  "recheckDueAt": "2026-08-06T00:07:11.965Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "5dcdc925114dbaf1a50c98840755d7452e2a06cd96837fcbddf78cdcbc093908",
+  "payloadHash": "4e305f0bf76cffe8858fe615bcc6c0884f9752b2eca28761854ed1e50c91fc3a",
+  "previousContentHash": "5dcdc925114dbaf1a50c98840755d7452e2a06cd96837fcbddf78cdcbc093908",
+  "changeStatus": "unchanged",
+  "title": "출품안내_12월 - 일러스트레이션 - 수원",
+  "bytes": 1603061,
+  "normalizedTextBytes": 6433,
+  "cachePath": ".content-cache/official/ilko-2026-suwon-participating.html"
+}

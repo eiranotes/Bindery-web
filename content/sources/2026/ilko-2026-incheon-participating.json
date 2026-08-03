@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-incheon-participating",
+  "url": "https://illustrationkorea.co.kr/incheon/participating/participating/",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-application",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 3,
+  "checkedAt": "2026-08-03T00:07:11.656Z",
+  "recheckDueAt": "2026-08-06T00:07:11.656Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "b2988e637c6e68eab3c188ece9cd44f6e3694ab93802d97f95f03b2fd521dd40",
+  "payloadHash": "181dd91771c4d15457fc86e5af5ae429321522fc0bfb93ecfee6f142f1320950",
+  "previousContentHash": "b2988e637c6e68eab3c188ece9cd44f6e3694ab93802d97f95f03b2fd521dd40",
+  "changeStatus": "unchanged",
+  "title": "출품안내 - 일러스트레이션 - 인천",
+  "bytes": 1480982,
+  "normalizedTextBytes": 6039,
+  "cachePath": ".content-cache/official/ilko-2026-incheon-participating.html"
+}

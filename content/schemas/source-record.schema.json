@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bindery.local/schemas/source-record.schema.json",
+  "title": "Bindery collected source record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "url", "publisher", "tier", "kind", "eventMasterIds", "recheckDays",
+    "checkedAt", "recheckDueAt", "availability", "robots", "httpStatus", "contentType",
+    "contentHash", "previousContentHash", "changeStatus"
+  ],
+  "properties": {
+    "id": {"type": "string"},
+    "url": {"type": "string", "format": "uri", "pattern": "^https://"},
+    "publisher": {"type": "string"},
+    "tier": {"enum": ["S1", "S2", "S3", "S4", "S5"]},
+    "kind": {"type": "string"},
+    "eventMasterIds": {"type": "array", "items": {"type": "string"}},
+    "recheckDays": {"type": "integer", "minimum": 1},
+    "checkedAt": {"type": "string", "format": "date-time"},
+    "recheckDueAt": {"type": "string", "format": "date-time"},
+    "availability": {"enum": ["accessible", "robots-blocked", "http-error", "fetch-error"]},
+    "robots": {"enum": ["allowed", "blocked", "unavailable"]},
+    "httpStatus": {"type": ["integer", "null"]},
+    "contentType": {"type": ["string", "null"]},
+    "contentHash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "payloadHash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "previousContentHash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "changeStatus": {"enum": ["new", "changed", "unchanged", "blocked", "error"]},
+    "title": {"type": ["string", "null"]},
+    "bytes": {"type": "integer", "minimum": 0},
+    "normalizedTextBytes": {"type": ["integer", "null"], "minimum": 0},
+    "cachePath": {"type": ["string", "null"]},
+    "error": {"type": "string"}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "ilko-2026-brochure",
+  "url": "https://d315x4xj2fs2tq.cloudfront.net/wp-content/uploads/sites/9/2026/04/30195104/2026-illustration-korea_brochure.pdf",
+  "publisher": "일러스트코리아 사무국",
+  "tier": "S1",
+  "kind": "official-pdf",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 30,
+  "checkedAt": "2026-08-03T00:07:11.132Z",
+  "recheckDueAt": "2026-09-02T00:07:11.132Z",
+  "availability": "accessible",
+  "robots": "unavailable",
+  "httpStatus": 200,
+  "contentType": "application/pdf",
+  "contentHash": "6c49f43f8d41c031bdfc98b4e117f791367e986cc563d744dfa6a83d33fb20e3",
+  "payloadHash": "6c49f43f8d41c031bdfc98b4e117f791367e986cc563d744dfa6a83d33fb20e3",
+  "previousContentHash": "6c49f43f8d41c031bdfc98b4e117f791367e986cc563d744dfa6a83d33fb20e3",
+  "changeStatus": "unchanged",
+  "title": null,
+  "bytes": 5265896,
+  "normalizedTextBytes": null,
+  "cachePath": ".content-cache/official/ilko-2026-brochure.pdf"
+}

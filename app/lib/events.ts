@@ -6,23 +6,35 @@ import type {
 
 const day = 24 * 60 * 60 * 1000;
 
+function eventTime(value: string, endOfDay = false): number {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${value}T${endOfDay ? "23:59:59" : "00:00:00"}+09:00`).getTime();
+  }
+  return new Date(value).getTime();
+}
+
 export function deriveEventStatus(
   event: EventEdition,
   now = new Date(),
 ): EventStatus {
   const current = now.getTime();
-  const applicationOpen = new Date(event.applicationOpen).getTime();
-  const deadline = new Date(event.applicationDeadline).getTime();
-  const start = new Date(event.startDate).getTime();
-  const end = new Date(event.endDate).getTime();
+  const applicationOpen = eventTime(event.applicationOpen);
+  const deadline = eventTime(event.applicationDeadline, true);
+  const start = eventTime(event.startDate);
+  const end = eventTime(event.endDate, true);
+  const deadlineIsFinal = (event.applicationDeadlineKind ?? "final") === "final";
 
   if (current > end) return "ended";
-  if (current > deadline && current < start && start - current <= 14 * day) {
+  if (current >= start) return "ongoing";
+  if (event.applicationStatus === "closed") {
+    return start - current <= 14 * day ? "soon" : "closed";
+  }
+  if (deadlineIsFinal && current > deadline && start - current <= 14 * day) {
     return "soon";
   }
-  if (current > deadline) return "closed";
+  if (deadlineIsFinal && current > deadline) return "closed";
   if (current < applicationOpen) return "upcoming";
-  if (deadline - current <= 14 * day) return "urgent";
+  if (current <= deadline && deadline - current <= 14 * day) return "urgent";
   return "open";
 }
 
@@ -33,9 +45,27 @@ export function daysUntilDeadline(
   return Math.max(
     0,
     Math.ceil(
-      (new Date(event.applicationDeadline).getTime() - now.getTime()) / day,
+      (eventTime(event.applicationDeadline, true) - now.getTime()) / day,
     ),
   );
+}
+
+export function nextEventMilestone(event: EventEdition, now = new Date()) {
+  const deadline = eventTime(event.applicationDeadline, true);
+  if (deadline >= now.getTime()) {
+    return {
+      date: event.applicationDeadline,
+      days: daysUntilDeadline(event, now),
+      label: event.applicationDeadlineLabel ?? "접수 마감",
+      kind: "application" as const,
+    };
+  }
+  return {
+    date: event.startDate,
+    days: daysUntilEvent(event, now),
+    label: "행사 시작",
+    kind: "event" as const,
+  };
 }
 
 export function daysUntilEvent(
@@ -44,7 +74,7 @@ export function daysUntilEvent(
 ): number {
   return Math.max(
     0,
-    Math.ceil((new Date(event.startDate).getTime() - now.getTime()) / day),
+    Math.ceil((eventTime(event.startDate) - now.getTime()) / day),
   );
 }
 
@@ -86,10 +116,7 @@ export function filterEvents(
     const rightIsPast = rightStatus === "ended" ? 1 : 0;
 
     if (leftIsPast !== rightIsPast) return leftIsPast - rightIsPast;
-    return (
-      new Date(left.applicationDeadline).getTime() -
-      new Date(right.applicationDeadline).getTime()
-    );
+    return eventTime(nextEventMilestone(left, now).date, true) - eventTime(nextEventMilestone(right, now).date, true);
   });
 }
 
@@ -150,6 +177,7 @@ export const statusLabels: Record<EventStatus, string> = {
   urgent: "마감 임박",
   closed: "접수 마감",
   soon: "개최 임박",
+  ongoing: "진행 중",
   ended: "종료",
 };
 

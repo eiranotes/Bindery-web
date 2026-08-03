@@ -4,8 +4,10 @@ import type {
   NewsItem,
   Note,
 } from "./types.ts";
+import { generatedEvents } from "./generated/events.ts";
 
-export const events: EventEdition[] = [
+/** Product-validation fixtures retained for tests and migration reference only. */
+export const exampleEvents: EventEdition[] = [
   {
     id: "illustar-2026-winter",
     slug: "illustar-fair",
@@ -560,6 +562,7 @@ export const newsItems: NewsItem[] = [
   },
 ];
 
+export const events: EventEdition[] = generatedEvents;
 export const regions = ["전체", ...new Set(events.map((event) => event.region))];
 export const genres = ["전체", ...new Set(events.map((event) => event.genre))];
 export const scales = ["전체", ...new Set(events.map((event) => event.scale))];

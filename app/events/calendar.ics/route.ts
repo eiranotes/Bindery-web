@@ -16,6 +16,30 @@ function utc(value: string) {
     .replace(/\.\d{3}Z$/, "Z");
 }
 
+function isDateOnly(value: string) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function compactDate(value: string) {
+  return value.replaceAll("-", "");
+}
+
+function nextDate(value: string) {
+  const date = new Date(`${value}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function icsDates(start: string, end = start) {
+  if (isDateOnly(start) && isDateOnly(end)) {
+    return [
+      `DTSTART;VALUE=DATE:${compactDate(start)}`,
+      `DTEND;VALUE=DATE:${compactDate(nextDate(end))}`,
+    ];
+  }
+  return [`DTSTART:${utc(start)}`, `DTEND:${utc(end)}`];
+}
+
 export function GET(request: Request) {
   const host = new URL(request.url).origin;
   const entries = events.flatMap((event) => [
@@ -23,9 +47,8 @@ export function GET(request: Request) {
       "BEGIN:VEVENT",
       `UID:${event.id}-deadline@bindery`,
       `DTSTAMP:${utc(new Date().toISOString())}`,
-      `DTSTART:${utc(event.applicationDeadline)}`,
-      `DTEND:${utc(event.applicationDeadline)}`,
-      `SUMMARY:${escapeIcs(`${event.shortName} 신청 마감`)}`,
+      ...icsDates(event.applicationDeadline),
+      `SUMMARY:${escapeIcs(`${event.shortName} ${event.applicationDeadlineLabel ?? "신청 마감"}`)}`,
       `DESCRIPTION:${escapeIcs("신청 전 공식 원문을 확인하세요.")}`,
       `URL:${host}/events/${event.slug}/${event.edition}`,
       "END:VEVENT",
@@ -34,8 +57,7 @@ export function GET(request: Request) {
       "BEGIN:VEVENT",
       `UID:${event.id}-event@bindery`,
       `DTSTAMP:${utc(new Date().toISOString())}`,
-      `DTSTART:${utc(event.startDate)}`,
-      `DTEND:${utc(event.endDate)}`,
+      ...icsDates(event.startDate, event.endDate),
       `SUMMARY:${escapeIcs(event.name)}`,
       `LOCATION:${escapeIcs(`${event.venue}, ${event.address}`)}`,
       `URL:${host}/events/${event.slug}/${event.edition}`,

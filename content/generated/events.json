@@ -1,0 +1,188 @@
+[
+  {
+    "id": "illustration-korea-2026-seoul-at",
+    "slug": "illustration-korea",
+    "edition": "2026-seoul-at",
+    "name": "2026 서울 일러스트코리아 (aT센터)",
+    "shortName": "서울 일러스트코리아 aT",
+    "organizer": "일러스트코리아 사무국 · ㈜메쎄이상",
+    "region": "서울",
+    "venue": "aT센터",
+    "address": "서울특별시 서초구 강남대로 27",
+    "startDate": "2026-09-04",
+    "endDate": "2026-09-06",
+    "applicationOpen": "2026-06-12",
+    "applicationDeadline": "2026-07-13",
+    "applicationDeadlineKind": "early-bird",
+    "applicationDeadlineLabel": "조기 신청 할인 마감",
+    "applicationStatus": "capacity",
+    "boothFee": 550000,
+    "boothFeeIncludesVat": false,
+    "boothSize": "2m × 2m",
+    "boothCount": null,
+    "selection": "선착순",
+    "businessRequired": null,
+    "genre": "복합",
+    "scale": "확인 중",
+    "sourceUrl": "https://illustrationkorea.co.kr/at/participating/",
+    "sourceLabel": "일러스트코리아 공식 출품 안내",
+    "sourceCount": 5,
+    "evidenceCoverage": 100,
+    "dataStatus": "official",
+    "verifiedAt": "2026-08-03",
+    "summary": "일러스트·캐릭터·디자인 문구·창작 굿즈·북아트 작가가 참여하는 일러스트코리아 서울 aT센터 회차입니다.",
+    "application": {
+      "documents": [
+        "온라인 참가신청서",
+        "포트폴리오 등록"
+      ],
+      "resalePolicy": null,
+      "refundPolicy": "주최 승인 전 위약금 없음. 승인 후에는 개최일까지 남은 기간에 따라 총 참가비의 50%, 70%, 100% 위약금이 적용됩니다.",
+      "note": "최종 신청기한은 고정 날짜가 아니라 부스 마감 시까지입니다."
+    },
+    "onsite": {
+      "loadIn": null,
+      "loadOut": null,
+      "electricity": "B·C타입은 기본 전기 1kW와 콘센트 1개 제공, A타입과 추가 용량은 유료 신청",
+      "wallUse": null,
+      "parking": null,
+      "logistics": null,
+      "fixtures": "A타입은 데스크 1·의자 1·암스팟 1, B·C타입은 데스크 1·의자 1·암스팟 2 제공"
+    },
+    "history": [
+      {
+        "edition": "2026 서울 일러스트코리아 (aT센터)",
+        "dates": "09.04–09.06",
+        "venue": "aT센터",
+        "boothFee": 550000,
+        "booths": null,
+        "selection": "선착순"
+      }
+    ],
+    "reviewCount": 0
+  },
+  {
+    "id": "illustration-korea-2026-incheon",
+    "slug": "illustration-korea",
+    "edition": "2026-incheon",
+    "name": "2026 인천 일러스트코리아",
+    "shortName": "인천 일러스트코리아",
+    "organizer": "일러스트코리아 사무국 · ㈜메쎄이상",
+    "region": "인천",
+    "venue": "송도컨벤시아",
+    "address": "인천광역시 연수구 센트럴로 123",
+    "startDate": "2026-10-30",
+    "endDate": "2026-11-01",
+    "applicationOpen": "2026-04-02",
+    "applicationDeadline": "2026-08-30",
+    "applicationDeadlineKind": "early-bird",
+    "applicationDeadlineLabel": "조기 신청 할인 마감",
+    "applicationStatus": "capacity",
+    "boothFee": 550000,
+    "boothFeeIncludesVat": false,
+    "boothSize": "2m × 2m",
+    "boothCount": null,
+    "selection": "선착순",
+    "businessRequired": null,
+    "genre": "복합",
+    "scale": "확인 중",
+    "sourceUrl": "https://illustrationkorea.co.kr/incheon/participating/participating/",
+    "sourceLabel": "일러스트코리아 공식 출품 안내",
+    "sourceCount": 5,
+    "evidenceCoverage": 100,
+    "dataStatus": "official",
+    "verifiedAt": "2026-08-03",
+    "summary": "일러스트·캐릭터·디자인 문구·창작 굿즈·북아트 작가가 참여하는 일러스트코리아 인천 회차입니다.",
+    "application": {
+      "documents": [
+        "온라인 참가신청서",
+        "포트폴리오 등록"
+      ],
+      "resalePolicy": null,
+      "refundPolicy": "주최 승인 전 위약금 없음. 승인 후에는 개최일까지 남은 기간에 따라 총 참가비의 50%, 70%, 100% 위약금이 적용됩니다.",
+      "note": "최종 신청기한은 고정 날짜가 아니라 부스 마감 시까지입니다."
+    },
+    "onsite": {
+      "loadIn": null,
+      "loadOut": null,
+      "electricity": "B·C타입은 기본 전기 1kW와 콘센트 1개 제공, A타입과 추가 용량은 유료 신청",
+      "wallUse": null,
+      "parking": null,
+      "logistics": null,
+      "fixtures": "A타입은 데스크 1·의자 1·암스팟 1, B·C타입은 데스크 1·의자 1·암스팟 2 제공"
+    },
+    "history": [
+      {
+        "edition": "2026 인천 일러스트코리아",
+        "dates": "10.30–11.01",
+        "venue": "송도컨벤시아",
+        "boothFee": 550000,
+        "booths": null,
+        "selection": "선착순"
+      }
+    ],
+    "reviewCount": 0
+  },
+  {
+    "id": "illustration-korea-2026-suwon",
+    "slug": "illustration-korea",
+    "edition": "2026-suwon",
+    "name": "2026 수원 일러스트코리아",
+    "shortName": "수원 일러스트코리아",
+    "organizer": "일러스트코리아 사무국 · ㈜메쎄이상",
+    "region": "경기",
+    "venue": "수원메쎄 Hall 1",
+    "address": "경기도 수원시 권선구 세화로134번길 37",
+    "startDate": "2026-12-11",
+    "endDate": "2026-12-13",
+    "applicationOpen": "2026-03-25",
+    "applicationDeadline": "2026-10-11",
+    "applicationDeadlineKind": "early-bird",
+    "applicationDeadlineLabel": "조기 신청 할인 마감",
+    "applicationStatus": "capacity",
+    "boothFee": 550000,
+    "boothFeeIncludesVat": false,
+    "boothSize": "2m × 2m",
+    "boothCount": null,
+    "selection": "선착순",
+    "businessRequired": null,
+    "genre": "복합",
+    "scale": "확인 중",
+    "sourceUrl": "https://illustrationkorea.co.kr/suwon/participating/participating_12/",
+    "sourceLabel": "일러스트코리아 공식 출품 안내",
+    "sourceCount": 5,
+    "evidenceCoverage": 100,
+    "dataStatus": "official",
+    "verifiedAt": "2026-08-03",
+    "summary": "일러스트·캐릭터·디자인 문구·창작 굿즈·북아트 작가가 참여하는 일러스트코리아 수원 회차입니다.",
+    "application": {
+      "documents": [
+        "온라인 참가신청서",
+        "포트폴리오 등록"
+      ],
+      "resalePolicy": null,
+      "refundPolicy": "주최 승인 전 위약금 없음. 승인 후에는 개최일까지 남은 기간에 따라 총 참가비의 50%, 70%, 100% 위약금이 적용됩니다.",
+      "note": "최종 신청기한은 고정 날짜가 아니라 부스 소진 시까지입니다."
+    },
+    "onsite": {
+      "loadIn": null,
+      "loadOut": null,
+      "electricity": "B·C타입은 기본 전기 1kW와 콘센트 1개 제공, A타입과 추가 용량은 유료 신청",
+      "wallUse": null,
+      "parking": null,
+      "logistics": null,
+      "fixtures": "A타입은 데스크 1·의자 1·암스팟 1, B·C타입은 데스크 1·의자 1·암스팟 2 제공"
+    },
+    "history": [
+      {
+        "edition": "2026 수원 일러스트코리아",
+        "dates": "12.11–12.13",
+        "venue": "수원메쎄 Hall 1",
+        "boothFee": 550000,
+        "booths": null,
+        "selection": "선착순"
+      }
+    ],
+    "reviewCount": 0
+  }
+]

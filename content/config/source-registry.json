@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "userAgent": "BinderyContentCollector/0.1 (+local editorial research)",
+  "sources": [
+    {
+      "id": "ilko-2026-series-home",
+      "url": "https://illustrationkorea.co.kr/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-home",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 7
+    },
+    {
+      "id": "ilko-2026-brochure",
+      "url": "https://d315x4xj2fs2tq.cloudfront.net/wp-content/uploads/sites/9/2026/04/30195104/2026-illustration-korea_brochure.pdf",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-pdf",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 30
+    },
+    {
+      "id": "ilko-2026-at-home",
+      "url": "https://illustrationkorea.co.kr/at/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-edition",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 7
+    },
+    {
+      "id": "ilko-2026-at-participating",
+      "url": "https://illustrationkorea.co.kr/at/participating/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-application",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 3
+    },
+    {
+      "id": "ilko-2026-incheon-home",
+      "url": "https://illustrationkorea.co.kr/incheon/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-edition",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 7
+    },
+    {
+      "id": "ilko-2026-incheon-participating",
+      "url": "https://illustrationkorea.co.kr/incheon/participating/participating/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-application",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 3
+    },
+    {
+      "id": "ilko-2026-suwon-home",
+      "url": "https://illustrationkorea.co.kr/suwon/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-edition",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 7
+    },
+    {
+      "id": "ilko-2026-suwon-participating",
+      "url": "https://illustrationkorea.co.kr/suwon/participating/participating_12/",
+      "publisher": "일러스트코리아 사무국",
+      "tier": "S1",
+      "kind": "official-application",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 3
+    },
+    {
+      "id": "venue-at-center",
+      "url": "https://www.at.or.kr/contents/acko364000/view.action",
+      "publisher": "한국농수산식품유통공사",
+      "tier": "S2",
+      "kind": "official-venue",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 90
+    },
+    {
+      "id": "venue-songdo-convensia",
+      "url": "https://songdoconvensia.visitincheon.or.kr/",
+      "publisher": "인천관광공사",
+      "tier": "S2",
+      "kind": "official-venue",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 90
+    },
+    {
+      "id": "venue-suwon-messe",
+      "url": "https://suwonmesse.com/suwonmesse/contact/",
+      "publisher": "수원메쎄",
+      "tier": "S2",
+      "kind": "official-venue",
+      "eventMasterIds": ["illustration-korea"],
+      "recheckDays": 90
+    }
+  ]
+}

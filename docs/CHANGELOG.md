@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-03
+
+- Added an allowlisted official-content collector with robots/HTTP checks,
+  local raw caching, normalized SHA-256 records, recheck scheduling, field-level
+  evidence, deterministic site generation, and human-readable Markdown reports.
+- Replaced the five public event fixtures with three editor-checked 2026
+  Illustration Korea editions covering Seoul aT, Incheon, and Suwon from 11
+  accessible official organizer/venue sources.
+- Preserved official uncertainty: capacity-based final deadlines stay distinct
+  from early discounts, VAT is explicit, and unknown booth counts, business
+  requirements, and logistics render as missing instead of zero or false.
+- Added schema files, generated-file staleness checks, publication leak guards,
+  all-day ICS output, milestone-aware status/sorting, and focused content,
+  domain, rendered-route, feed, and responsive coverage.
+- Added a disabled-by-default official X API review collector, local JSONL
+  import/reporting, hashed author IDs, rule-based topics, and ArchiveBox URL
+  handoff. Local review data is ignored by Git and excluded from official
+  generation and reports.
+- Added the three official event IDs to the append-only Community allowlist
+  while preserving existing legacy event references.
+
 ## 2026-07-28
 
 - Shortened introductions, home index labels, and Community helper copy across

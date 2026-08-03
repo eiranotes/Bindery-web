@@ -6,12 +6,12 @@ import { DDay } from "../../../components/DDay";
 import { StatusStamp } from "../../../components/StatusStamp";
 import { events } from "../../../lib/data.ts";
 import {
-  daysUntilDeadline,
   deriveEventStatus,
   formatCurrency,
   formatDate,
   formatDateRange,
   getEventByPath,
+  nextEventMilestone,
 } from "../../../lib/events.ts";
 
 type EventDetailProps = {
@@ -51,7 +51,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   const event = getEventByPath(slug, edition);
   if (!event) notFound();
   const status = deriveEventStatus(event);
-  const deadlineDays = daysUntilDeadline(event);
+  const milestone = nextEventMilestone(event);
 
   const eventJsonLd = {
     "@context": "https://schema.org",
@@ -92,8 +92,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           </p>
         </div>
         <div className="detail-dday">
-          <DDay days={deadlineDays} label={`${event.shortName} 신청`} />
-          <span className="detail-dday__label">신청 마감까지</span>
+          <DDay days={milestone.days} label={`${event.shortName} ${milestone.label}`} />
+          <span className="detail-dday__label">{milestone.label}까지</span>
         </div>
       </header>
 
@@ -103,8 +103,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           {event.sourceLabel} 확인 ↗
         </a>
         <span>
-          {event.verifiedAt} 확인 · 바인더리가 정리한 예시입니다. 신청 전 반드시
-          원문을 확인하세요.
+          {event.verifiedAt} 확인 · 공식 출처 {event.sourceCount ?? 1}건을 연결했습니다.
+          신청 전 반드시 회차 원문을 확인하세요.
         </span>
       </aside>
 
@@ -129,15 +129,15 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </div>
             <div>
               <dt>재판매 기준</dt>
-              <dd>{event.application.resalePolicy}</dd>
+              <dd><InfoValue value={event.application.resalePolicy} /></dd>
             </div>
             <div>
               <dt>환불 기준</dt>
-              <dd>{event.application.refundPolicy}</dd>
+              <dd><InfoValue value={event.application.refundPolicy} /></dd>
             </div>
             <div>
               <dt>메모</dt>
-              <dd>{event.application.note}</dd>
+              <dd><InfoValue value={event.application.note} /></dd>
             </div>
           </dl>
         </section>
@@ -212,7 +212,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                         </small>
                       )}
                   </td>
-                  <td>{history.booths}</td>
+                  <td><InfoValue value={history.booths === null ? null : history.booths.toLocaleString("ko-KR")} /></td>
                   <td>{history.selection}</td>
                 </tr>
               ))}
@@ -223,31 +223,13 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
           <section className="review-boundary" aria-labelledby="review-title">
         <div className="section-line-heading">
-          <h2 id="review-title">참가 후기 요약</h2>
-          <span>N = {event.reviewCount}</span>
+          <h2 id="review-title">참가 후기 참고 경계</h2>
+          <span>LOCAL ONLY</span>
         </div>
-        {event.reviewCount >= 5 && event.reviewAggregate ? (
-          <dl>
-            <div>
-              <dt>비용 대비 만족</dt>
-              <dd>{event.reviewAggregate.valueForFee.toFixed(1)} / 5</dd>
-            </div>
-            <div>
-              <dt>방문객 밀도</dt>
-              <dd>{event.reviewAggregate.visitorDensity.toFixed(1)} / 5</dd>
-            </div>
-            <div>
-              <dt>재참가 의향</dt>
-              <dd>{event.reviewAggregate.returnIntent}%</dd>
-            </div>
-          </dl>
-        ) : (
-          <p>
-            응답이 5건 이상 모이면 익명 집계만 공개합니다. 현재 응답{" "}
-            {event.reviewCount}건은 개인을 추정할 수 있어 수치를 표시하지
-            않습니다.
-          </p>
-        )}
+        <p>
+          참가자·판매자 후기는 운영 참고용 로컬 저장소에만 보관하며 이 화면에는
+          원문, 작성자, 건수, 평가를 게시하지 않습니다.
+        </p>
           </section>
         </div>
 
@@ -255,9 +237,9 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           <h2 id="detail-side-title">한눈에</h2>
           <dl>
             <div>
-              <dt>신청 마감</dt>
+              <dt>{milestone.label}</dt>
               <dd>
-                {formatDate(event.applicationDeadline, {
+                {formatDate(milestone.date, {
                   month: "2-digit",
                   day: "2-digit",
                 })}
@@ -273,7 +255,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </div>
             <div>
               <dt>사업자</dt>
-              <dd>{event.businessRequired ? "필요" : "필수 아님"}</dd>
+              <dd>{event.businessRequired === null ? "확인 중" : event.businessRequired ? "필요" : "필수 아님"}</dd>
             </div>
             <div>
               <dt>선정 방식</dt>

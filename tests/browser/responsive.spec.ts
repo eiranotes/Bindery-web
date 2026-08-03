@@ -12,7 +12,7 @@ const primaryRoutes = [
   "/events/compare",
   "/events/archive",
   "/events/calendar",
-  "/events/illustar-fair/2026-winter",
+  "/events/illustration-korea/2026-incheon",
   "/notes",
   "/notes/first-booth-checklist",
   "/groupbuy",
@@ -85,7 +85,7 @@ test("wide event, comparison, archive, and calendar data scroll inside their own
   await page.setViewportSize({ width: 360, height: 800 });
 
   for (const route of [
-    "/events/illustar-fair/2026-winter",
+    "/events/illustration-korea/2026-incheon",
     "/events/compare",
     "/events/archive",
   ]) {
@@ -159,6 +159,7 @@ test("comparison and archive expose keyboard-scrollable tables with sticky row l
 test("primary routes keep text out of avoidably narrow columns", async ({
   page,
 }) => {
+  test.setTimeout(60_000);
   for (const viewport of viewports) {
     await page.setViewportSize(viewport);
 

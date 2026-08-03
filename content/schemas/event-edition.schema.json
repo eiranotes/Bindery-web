@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bindery.local/schemas/event-edition.schema.json",
+  "title": "Bindery publishable event edition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "masterId", "slug", "edition", "contentStatus", "name", "shortName",
+    "region", "venueId", "venue", "address", "startDate", "endDate", "genre",
+    "scale", "boothCount", "summary", "application", "onsite", "primarySourceId",
+    "sourceIds", "verifiedAt", "fieldEvidence"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+    "masterId": {"type": "string"},
+    "slug": {"type": "string"},
+    "edition": {"type": "string"},
+    "contentStatus": {"const": "editor_checked"},
+    "name": {"type": "string", "minLength": 1},
+    "shortName": {"type": "string", "minLength": 1},
+    "region": {"type": "string", "minLength": 1},
+    "venueId": {"type": "string"},
+    "venue": {"type": "string", "minLength": 1},
+    "address": {"type": "string", "minLength": 1},
+    "startDate": {"type": "string", "format": "date"},
+    "endDate": {"type": "string", "format": "date"},
+    "genre": {"enum": ["문구", "일러스트", "서브컬처", "복합"]},
+    "scale": {"enum": ["소형", "중형", "대형", "확인 중"]},
+    "boothCount": {"type": ["integer", "null"], "minimum": 0},
+    "summary": {"type": "string", "minLength": 1},
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["openConfirmedAt", "status", "deadline", "selection", "businessRequired", "documents", "resalePolicy", "refundPolicy", "note", "boothOptions"],
+      "properties": {
+        "openConfirmedAt": {"type": "string", "format": "date"},
+        "status": {"enum": ["scheduled", "open", "capacity", "closed"]},
+        "deadline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "at", "label"],
+          "properties": {
+            "kind": {"enum": ["final", "early-bird", "capacity"]},
+            "at": {"type": "string", "format": "date"},
+            "label": {"type": "string", "minLength": 1}
+          }
+        },
+        "selection": {"enum": ["선착순", "추첨", "심사"]},
+        "businessRequired": {"type": ["boolean", "null"]},
+        "documents": {"type": "array", "items": {"type": "string"}},
+        "resalePolicy": {"type": ["string", "null"]},
+        "refundPolicy": {"type": ["string", "null"]},
+        "note": {"type": ["string", "null"]},
+        "boothOptions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "feeKrw", "size", "vatIncluded"],
+            "properties": {
+              "id": {"type": "string"},
+              "label": {"type": "string"},
+              "feeKrw": {"type": "integer", "minimum": 0},
+              "size": {"type": "string"},
+              "vatIncluded": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "onsite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loadIn", "loadOut", "electricity", "wallUse", "parking", "logistics", "fixtures"],
+      "properties": {
+        "loadIn": {"type": ["string", "null"]},
+        "loadOut": {"type": ["string", "null"]},
+        "electricity": {"type": ["string", "null"]},
+        "wallUse": {"type": ["string", "null"]},
+        "parking": {"type": ["string", "null"]},
+        "logistics": {"type": ["string", "null"]},
+        "fixtures": {"type": ["string", "null"]}
+      }
+    },
+    "primarySourceId": {"type": "string"},
+    "sourceIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "verifiedAt": {"type": "string", "format": "date"},
+    "fieldEvidence": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sourceId", "note"],
+          "properties": {
+            "sourceId": {"type": "string"},
+            "note": {"type": "string", "minLength": 4}
+          }
+        }
+      }
+    }
+  }
+}

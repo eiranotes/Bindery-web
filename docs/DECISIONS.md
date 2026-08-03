@@ -312,3 +312,30 @@ Source freshness, example-data status, official-link checks, permissions,
 moderation consequences, and device-local storage risks remain explicit where
 the user makes a decision. Notices use the same complete rule and sheet
 vocabulary as the rest of Bindery rather than a decorative colored side stripe.
+
+## D-029 — Official facts and local experience research use separate pipelines
+
+Publishable event data is keyed by EventMaster and EventEdition, and every
+critical field carries FieldEvidence linked to an allowlisted SourceRecord.
+S1 organizer sources may support dates, applications, fees, selection, refunds,
+and operations; S2 venue/public sources may support venue identity and address.
+Automatic fetching records source availability, normalized hashes, and recheck
+dates, but cannot promote an edition beyond `editor_checked` or invent a field.
+
+Unknown quantities and requirements remain `null`; zero and false are reserved
+for explicit official facts. A capacity-based final deadline is not replaced by
+an early-discount date. Generated JSON and TypeScript must be deterministic and
+checked for staleness before release.
+
+Participant and seller experience material is S5 and never supports a public
+event field. It is stored only under Git-ignored `content-local/reviews`, uses
+hashed author identifiers, and has no public count or aggregate. The official
+report and generator do not read the local review store; a guard blocks local
+paths, raw reviews, and nonzero review counts from publishable artifacts.
+
+X collection uses the official API only. Active but unofficial tools such as
+`twscrape` and Twikit were evaluated as implementation references but rejected
+from the runtime because they automate non-API site endpoints. ArchiveBox is a
+separate local evidence vault for already acquired public URLs, not an alternate
+X collector. Collector activation, API credentials, public use, or quotation
+requires a separate operating decision.

@@ -1,0 +1,25 @@
+{
+  "id": "venue-suwon-messe",
+  "url": "https://suwonmesse.com/suwonmesse/contact/",
+  "publisher": "수원메쎄",
+  "tier": "S2",
+  "kind": "official-venue",
+  "eventMasterIds": [
+    "illustration-korea"
+  ],
+  "recheckDays": 90,
+  "checkedAt": "2026-08-03T00:07:12.617Z",
+  "recheckDueAt": "2026-11-01T00:07:12.617Z",
+  "availability": "accessible",
+  "robots": "allowed",
+  "httpStatus": 200,
+  "contentType": "text/html",
+  "contentHash": "2c36f14e31b04f7649583e7928c686162ca86a90c728720cb58ba1a248fca7c9",
+  "payloadHash": "c6af943dc719c284b65659d87bc87a06cf286de3aafc2d383f0c27d70235cc5f",
+  "previousContentHash": "2c36f14e31b04f7649583e7928c686162ca86a90c728720cb58ba1a248fca7c9",
+  "changeStatus": "unchanged",
+  "title": "오시는 길 - 수원메쎄",
+  "bytes": 1504858,
+  "normalizedTextBytes": 2631,
+  "cachePath": ".content-cache/official/venue-suwon-messe.html"
+}

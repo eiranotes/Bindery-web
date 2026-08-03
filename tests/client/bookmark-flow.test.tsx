@@ -33,7 +33,7 @@ afterEach(() => {
 test("save, same-tab sync, binder removal, and empty guidance stay connected", async () => {
   render(
     <>
-      <BookmarkButton eventId="illustar-2026-winter" />
+      <BookmarkButton eventId="illustration-korea-2026-incheon" />
       <BinderClient />
     </>,
   );
@@ -46,7 +46,7 @@ test("save, same-tab sync, binder removal, and empty guidance stay connected", a
   const savedRegion = await screen.findByRole("region", {
     name: "꽂아 둔 행사 1",
   });
-  expect(within(savedRegion).getByText("일러스타페어 2026 겨울")).toBeTruthy();
+  expect(within(savedRegion).getByText("2026 인천 일러스트코리아")).toBeTruthy();
   const toggleButton = screen
     .getAllByRole("button", { name: "내 바인더에서 빼기" })
     .find((button) => button.hasAttribute("aria-pressed"));
@@ -100,7 +100,7 @@ test("a signed-out public reader saves a community post on this device", async (
 test("explicit merge sends local events and posts while retaining both", async () => {
   const localRecord = JSON.stringify({
     version: 1,
-    eventIds: ["illustar-2026-winter"],
+    eventIds: ["illustration-korea-2026-incheon"],
     communityPosts: [{ id: "00000000-0000-4000-8000-000000000001", title: "공개 글", boardId: "general" }],
   });
   localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
@@ -109,7 +109,7 @@ test("explicit merge sends local events and posts while retaining both", async (
   fireEvent.click(await screen.findByRole("button", { name: "계정 Binder와 합치기" }));
   await screen.findByText("2개 모두 이미 계정 Binder에 있습니다. 이 기기의 저장은 그대로 남아 있습니다.");
   expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({ items: [
-    { kind: "event", id: "illustar-2026-winter" },
+    { kind: "event", id: "illustration-korea-2026-incheon" },
     { kind: "community_post", id: "00000000-0000-4000-8000-000000000001" },
   ] });
   expect(localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(localRecord);
@@ -129,7 +129,7 @@ test("account community posts render cross-device with their board link", async 
 test("blocked storage keeps the saved item and explains why removal failed", async () => {
   window.localStorage.setItem(
     BOOKMARK_STORAGE_KEY,
-    '{"version":1,"eventIds":["illustar-2026-winter"]}',
+    '{"version":1,"eventIds":["illustration-korea-2026-incheon"]}',
   );
   vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
     throw new DOMException("Blocked", "SecurityError");
@@ -151,19 +151,19 @@ test("blocked storage keeps the saved item and explains why removal failed", asy
       "이 브라우저에서는 기기 저장소를 변경할 수 없습니다.",
     ),
   ).toBeTruthy();
-  expect(within(savedRegion).getByText("일러스타페어 2026 겨울")).toBeTruthy();
+  expect(within(savedRegion).getByText("2026 인천 일러스트코리아")).toBeTruthy();
 });
 
 test("a signed-in member explicitly merges local saves without clearing them", async () => {
   const localRecord =
-    '{"version":1,"eventIds":["illustar-2026-winter"]}';
+    '{"version":1,"eventIds":["illustration-korea-2026-incheon"]}';
   window.localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
   const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
     new Response(
       JSON.stringify({
         ok: true,
         code: "merged",
-        merged: [{ kind: "event", id: "illustar-2026-winter" }],
+        merged: [{ kind: "event", id: "illustration-korea-2026-incheon" }],
         rejected: [],
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
@@ -188,14 +188,14 @@ test("a signed-in member explicitly merges local saves without clearing them", a
     headers: { "Content-Type": "application/json" },
   });
   expect(JSON.parse(String(request?.body))).toEqual({
-    items: [{ kind: "event", id: "illustar-2026-winter" }],
+    items: [{ kind: "event", id: "illustration-korea-2026-incheon" }],
   });
   expect(window.localStorage.getItem(BOOKMARK_STORAGE_KEY)).toBe(localRecord);
 });
 
 test("a rejected account item remains local with an explicit partial result", async () => {
   const localRecord =
-    '{"version":1,"eventIds":["illustar-2026-winter"]}';
+    '{"version":1,"eventIds":["illustration-korea-2026-incheon"]}';
   window.localStorage.setItem(BOOKMARK_STORAGE_KEY, localRecord);
   vi.spyOn(globalThis, "fetch").mockResolvedValue(
     new Response(
@@ -205,7 +205,7 @@ test("a rejected account item remains local with an explicit partial result", as
         merged: [],
         rejected: [
           {
-            item: { kind: "event", id: "illustar-2026-winter" },
+            item: { kind: "event", id: "illustration-korea-2026-incheon" },
             code: "service-error",
             message: "이 항목을 계정 Binder에 저장하지 못했습니다.",
           },
@@ -232,7 +232,7 @@ test("a rejected account item remains local with an explicit partial result", as
 test("signed-out Binder stays local-only and never sends device saves", async () => {
   window.localStorage.setItem(
     BOOKMARK_STORAGE_KEY,
-    '{"version":1,"eventIds":["illustar-2026-winter"]}',
+    '{"version":1,"eventIds":["illustration-korea-2026-incheon"]}',
   );
   const fetchMock = vi.spyOn(globalThis, "fetch");
 
@@ -250,7 +250,7 @@ test("a signed-in member sees account event saves on another device", async () =
 
   render(
     <BinderClient
-      accountEventIds={["seoul-illustration-2026-v20"]}
+      accountEventIds={["illustration-korea-2026-seoul-at"]}
       syncState="signed_in"
     />,
   );
@@ -259,7 +259,7 @@ test("a signed-in member sees account event saves on another device", async () =
     name: "꽂아 둔 행사 1",
   });
   expect(
-    within(savedRegion).getByText("서울일러스트레이션페어 V.20"),
+    within(savedRegion).getByText("2026 서울 일러스트코리아 (aT센터)"),
   ).toBeTruthy();
   expect(
     within(savedRegion).queryByRole("button", {

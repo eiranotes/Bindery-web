@@ -5,9 +5,9 @@
 운영 지식 아카이브입니다. Notes, News, Groupbuy와 Community는 행사 판단과
 준비를 보조하는 정보 계층으로 연결됩니다.
 
-이 저장소는 GPT Sites용 vinext/React 구현입니다. 현재 공개 데이터는
-제품 검증용 예시이며, 신청·비용·일정의 최종 판단은 각 화면에서 연결하는
-공식 원문을 기준으로 해야 합니다.
+이 저장소는 GPT Sites용 vinext/React 구현입니다. 행사 화면은 허용 목록의 공식
+원문을 수집·해시하고 필드별 근거를 편집자가 확인한 생성 데이터를 사용합니다.
+신청·비용·일정의 최종 판단은 각 화면에서 연결하는 공식 원문을 기준으로 해야 합니다.
 
 제품 전략과 단계별 데이터·운영 계획은
 [`docs/SITE_STRATEGY_AND_ROADMAP.md`](docs/SITE_STRATEGY_AND_ROADMAP.md)를
@@ -50,6 +50,20 @@ npm test
 npm run build
 npm run test:community-db
 ```
+
+### 행사 콘텐츠 파이프라인
+
+```bash
+npm run content:pipeline
+npm run content:guard
+npm run content:check-generated
+```
+
+`content/`에는 공개 가능한 공식 사실, 출처 레코드, 필드 근거와 Markdown 수집
+보고서만 둡니다. 원문 캐시는 `.content-cache/`, 참가자·판매자 후기 연구 자료는
+`content-local/reviews/`에 두며 두 경로 모두 Git과 사이트 생성 입력에서 제외됩니다.
+신뢰도 등급, X 공식 API 수집기, ArchiveBox 로컬 보관 절차는
+[`docs/CONTENT_PIPELINE.md`](docs/CONTENT_PIPELINE.md)를 따릅니다.
 
 `npm test`는 360×800, 768×1024, 1280×900 브라우저 검증도 포함합니다.
 macOS에서는 설치된 Google Chrome을 사용하고, 다른 환경에서는 먼저
@@ -147,7 +161,7 @@ Binder 경계가 소스와 실제 로컬 PostgreSQL 테스트까지 구축됐습
 ## 제품 경계
 
 - 실제 결제, 정산, 환불, 분쟁 조정은 제공하지 않습니다.
-- 후기 응답은 5건 이상일 때만 익명 집계로 표시합니다.
+- 참가자·판매자 후기는 현재 게시·집계하지 않고 로컬 운영 참고 자료로만 보관합니다.
 - 커뮤니티는 자유게시판이지만 정보 분류와 출처 맥락을 우선합니다. 작가
   게시판은 서버가 임시 승인 또는 검수 완료 상태를 확인하기 전까지 읽기·
   쓰기를 모두 잠급니다. 모두의 게시판은 공개 열람, 정상 회원 작성·댓글·

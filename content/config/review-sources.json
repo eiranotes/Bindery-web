@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "storage": "content-local/reviews",
+  "publicOutput": false,
+  "collectors": [
+    {
+      "id": "x-official-recent-search",
+      "provider": "x-api-v2",
+      "enabled": false,
+      "eventMasterId": "illustration-korea",
+      "query": "(\"일러스트코리아\" OR \"서울 일러스트코리아\" OR \"인천 일러스트코리아\" OR \"수원 일러스트코리아\") (참가 OR 부스 OR 셀러 OR 작가) lang:ko -is:retweet",
+      "maxResults": 100,
+      "retentionDays": 365
+    }
+  ]
+}

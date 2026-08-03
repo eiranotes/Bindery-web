@@ -1,0 +1,69 @@
+{
+  "id": "illustration-korea-2026-suwon",
+  "masterId": "illustration-korea",
+  "slug": "illustration-korea",
+  "edition": "2026-suwon",
+  "contentStatus": "editor_checked",
+  "name": "2026 수원 일러스트코리아",
+  "shortName": "수원 일러스트코리아",
+  "region": "경기",
+  "venueId": "suwon-messe",
+  "venue": "수원메쎄 Hall 1",
+  "address": "경기도 수원시 권선구 세화로134번길 37",
+  "startDate": "2026-12-11",
+  "endDate": "2026-12-13",
+  "genre": "복합",
+  "scale": "확인 중",
+  "boothCount": null,
+  "summary": "일러스트·캐릭터·디자인 문구·창작 굿즈·북아트 작가가 참여하는 일러스트코리아 수원 회차입니다.",
+  "application": {
+    "openConfirmedAt": "2026-03-25",
+    "status": "capacity",
+    "deadline": {
+      "kind": "early-bird",
+      "at": "2026-10-11",
+      "label": "조기 신청 할인 마감"
+    },
+    "selection": "선착순",
+    "businessRequired": null,
+    "documents": ["온라인 참가신청서", "포트폴리오 등록"],
+    "resalePolicy": null,
+    "refundPolicy": "주최 승인 전 위약금 없음. 승인 후에는 개최일까지 남은 기간에 따라 총 참가비의 50%, 70%, 100% 위약금이 적용됩니다.",
+    "note": "최종 신청기한은 고정 날짜가 아니라 부스 소진 시까지입니다.",
+    "boothOptions": [
+      {"id": "half", "label": "A타입 Half부스", "feeKrw": 550000, "size": "2m × 2m", "vatIncluded": false},
+      {"id": "full", "label": "B타입 Full부스", "feeKrw": 750000, "size": "2m × 2m", "vatIncluded": false},
+      {"id": "company", "label": "C타입 Company부스", "feeKrw": 1250000, "size": "3m × 2m", "vatIncluded": false},
+      {"id": "space-only", "label": "독립부스", "feeKrw": 1150000, "size": "3m × 2m", "vatIncluded": false}
+    ]
+  },
+  "onsite": {
+    "loadIn": null,
+    "loadOut": null,
+    "electricity": "B·C타입은 기본 전기 1kW와 콘센트 1개 제공, A타입과 추가 용량은 유료 신청",
+    "wallUse": null,
+    "parking": null,
+    "logistics": null,
+    "fixtures": "A타입은 데스크 1·의자 1·암스팟 1, B·C타입은 데스크 1·의자 1·암스팟 2 제공"
+  },
+  "primarySourceId": "ilko-2026-suwon-participating",
+  "sourceIds": [
+    "ilko-2026-series-home",
+    "ilko-2026-brochure",
+    "ilko-2026-suwon-home",
+    "ilko-2026-suwon-participating",
+    "venue-suwon-messe"
+  ],
+  "verifiedAt": "2026-08-03",
+  "fieldEvidence": {
+    "dates": [{"sourceId": "ilko-2026-series-home", "note": "수원 회차는 2026년 12월 11일부터 13일까지로 공지됨"}],
+    "venue": [{"sourceId": "ilko-2026-brochure", "note": "수원메쎄 Hall 1 개최로 기재됨"}],
+    "address": [{"sourceId": "venue-suwon-messe", "note": "수원메쎄 공식 안내에 경기 수원시 세화로134번길 37로 기재됨"}],
+    "applicationStatus": [{"sourceId": "ilko-2026-suwon-participating", "note": "온라인 선착순 접수이며 부스 소진 시까지 모집"}],
+    "applicationMilestone": [{"sourceId": "ilko-2026-suwon-participating", "note": "10월 11일까지 신청 시 조기 할인"}],
+    "boothFee": [{"sourceId": "ilko-2026-suwon-participating", "note": "VAT 별도 A타입 55만원부터 독립부스 115만원까지"}],
+    "selection": [{"sourceId": "ilko-2026-suwon-participating", "note": "온라인 신청, 선착순 마감"}],
+    "refundPolicy": [{"sourceId": "ilko-2026-suwon-participating", "note": "승인 뒤 개최 시점에 따라 50%, 70%, 100% 위약금"}],
+    "fixtures": [{"sourceId": "ilko-2026-suwon-participating", "note": "부스 타입별 데스크, 의자, 조명, 전기 제공 내역"}]
+  }
+}
