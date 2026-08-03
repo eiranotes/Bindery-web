@@ -94,6 +94,15 @@
   workflow with explicit non-functional server/user-action boundaries.
 - [x] Deploy the public Pages preview and smoke-test the hosted home, event list,
   comparison, archive, ICS, desktop, and mobile surfaces.
+- [x] Create the WebGPT `Bindery-web` project, upload the product/design/source
+  brief, and obtain a fresh Pro-model implementation review.
+- [x] Make event search, comparison, edition archive, and preparation Notes the
+  four primary destinations; demote Community and hide Groupbuy from discovery.
+- [x] Replace the theme selector with an honest Korean/English/Japanese/Chinese
+  shell locale skeleton and preserve Korean as the untranslated content language.
+- [x] Reduce the UI to Surface, Ink, Structure Blue, and Deadline Pink base roles.
+- [x] Re-run content, type, build, 108 Node, 29 client, 31 browser, static Pages,
+  and 360/768/1280 visual gates for the event-first release.
 - [ ] Restore owner management access to the existing GPT Sites project and
   deploy the current `main` without changing its owner-only access policy.
 - [ ] Add an approved X account cookie interactively to the ignored twscrape DB

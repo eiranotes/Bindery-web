@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: "공동구매 현황",
   description:
     "문구·굿즈 공동구매의 모집 상태와 주최 이력을 읽기 전용으로 확인합니다.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const dateFormatter = new Intl.DateTimeFormat("ko-KR", {
@@ -33,7 +37,7 @@ export default function GroupbuyPage() {
         <p className="stamp">책임 경계</p>
         <div>
           <h2 id="groupbuy-boundary">
-            바인더리는 결제와 정산에 관여하지 않습니다.
+            Bindery는 결제와 정산에 관여하지 않습니다.
           </h2>
           <p>
             이 화면은 모집 현황을 정리한 읽기 전용 정보판입니다. 송금, 환불,
@@ -177,7 +181,7 @@ export default function GroupbuyPage() {
             <p className="entry-index" aria-hidden="true">
               C
             </p>
-            <h3>바인더리가 하는 일</h3>
+            <h3>Bindery가 하는 일</h3>
             <ul className="check-list">
               <li>진행 상태와 변경 기록을 같은 형식으로 정리</li>
               <li>정정이 필요한 항목을 표시하고 확인 시점을 남김</li>

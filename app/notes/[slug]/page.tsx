@@ -36,11 +36,11 @@ export async function generateMetadata({
   const note = getNote(slug);
 
   if (!note) {
-    return { title: "노트를 찾을 수 없음 | 바인더리" };
+    return { title: "노트를 찾을 수 없음 | Bindery" };
   }
 
   return {
-    title: `${note.title} | 바인더리`,
+    title: `${note.title} | Bindery`,
     description: note.summary,
   };
 }

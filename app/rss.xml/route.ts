@@ -26,7 +26,7 @@ export function GET(request: Request) {
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-  <title>바인더리 소식</title>
+  <title>Bindery 소식</title>
   <link>${xml(origin)}</link>
   <description>만드는 사람에게 필요한 공식 공지와 업계 변화의 원문 색인</description>
   <language>ko-KR</language>

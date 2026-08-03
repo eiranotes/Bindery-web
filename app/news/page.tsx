@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { newsItems } from "../lib/data";
 
 export const metadata: Metadata = {
-  title: "업계 소식 | 바인더리",
+  title: "업계 소식 | Bindery",
   description:
     "행사 주최 측과 전시장, 창작자 지원 기관의 원문으로 이어지는 짧은 업데이트 타임라인.",
 };
@@ -72,7 +72,7 @@ export default function NewsPage() {
       <aside className="trust-notice" aria-label="뉴스 출처 안내">
         <p className="utility-text">SOURCE FIRST</p>
         <p>
-          바인더리는 소식의 핵심 확인 지점만 정리합니다. 신청, 비용, 일정에
+          Bindery는 소식의 핵심 확인 지점만 정리합니다. 신청, 비용, 일정에
           관한 최종 판단은 연결된 공식 원문에서 확인하세요.
         </p>
       </aside>

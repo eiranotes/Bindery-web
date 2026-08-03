@@ -12,7 +12,7 @@ import { createSupabaseServerClient } from "../lib/supabase/server.ts";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "실무 노트 | 바인더리",
+  title: "실무 노트 | Bindery",
   description:
     "문구 작가의 사업자·세금, 제작·발주, 행사 운영, 가격·원가 실무를 날짜와 함께 정리한 노트.",
 };

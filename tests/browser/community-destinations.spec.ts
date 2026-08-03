@@ -126,7 +126,13 @@ test("community ad inventory stays labeled, reserved, and clear of controls", as
           ),
         ].filter((element) => {
           const style = getComputedStyle(element);
-          return style.display !== "none" && style.visibility !== "hidden";
+          const rect = element.getBoundingClientRect();
+          return (
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            rect.width > 0 &&
+            rect.height > 0
+          );
         });
 
         return slots.flatMap((slot) => {

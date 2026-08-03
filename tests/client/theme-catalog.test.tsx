@@ -32,21 +32,26 @@ function contrast(foreground: string, background: string): number {
 }
 
 describe("theme catalog", () => {
-  it("keeps every replaceable theme in one complete catalog", () => {
+  it("keeps one restrained four-role palette in a complete catalog", () => {
     expect(DEFAULT_THEME_ID).toBe("riso");
-    expect(THEME_CATALOG.map((theme) => theme.id)).toEqual([
-      "riso",
-      "carbon-proof",
-    ]);
+    expect(THEME_CATALOG.map((theme) => theme.id)).toEqual(["riso"]);
 
     for (const theme of THEME_CATALOG) {
       expect(Object.keys(theme.tokens).toSorted()).toEqual(
         [...THEME_TOKEN_NAMES].toSorted(),
       );
     }
+
+    const tokens = THEME_CATALOG[0].tokens;
+    expect(tokens.sheet).toBe(tokens.stock);
+    expect(tokens.inkYellow).toBe(tokens.inkPink);
+    expect(tokens.overGreen).toBe(tokens.inkBlue);
+    expect(
+      new Set([tokens.stock, tokens.text, tokens.inkBlue, tokens.inkPink]).size,
+    ).toBe(4);
   });
 
-  it("generates selectors and readable body-text pairs for every theme", () => {
+  it("generates selectors and readable base color pairs", () => {
     const stylesheet = createThemeStylesheet();
 
     for (const theme of THEME_CATALOG) {
@@ -55,15 +60,12 @@ describe("theme catalog", () => {
       expect(contrast(theme.tokens.text, theme.tokens.stock)).toBeGreaterThanOrEqual(
         4.5,
       );
-      expect(
-        contrast(theme.tokens.textSoft, theme.tokens.stock),
-      ).toBeGreaterThanOrEqual(4.5);
-      expect(
-        contrast(theme.tokens.textFaint, theme.tokens.stock),
-      ).toBeGreaterThanOrEqual(4.5);
       expect(contrast(theme.tokens.text, theme.tokens.sheet)).toBeGreaterThanOrEqual(
         4.5,
       );
+      expect(
+        contrast(theme.tokens.inkBlue, theme.tokens.stock),
+      ).toBeGreaterThanOrEqual(4.5);
     }
   });
 });

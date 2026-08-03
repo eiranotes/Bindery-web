@@ -2,6 +2,23 @@
 
 ## 2026-08-03
 
+- Created a WebGPT `Bindery-web` project, uploaded six product, design, strategy,
+  audit, pipeline, and implementation-brief sources, applied a fresh Pro review,
+  then added the review summary as a seventh reusable project source.
+- Rebuilt the global header and Home index around event search, comparison,
+  edition history, and preparation Notes; moved News, calendar, and Community
+  into supporting navigation and removed Groupbuy from sitemap and static Pages.
+- Changed the public wordmark and metadata to `Bindery` and added a persistent,
+  self-named Korean/English/Japanese/Chinese shell selector with an explicit
+  Korean-original content boundary.
+- Consolidated the interface into four base color roles and reserved fluorescent
+  pink for non-text deadline emphasis while keeping blue focus indicators.
+- Verified the release with content guards, typecheck, production build, 108
+  Node tests, 29 client tests, 31 Playwright tests, three visual viewport checks,
+  and a 25-screen static Pages artifact without Groupbuy output.
+- Disabled the locale selector in the script-free Pages artifact and named that
+  limitation in the static-preview banner so the preview does not imply working
+  translations.
 - Added an allowlisted official-content collector with robots/HTTP checks,
   local raw caching, normalized SHA-256 records, recheck scheduling, field-level
   evidence, deterministic site generation, and human-readable Markdown reports.

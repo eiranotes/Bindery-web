@@ -16,8 +16,9 @@ test("home follows the checked-in HTML mockup language at reduced density", asyn
   assert.match(html, /회차 아카이브 보기/);
   assert.match(html, /class="colorbar"/);
   assert.equal((html.match(/class="d-day"/g) ?? []).length, 3);
-  assert.equal((html.match(/class="list-number"/g) ?? []).length, 5);
+  assert.equal((html.match(/class="list-number"/g) ?? []).length, 4);
   assert.match(html, /href="\/community"/);
+  assert.doesNotMatch(html, /href="\/groupbuy"/);
   assert.doesNotMatch(html, /calendar-grid|groupbuy-progress|news-timeline/);
 });
 

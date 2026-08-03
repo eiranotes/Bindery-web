@@ -32,7 +32,6 @@ const pageRoutes = [
   "/notes/reading-print-quotes",
   "/notes/first-booth-checklist",
   "/notes/booth-break-even",
-  "/groupbuy",
   "/news",
   "/community",
   "/community/general",
@@ -78,6 +77,10 @@ function staticHtml(source) {
     )
     .replace(/<link\b[^>]*rel=["']modulepreload["'][^>]*>/giu, "")
     .replace(
+      /(<label\b[^>]*class=["'][^"']*\blocale-control\b[^"']*["'][^>]*>[\s\S]*?<select)\b/giu,
+      '$1 disabled data-static-preview-unavailable="true"',
+    )
+    .replace(
       /\b(href|src|action|data-rsc-css-href)=(['"])(\/[^'"]*)\2/giu,
       (_, attribute, quote, value) => `${attribute}=${quote}${prefixLocalUrl(value)}${quote}`,
     );
@@ -86,7 +89,7 @@ function staticHtml(source) {
 .github-pages-preview{margin:0;padding:.72rem clamp(1rem,4vw,3rem);border-bottom:1px solid var(--rule);background:var(--ink-yellow);color:var(--text);font:600 .78rem/1.55 var(--font-body);letter-spacing:.01em}
 .github-pages-preview strong{font-family:var(--font-utility);font-size:.72rem;letter-spacing:.08em}.github-pages-preview a{color:inherit;text-underline-offset:.2em}
 </style>`;
-  const previewNotice = `<aside class="github-pages-preview" aria-label="정적 프리뷰 안내"><strong>STATIC PREVIEW</strong> · 공식 행사 정보 중심 GitHub Pages 체험판입니다. 로그인·저장·작성 기능은 동작하지 않습니다. <a href="${basePath}/events/">행사 정보 보기</a></aside>`;
+  const previewNotice = `<aside class="github-pages-preview" aria-label="정적 프리뷰 안내"><strong>STATIC PREVIEW</strong> · 공식 행사 정보 중심 GitHub Pages 체험판입니다. 언어 전환·로그인·저장·작성 기능은 동작하지 않습니다. <a href="${basePath}/events/">행사 정보 보기</a></aside>`;
   html = html.replace("</head>", `${previewStyle}</head>`).replace("<body>", `<body>${previewNotice}`);
 
   if (html.includes("http://localhost") || /<script\b(?![^>]*type=["']application\/ld\+json["'])/iu.test(html)) {

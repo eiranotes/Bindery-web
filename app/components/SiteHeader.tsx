@@ -1,51 +1,64 @@
-import Link from "next/link";
-import { ThemeControl } from "./ThemeControl";
+"use client";
 
-const navigation = [
-  { href: "/events", label: "행사" },
-  { href: "/notes", label: "노트" },
-  { href: "/groupbuy", label: "공동구매" },
-  { href: "/news", label: "소식" },
-  { href: "/community", label: "커뮤니티" },
-];
+import Link from "next/link";
+import { LocaleControl } from "./LocaleControl";
+import { useShellLocale } from "./useShellLocale";
 
 export function SiteHeader() {
+  const { messages } = useShellLocale();
+  const primaryNavigation = [
+    { href: "/events", label: messages.events },
+    { href: "/events/compare", label: messages.compare },
+    { href: "/events/archive", label: messages.archive },
+    { href: "/notes", label: messages.notes },
+  ];
+  const supportingNavigation = [
+    { href: "/news", label: messages.news },
+    { href: "/community", label: messages.community },
+  ];
+
   return (
     <header className="site-header">
       <div className="colorbar" aria-hidden="true">
         <i />
         <i />
-        <i />
       </div>
       <div className="site-header__inner">
-        <Link className="wordmark" href="/" aria-label="BINDERY 홈">
+        <Link className="wordmark" href="/" aria-label={messages.home}>
           <span aria-hidden="true">◎</span>
-          바인더리
+          Bindery
         </Link>
 
-        <nav className="desktop-nav" aria-label="주요 탐색">
-          {navigation.map((item) => (
+        <nav className="desktop-nav" aria-label={messages.primaryNavigation}>
+          {primaryNavigation.map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
           ))}
           <Link className="binder-link" href="/me">
-            내 바인더
+            {messages.binder}
           </Link>
-          <ThemeControl className="theme-control--desktop" />
+          <LocaleControl className="locale-control--desktop" />
         </nav>
 
         <details className="mobile-nav">
-          <summary>메뉴</summary>
-          <nav aria-label="모바일 주요 탐색">
-            {navigation.map((item) => (
+          <summary>{messages.menu}</summary>
+          <nav aria-label={messages.mobileNavigation}>
+            {primaryNavigation.map((item) => (
               <Link key={item.href} href={item.href}>
                 {item.label}
               </Link>
             ))}
-            <Link href="/me">내 바인더</Link>
-            <div className="mobile-nav__theme">
-              <ThemeControl className="theme-control--mobile" />
+            <div className="mobile-nav__support">
+              {supportingNavigation.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <Link href="/me">{messages.binder}</Link>
+            <div className="mobile-nav__locale">
+              <LocaleControl className="locale-control--mobile" />
             </div>
           </nav>
         </details>

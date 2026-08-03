@@ -2,10 +2,13 @@
 
 ## Current state
 
-The GPT Sites vinext implementation includes an information-first Community
-prototype split into an artist-verified board and a general board, a
-catalog-driven theme selector, complete Community destination screens, and
-reserved ad inventory. The production site remains owner-only at
+The GPT Sites vinext implementation now presents Bindery as an event-first
+database: event search, comparison, edition history, and preparation Notes are
+the four primary destinations; News, calendar, and Community are supporting
+routes; Groupbuy is hidden from discovery and static deployment. The former
+theme selector is replaced by a Korean/English/Japanese/Chinese interface-shell
+selector that keeps untranslated event content honestly marked as Korean. The
+production site remains owner-only at
 <https://bindery-korea-info.eiraworks-9813.chatgpt.site>; the current Community
 release is deployed there as owner-only Sites version 5. Community backend work
 has progressed locally from clean checkpoint `7f4be4a` through operating
@@ -31,9 +34,25 @@ comparison/archive release, and static fallback are now public at
 successfully built and deployed commit `f836f0f`; the hosted home, event list,
 comparison, archive, and ICS routes return 200, and the live comparison passed
 desktop/mobile Chrome checks without missing assets, console errors, or page overflow.
+The event-first redesign in this working tree has not been pushed or deployed;
+the public Pages URL therefore still shows the preceding release.
 
 ## Completed
 
+- Created the WebGPT `Bindery-web` project, uploaded six repository authority
+  sources, selected Pro, obtained a current implementation review grounded in
+  Apple HIG, WCAG 2.2, USWDS, W3C i18n, and responsive Web guidance, and added
+  the final review summary as the seventh reusable project source.
+- Applied the review's P0 event-first information architecture, exact `Bindery`
+  wordmark, four-role palette, blue focus treatment, and staged locale shell.
+- Removed Groupbuy from header, Home, sitemap, and GitHub Pages export while
+  retaining its noindexed source route for later policy work.
+- Passed the final content guards, generated-data freshness check, typecheck,
+  production build, 108 Node tests, 29 client tests, and 31 Playwright tests.
+  Visually inspected Home at 360px, 768px, and 1280px; the static exporter now
+  produces 25 public screens and no Groupbuy artifact or executable app script.
+  Its locale control is disabled and the preview banner states that language
+  switching requires the later server/runtime deployment.
 - Reviewed the existing WebGPT conversation `웹 콘텐츠 카테고리화 계획` and
   obtained a fresh Pro-model boundary review before implementation.
 - Added an allowlisted official collector with robots/HTTP checks, local raw

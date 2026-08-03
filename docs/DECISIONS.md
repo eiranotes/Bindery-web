@@ -357,3 +357,22 @@ public information pages, assets, ICS, RSS, robots, and sitemap under the
 login, save, write, and server mutations as unavailable. A later custom-domain
 production deployment must restore an actual server runtime and re-run hosted
 authentication, authorization, and mutation proof.
+
+## D-031 — Event-first navigation, restrained palette, and honest locale shell
+
+The 2026-08-03 WebGPT Pro review confirmed that the strategy was already
+event-first while the global navigation still gave Groupbuy and Community equal
+weight. Make event search, comparison, edition history, and preparation Notes the
+four primary destinations. Keep News, calendar, and Community as supporting
+navigation. Retain the Groupbuy route only as noindexed source for later policy
+work and omit it from navigation, sitemap, and static deployment.
+
+Use one four-role palette: Surface `#F4F3EF`, Ink `#1B1D2A`, Structure Blue
+`#3D5588`, and Deadline Pink `#FF48B0`. Derived rules and muted text may mix those
+roles, but pink is not body text, a focus color, or the only status signal.
+
+Add Korean, English, Japanese, and Simplified Chinese interface-shell choices
+using self-named language labels. Until translated event data exists, only shared
+navigation and controls change. Keep the page language Korean and state that event
+names and bodies remain Korean originals; a locale preference must not imply a
+translation that does not exist.

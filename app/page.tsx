@@ -33,32 +33,26 @@ export default function Home() {
     {
       number: "01",
       href: "/events",
-      title: "행사",
-      copy: "마감·비용·회차",
+      title: "행사 찾기",
+      copy: "마감·비용·조건",
     },
     {
       number: "02",
-      href: "/notes",
-      title: "노트",
-      copy: "준비 기준",
+      href: "/events/compare",
+      title: "행사 비교",
+      copy: "조건 나란히 보기",
     },
     {
       number: "03",
-      href: "/groupbuy",
-      title: "공동구매",
-      copy: "진행 현황",
+      href: "/events/archive",
+      title: "회차 아카이브",
+      copy: "지난 회차 변화",
     },
     {
       number: "04",
-      href: "/news",
-      title: "소식",
-      copy: "공식 공지",
-    },
-    {
-      number: "05",
-      href: "/community",
-      title: "커뮤니티",
-      copy: "질문·경험",
+      href: "/notes",
+      title: "준비 노트",
+      copy: "신청·현장 기준",
     },
   ];
 
@@ -118,6 +112,13 @@ export default function Home() {
             <span aria-hidden="true">→</span>
           </Link>
         ))}
+      </nav>
+
+      <nav className="home-support" aria-label="보조 정보">
+        <span>SUPPORTING</span>
+        <Link href="/news">공식 소식</Link>
+        <Link href="/events/calendar">일정 달력</Link>
+        <Link href="/community">커뮤니티 참고</Link>
       </nav>
 
       <AdSlot placement="home-lower" />

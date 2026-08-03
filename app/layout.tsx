@@ -3,7 +3,6 @@ import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { getSiteUrl, SITE_DESCRIPTION } from "./lib/site.ts";
 import {
-  createThemeBootstrapScript,
   createThemeStylesheet,
   DEFAULT_THEME_ID,
 } from "./lib/themes.ts";
@@ -15,12 +14,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase,
     title: {
-      default: "BINDERY — 만드는 사람의 다음 일정",
-      template: "%s — BINDERY",
+      default: "Bindery — 만드는 사람의 다음 일정",
+      template: "%s — Bindery",
     },
     description: SITE_DESCRIPTION,
     openGraph: {
-      title: "BINDERY — 만드는 사람의 다음 일정",
+      title: "Bindery — 만드는 사람의 다음 일정",
       description:
         "행사 마감부터 현장 준비까지, 만드는 사람에게 필요한 정보를 한 장씩.",
       type: "website",
@@ -50,9 +49,6 @@ export default function RootLayout({
         <style
           data-bindery-theme-catalog
           dangerouslySetInnerHTML={{ __html: createThemeStylesheet() }}
-        />
-        <script
-          dangerouslySetInnerHTML={{ __html: createThemeBootstrapScript() }}
         />
       </head>
       <body>

@@ -47,7 +47,7 @@ test("home preserves its information contract without page overflow", async ({
 
     expect(metrics.pageOverflow, `${viewport.width}px page overflow`).toBe(0);
     expect(metrics.deadlineRows).toBe(3);
-    expect(metrics.indexLinks).toBe(5);
+    expect(metrics.indexLinks).toBe(4);
     expect(metrics.today).toContain("오늘 ·");
   }
 });
@@ -59,7 +59,7 @@ test("360px primary controls meet the touch target floor", async ({ page }) => {
   const controls = await page.evaluate(() =>
     [
       ...document.querySelectorAll(
-        ".button, summary, .home-index a, .home-binder-link a",
+        ".button, summary, .home-index a, .home-support a, .home-binder-link a",
       ),
     ].map((element) => {
       const rect = element.getBoundingClientRect();
@@ -230,15 +230,15 @@ test("primary routes keep text out of avoidably narrow columns", async ({
   }
 });
 
-test("theme selection is reachable, legible, and touch sized", async ({
+test("shell language selection is synchronized, honest, and touch sized", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
 
   const selector = page
-    .locator(".theme-control--desktop")
-    .getByRole("combobox", { name: "인쇄 테마" });
+    .locator(".locale-control--desktop")
+    .getByRole("combobox", { name: "언어" });
   await expect(selector).toHaveCount(1);
   await selector.focus();
 
@@ -258,30 +258,26 @@ test("theme selection is reachable, legible, and touch sized", async ({
   expect(desktopMetrics.outlineStyle).not.toBe("none");
   expect(desktopMetrics.outlineWidth).toBeGreaterThanOrEqual(3);
 
-  await page.goto("/events/calendar?month=2026-08");
-  const emptyCalendarCell = page.locator(".calendar-day--empty").first();
-  const defaultEmptyFill = await emptyCalendarCell.evaluate(
-    (element) => getComputedStyle(element).backgroundColor,
+  await selector.selectOption("en");
+  await expect(page.getByRole("link", { name: "Events" })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-shell-locale",
+    "en",
   );
-  const calendarSelector = page
-    .locator(".theme-control--desktop")
-    .getByRole("combobox", { name: "인쇄 테마" });
-  await calendarSelector.selectOption("carbon-proof");
-  await expect
-    .poll(() =>
-      emptyCalendarCell.evaluate(
-        (element) => getComputedStyle(element).backgroundColor,
-      ),
-    )
-    .not.toBe(defaultEmptyFill);
+  await expect(
+    page
+      .getByRole("contentinfo")
+      .getByText("Event content remains in Korean.", { exact: false }),
+  ).toBeVisible();
 
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("/");
-  await page.getByText("메뉴", { exact: true }).click();
+  await page.getByText("Menu", { exact: true }).click();
 
   const mobileSelector = page
-    .locator(".theme-control--mobile")
-    .getByRole("combobox", { name: "인쇄 테마" });
+    .locator(".locale-control--mobile")
+    .getByRole("combobox", { name: "Language" });
   await expect(mobileSelector).toBeVisible();
   const mobileHeight = await mobileSelector.evaluate((element) =>
     Math.round(element.getBoundingClientRect().height),

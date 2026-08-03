@@ -9,7 +9,7 @@ test("home metadata contains product identity and no starter markers", async () 
 
   assert.match(
     html,
-    /<title>창작자 행사 마감·회차 아카이브 — BINDERY<\/title>/,
+    /<title>창작자 행사 마감·회차 아카이브 — Bindery<\/title>/,
   );
   assert.match(html, /property="og:image"/);
   assert.doesNotMatch(
@@ -46,12 +46,14 @@ test("sitemap and robots expose public routes", async () => {
     sitemapText,
     /http:\/\/localhost:3000\/community\/(?:write|verify|report)/,
   );
+  assert.doesNotMatch(sitemapText, /http:\/\/localhost:3000\/groupbuy/);
   assert.doesNotMatch(sitemapText, /bindery\.example/);
 
   const robots = await render("/robots.txt");
   const robotsText = await robots.text();
   assert.equal(robots.status, 200);
   assert.match(robotsText, /Allow: \//);
+  assert.match(robotsText, /Disallow: \/groupbuy/);
   assert.match(
     robotsText,
     /Sitemap: http:\/\/localhost:3000\/sitemap\.xml/,
