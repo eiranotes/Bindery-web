@@ -44,12 +44,11 @@ The persisted Sites project ID still returns `project not found`, the current Pr
 account's Sites dashboard lists no managed sites, and the existing owner-only URL
 still renders the five fixture events. The combined official catalog,
 comparison/archive release, and static fallback are now public at
-<https://eiranotes.github.io/Bindery-web/>. GitHub Pages run `30775916113`
-successfully built and deployed commit `f836f0f`; the hosted home, event list,
-comparison, archive, and ICS routes return 200, and the live comparison passed
-desktop/mobile Chrome checks without missing assets, console errors, or page overflow.
-The event-first redesign in this working tree has not been pushed or deployed;
-the public Pages URL therefore still shows the preceding release.
+<https://eiranotes.github.io/Bindery-web/>. GitHub Pages run `30984669102`
+successfully built and deployed feature commit `6464216`; the hosted Design
+Festa vol.64 route returns 200 and visibly contains its dates, 6,500-booth scale,
+and JPY 17,000 minimum booth fee. The hosted home, event list, comparison,
+archive, and ICS routes are included in the same 92-screen static artifact.
 
 ## Completed
 

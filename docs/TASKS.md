@@ -136,6 +136,9 @@
 - [x] Verify international detail rendering, CNY formatting, unlike-currency
   comparison boundaries, all generated Binder allowlist IDs, 116 Node tests, 29
   client tests, 31 browser tests, and a 92-screen static Pages export.
+- [x] Commit and push the event-first plus normalized international catalog to
+  `main`; deploy feature commit `6464216` with successful Pages run
+  `30984669102` and smoke-test the public Design Festa detail route.
 - [ ] Split `EventMaster`, `EventEdition`, and `SourceRecord` into explicit
   domain types and canonical data collections.
 - [ ] Separate product-validation examples from verified public event records.

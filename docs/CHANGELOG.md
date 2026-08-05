@@ -15,11 +15,14 @@
   native ISO currency fields. Unlike currencies are no longer ranked against
   each other, and visitor tickets are not stored as exhibitor fees.
 - Added a dedicated international-stationery review report, overseas rendered
-  coverage, and a conflict-safe Community event allowlist migration for the 14
+  coverage, and a conflict-safe Community event allowlist migration for the 15
   new edition IDs.
 - Passed content guards, batch hash and source checks, lint, typecheck,
   production build, 116 Node tests, 29 client tests, 31 Playwright tests, and a
   92-screen static Pages export containing every new international detail path.
+- Published feature commit `6464216` through successful GitHub Pages run
+  `30984669102`; the public Design Festa vol.64 detail returned 200 with its
+  date, 6,500-booth scale, and JPY fee visible.
 
 - Ran a broad Pro-model search for Korean creator events and preserved the exact
   result as 63 EventMaster candidates, 76 edition candidates, 116 source records,
