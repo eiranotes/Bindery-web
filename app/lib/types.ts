@@ -3,6 +3,7 @@ export type EventStatus =
   | "open"
   | "urgent"
   | "closed"
+  | "unknown"
   | "soon"
   | "ongoing"
   | "ended";
@@ -15,11 +16,12 @@ export type ApplicationStatus = "scheduled" | "open" | "capacity" | "closed";
 export interface EventHistory {
   edition: string;
   dates: string;
-  venue: string;
-  boothFee: number;
+  venue: string | null;
+  boothFee: number | null;
+  boothFeeCurrency?: string | null;
   previousBoothFee?: number;
   booths: number | null;
-  selection: string;
+  selection: string | null;
 }
 
 export interface EventEdition {
@@ -29,21 +31,27 @@ export interface EventEdition {
   name: string;
   shortName: string;
   organizer: string;
+  countryCode: string;
+  countryName: string;
+  city: string | null;
+  timeZone: string;
+  sourceLanguage: string;
   region: string;
-  venue: string;
-  address: string;
+  venue: string | null;
+  address: string | null;
   startDate: string;
   endDate: string;
-  applicationOpen: string;
-  applicationDeadline: string;
-  applicationDeadlineKind?: ApplicationDeadlineKind;
-  applicationDeadlineLabel?: string;
-  applicationStatus?: ApplicationStatus;
-  boothFee: number;
-  boothFeeIncludesVat?: boolean;
-  boothSize: string;
+  applicationOpen: string | null;
+  applicationDeadline: string | null;
+  applicationDeadlineKind?: ApplicationDeadlineKind | null;
+  applicationDeadlineLabel?: string | null;
+  applicationStatus?: ApplicationStatus | null;
+  boothFee: number | null;
+  boothFeeCurrency: string | null;
+  boothFeeIncludesVat?: boolean | null;
+  boothSize: string | null;
   boothCount: number | null;
-  selection: "선착순" | "추첨" | "심사";
+  selection: "선착순" | "추첨" | "심사" | null;
   businessRequired: boolean | null;
   genre: EventGenre;
   scale: EventScale;
@@ -51,7 +59,8 @@ export interface EventEdition {
   sourceLabel: string;
   sourceCount?: number;
   evidenceCoverage?: number;
-  dataStatus?: "official" | "example";
+  dataStatus?: "official" | "source_checked" | "example";
+  reviewNeeded?: boolean;
   verifiedAt: string;
   summary: string;
   application: {

@@ -19,10 +19,22 @@ if (validation.errors.length) {
 }
 
 const registry = await readJson(path.join(contentDirectory, "config", "source-registry.json"));
-const sourceById = new Map(registry.sources.map((source) => [source.id, source]));
+const normalizedSources = await readJson(path.join(contentDirectory, "catalog", "source-records.json"));
+const sourceById = new Map(
+  [...normalizedSources, ...registry.sources].map((source) => [source.id, source]),
+);
 const masters = await loadMasters();
-const masterById = new Map(masters.map(({ value }) => [value.id, value]));
-const editionEntries = await loadEditions();
+const normalizedMasters = await readJson(path.join(contentDirectory, "catalog", "event-masters.json"));
+const masterById = new Map(
+  [...normalizedMasters, ...masters.map(({ value }) => value)].map((master) => [master.id, master]),
+);
+const normalizedEditions = await readJson(path.join(contentDirectory, "catalog", "event-editions.json"));
+const editionEntries = [
+  ...(await loadEditions()),
+  ...normalizedEditions
+    .filter((edition) => edition.publicationStatus === "public")
+    .map((value) => ({ file: path.join(contentDirectory, "catalog", "event-editions.json"), value })),
+];
 const evidenceFieldCount = 9;
 
 function dateLabel(startDate, endDate) {
@@ -33,10 +45,15 @@ function dateLabel(startDate, endDate) {
 
 const generatedEvents = editionEntries
   .map(({ value: edition }) => {
-    const master = masterById.get(edition.masterId);
-    const primarySource = sourceById.get(edition.primarySourceId);
-    const boothOptions = [...edition.application.boothOptions].sort((left, right) => left.feeKrw - right.feeKrw);
-    const minimumBooth = boothOptions[0];
+      const master = masterById.get(edition.masterId);
+      const primarySource = sourceById.get(edition.primarySourceId);
+    const boothOptions = [...edition.application.boothOptions]
+      .filter((option) => Number.isInteger(option.feeAmount ?? option.feeKrw))
+      .sort(
+        (left, right) =>
+          (left.feeAmount ?? left.feeKrw) - (right.feeAmount ?? right.feeKrw),
+      );
+    const minimumBooth = boothOptions[0] ?? null;
     const evidenceCoverage = Math.round(
       (Object.keys(edition.fieldEvidence ?? {}).length / evidenceFieldCount) * 100,
     );
@@ -47,29 +64,36 @@ const generatedEvents = editionEntries
       name: edition.name,
       shortName: edition.shortName,
       organizer: master.organizerName,
+      countryCode: edition.countryCode ?? master.countryCode ?? "KR",
+      countryName: edition.countryName ?? master.countryName ?? "대한민국",
+      city: edition.city ?? null,
+      timeZone: edition.timeZone ?? "Asia/Seoul",
+      sourceLanguage: edition.sourceLanguage ?? "ko",
       region: edition.region,
-      venue: edition.venue,
-      address: edition.address,
+      venue: edition.venue ?? null,
+      address: edition.address ?? null,
       startDate: edition.startDate,
       endDate: edition.endDate,
-      applicationOpen: edition.application.openConfirmedAt,
-      applicationDeadline: edition.application.deadline.at,
-      applicationDeadlineKind: edition.application.deadline.kind,
-      applicationDeadlineLabel: edition.application.deadline.label,
-      applicationStatus: edition.application.status,
-      boothFee: minimumBooth.feeKrw,
-      boothFeeIncludesVat: minimumBooth.vatIncluded,
-      boothSize: minimumBooth.size,
+      applicationOpen: edition.application.openConfirmedAt ?? null,
+      applicationDeadline: edition.application.deadline.at ?? null,
+      applicationDeadlineKind: edition.application.deadline.kind ?? null,
+      applicationDeadlineLabel: edition.application.deadline.label ?? null,
+      applicationStatus: edition.application.status ?? null,
+      boothFee: minimumBooth?.feeAmount ?? minimumBooth?.feeKrw ?? null,
+      boothFeeCurrency: minimumBooth?.currency ?? (minimumBooth ? "KRW" : null),
+      boothFeeIncludesVat: minimumBooth?.vatIncluded ?? null,
+      boothSize: minimumBooth?.size ?? null,
       boothCount: edition.boothCount,
-      selection: edition.application.selection,
+      selection: edition.application.selection ?? null,
       businessRequired: edition.application.businessRequired,
       genre: edition.genre,
       scale: edition.scale,
       sourceUrl: primarySource.url,
-      sourceLabel: `${master.canonicalName} 공식 출품 안내`,
+      sourceLabel: `${master.canonicalName} 공식 원문 (${primarySource.publisher})`,
       sourceCount: edition.sourceIds.length,
       evidenceCoverage,
-      dataStatus: "official",
+      dataStatus: edition.contentStatus === "editor_checked" ? "official" : "source_checked",
+      reviewNeeded: edition.contentStatus !== "editor_checked",
       verifiedAt: edition.verifiedAt,
       summary: edition.summary,
       application: {
@@ -83,10 +107,11 @@ const generatedEvents = editionEntries
         {
           edition: edition.name,
           dates: dateLabel(edition.startDate, edition.endDate),
-          venue: edition.venue,
-          boothFee: minimumBooth.feeKrw,
+          venue: edition.venue ?? null,
+          boothFee: minimumBooth?.feeAmount ?? minimumBooth?.feeKrw ?? null,
+          boothFeeCurrency: minimumBooth?.currency ?? (minimumBooth ? "KRW" : null),
           booths: edition.boothCount,
-          selection: edition.application.selection,
+          selection: edition.application.selection ?? null,
         },
       ],
       reviewCount: 0,
@@ -94,7 +119,8 @@ const generatedEvents = editionEntries
   })
   .sort(
     (left, right) =>
-      new Date(left.applicationDeadline).getTime() - new Date(right.applicationDeadline).getTime(),
+      new Date(left.applicationDeadline ?? left.startDate).getTime() -
+      new Date(right.applicationDeadline ?? right.startDate).getTime(),
   );
 
 const generatedJsonPath = path.join(contentDirectory, "generated", "events.json");

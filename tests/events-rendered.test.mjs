@@ -86,13 +86,68 @@ test("event detail keeps official-source, missing-data, history, and review gate
   const text = html.replaceAll("<!-- -->", "");
 
   assert.equal(response.status, 200);
-  assert.match(text, /공식 정보 원본/);
+  assert.match(text, /편집 검수된 공식 정보/);
   assert.match(text, /정보 없음/);
   assert.match(text, /지난 회차 비교/);
   assert.match(text, /공식 출처 5건/);
   assert.match(text, /LOCAL ONLY/);
   assert.doesNotMatch(text, /현재 응답|비용 대비 만족|reviewAggregate/);
   assert.match(text, /내 바인더에 넣기/);
+});
+
+test("source-checked event details disclose pending review and preserve unknowns", async () => {
+  const response = await render("/events/agf-korea/2026");
+  const html = await response.text();
+  const text = html.replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /Anime × Game Festival 2026/);
+  assert.match(text, /공식 원문 연결 정보/);
+  assert.match(text, /세부 필드는 검수 중입니다/);
+  assert.match(text, /정보 없음/);
+  assert.doesNotMatch(text, />undefined<|NaN/);
+});
+
+test("international stationery details expose country provenance and native currency", async () => {
+  const response = await render("/events/paperworld-china/2026");
+  const html = await response.text();
+  const text = html.replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /페이퍼월드 차이나 2026/);
+  assert.match(text, /중국·상하이/);
+  assert.match(text, /원문 언어 zh-Hans/);
+  assert.match(text, /CN¥990|CNY\s*990/);
+  assert.match(text, /공식 원문 연결 정보/);
+  assert.match(html, /"addressCountry":"CN"/);
+  assert.doesNotMatch(text, />undefined<|NaN/);
+});
+
+test("Design Festa detail preserves official scale, closed lottery, and JPY fees", async () => {
+  const response = await render("/events/design-festa/2026-64");
+  const html = await response.text();
+  const text = html.replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /디자인 페스타 vol\.64/);
+  assert.match(text, /일본·도쿄/);
+  assert.match(text, /6,500/);
+  assert.match(text, /추첨/);
+  assert.match(text, /JP¥17,000|JPY\s*17,000/);
+  assert.match(html, /"addressCountry":"JP"/);
+  assert.doesNotMatch(text, />undefined<|NaN/);
+});
+
+test("comparison does not rank unlike booth-fee currencies", async () => {
+  const response = await render(
+    "/events/compare?event1=paperworld-china-2026&event2=illustration-korea-2026-incheon",
+  );
+  const text = (await response.text()).replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /통화가 달라 직접 비교하지 않음/);
+  assert.match(text, /CN¥990|CNY\s*990/);
+  assert.match(text, /₩550,000/);
 });
 
 test("calendar route and ICS feed expose both event and deadline semantics", async () => {

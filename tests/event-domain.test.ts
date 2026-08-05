@@ -85,4 +85,10 @@ test("resolves stable event paths and preserves missing information", () => {
   );
   assert.equal(incheon?.boothCount, null);
   assert.equal(incheon?.businessRequired, null);
+
+  const paperworld = getEventByPath("paperworld-china", "2026");
+  assert.equal(paperworld?.countryCode, "CN");
+  assert.equal(paperworld?.timeZone, "Asia/Shanghai");
+  assert.equal(paperworld?.boothFee, 990);
+  assert.equal(paperworld?.boothFeeCurrency, "CNY");
 });

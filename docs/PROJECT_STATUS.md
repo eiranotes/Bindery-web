@@ -26,6 +26,20 @@ rather than the five product-validation fixtures. The first editor-checked
 batch contains three 2026 Illustration Korea editions backed by 11 accessible
 S1/S2 source records. Participant and seller material is physically separated
 under a Git-ignored local review store and does not enter public generation.
+A separate 2026-08-05 Pro discovery run is preserved as a hash-verified research
+batch. A second hash-verified international stationery batch adds ten event
+masters, 15 editions, and 16 reachable official sources across Japan, Taiwan,
+and mainland China, including Design Festa vol.64 as a broad creator-goods
+event rather than a stationery-only fair. The combined canonical collections
+now contain 73 EventMasters, 91 EventEditions, and 132 SourceRecords.
+Independent live checks found 120 accessible URLs, seven HTTP errors, and five
+fetch errors. Sixty-seven editions
+with a reachable S1/S2 primary-source chain and confirmed dates now enter public
+generation as visibly `source_checked`; 24 editions remain held. Together with
+the three editor-checked Illustration Korea editions, the generated catalog has
+70 editions. Country, city, IANA time zone, source language, and native ISO
+currency are preserved; unknown deadlines, fees, venues, and selection methods
+remain null, and unlike currencies are not directly ranked.
 The persisted Sites project ID still returns `project not found`, the current Pro
 account's Sites dashboard lists no managed sites, and the existing owner-only URL
 still renders the five fixture events. The combined official catalog,
@@ -78,6 +92,30 @@ the public Pages URL therefore still shows the preceding release.
   desktop/mobile static-preview checks.
 - Added the three official catalog IDs to the append-only Community event
   allowlist while preserving legacy Binder links.
+- Preserved the Pro event-discovery artifact byte-for-byte with a SHA-256
+  manifest, added candidate-only structural/reference validation, and generated
+  a live source-accessibility snapshot plus a top-20 editor-review queue without
+  promoting any unreviewed value to the public catalog. The fresh full gate
+  passes typecheck, production build, 109 Node tests, 29 client tests, and 31
+  Playwright tests.
+- Normalized the entire candidate bundle into canonical catalog collections and
+  merged 52 reachable dated editions into public generation with a separate
+  source-checked status. Updated list, detail, compare, archive, calendar, ICS,
+  and Binder flows to render missing application values honestly, and expanded
+  the database event allowlist to all 55 generated editions. The fresh release
+  gate passes lint, typecheck, production build, 112 Node tests, 29 client tests,
+  31 Playwright tests, and a 77-screen static Pages export.
+- Added a registered international-stationery candidate pipeline and 15 real
+  official-source editions: Japan 9, Taiwan 4, and mainland China 2. All 16
+  organizer, association, public trade-show, or official factsheet URLs passed
+  the 2026-08-05 live fetch audit. Design Festa vol.64 additionally carries its
+  official dates, 6,500-booth scale, lottery deadline, JPY fees, creator-only
+  sales rules, refund boundary, venue address, and basic onsite conditions.
+  Added country/time-zone/language metadata,
+  native-currency booth fees, a separate international review report, and an
+  append-only Community event allowlist migration. The combined release gate
+  passes lint, typecheck, production build, 116 Node tests, 29 client tests, 31
+  Playwright tests, and a 92-screen static Pages export.
 
 - Read all Markdown and HTML documents in the source package.
 - Established v1.0 information-first planning as product authority.
@@ -232,6 +270,10 @@ the public Pages URL therefore still shows the preceding release.
   Sites-hosted preview is still needed; the future real domain requires a server runtime.
 - Expand the official registry one event family at a time and review every
   changed hash before publishing regenerated fields.
+- Work through `content/reports/candidate-review.md`: replace or corroborate the
+  12 failing source URLs for the 24 held editions, then fill missing deadlines,
+  fees, selection, refund, venue, and onsite fields for the 52 source-checked
+  editions before promoting them to `editor_checked`.
 - Add an approved X cookie interactively to the ignored twscrape account DB (or
   supply an X API token) before the first local review capture; initialize the
   separate local ArchiveBox vault if snapshots are required.

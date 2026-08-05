@@ -1,0 +1,8 @@
+{
+  "id": "international-stationery-2026-08-05",
+  "createdAt": "2026-08-05",
+  "scope": "international-stationery",
+  "countries": ["JP", "TW", "CN"],
+  "collectionMethod": "manual official-source research",
+  "publicationBoundary": "reachable S1/S2 source and explicit event dates"
+}

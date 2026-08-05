@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-08-05
+
+- Added a registered international-stationery candidate pipeline and a
+  hash-verified Japan/Taiwan/mainland-China batch with 10 event masters, 15
+  editions, and 16 official sources; all 16 URLs passed a live fetch audit.
+- Added Design Festa vol.64 from its official event, exhibitor, FAQ, and Tokyo
+  Big Sight pages with dates, scale, closed lottery, native JPY booth fees,
+  original-work and refund rules, venue address, and onsite conditions.
+- Published 15 dated source-checked international editions, raising the
+  canonical catalog to 73 masters, 91 editions, 132 sources and the generated
+  site catalog to 70 editions while retaining 24 held domestic candidates.
+- Added country, city, IANA time zone, source language, official local name, and
+  native ISO currency fields. Unlike currencies are no longer ranked against
+  each other, and visitor tickets are not stored as exhibitor fees.
+- Added a dedicated international-stationery review report, overseas rendered
+  coverage, and a conflict-safe Community event allowlist migration for the 14
+  new edition IDs.
+- Passed content guards, batch hash and source checks, lint, typecheck,
+  production build, 116 Node tests, 29 client tests, 31 Playwright tests, and a
+  92-screen static Pages export containing every new international detail path.
+
+- Ran a broad Pro-model search for Korean creator events and preserved the exact
+  result as 63 EventMaster candidates, 76 edition candidates, 116 source records,
+  and a research report with a SHA-256 manifest.
+- Added candidate-only validation for JSONL structure, IDs, references, evidence
+  backlinks, dates, source tiers, canonical URLs, overlap isolation, and artifact
+  integrity without exposing research candidates to public generation.
+- Rechecked all 116 claimed official URLs: 104 were accessible, seven returned
+  HTTP errors, and five failed to fetch. Generated a reachable top-20 manual
+  review queue and left all 76 editions unpromoted pending editor normalization.
+- Passed candidate/public content guards, lint, typecheck, production build,
+  109 Node tests, 29 client tests, and 31 Playwright tests.
+- Normalized the complete 63-master, 76-edition, and 116-source research bundle
+  into canonical catalog collections. Added 52 dated editions with reachable
+  S1/S2 source chains to public generation, bringing the generated catalog to
+  55 editions while holding 24 unsafe editions.
+- Added nullable deadline, fee, venue, booth-size, selection, and application
+  status handling throughout event sorting, lists, details, comparisons,
+  archives, calendar, ICS, and Binder views; unknown values stay `정보 없음`.
+- Added a complete held/public-incomplete review report and synchronized the
+  database event allowlist with all generated public event IDs.
+- Passed lint, typecheck, production build, 112 Node tests, 29 client tests, 31
+  Playwright tests, and a 77-screen static Pages export for the expanded catalog.
+
 ## 2026-08-03
 
 - Created a WebGPT `Bindery-web` project, uploaded six product, design, strategy,

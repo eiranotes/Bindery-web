@@ -4,7 +4,9 @@ import Link from "next/link";
 import { PageIntro } from "../../components/PageIntro";
 import { events } from "../../lib/data.ts";
 import {
+  deriveEventStatus,
   eventPath,
+  filterEvents,
   formatCurrency,
   formatDate,
   formatDateRange,
@@ -29,7 +31,7 @@ function valueOf(value: string | string[] | undefined, fallback: string) {
 function requestedEventIds(
   query: Record<string, string | string[] | undefined>,
 ): [string, string, string] {
-  const defaults = events.slice(0, 3).map((event) => event.id);
+  const defaults = defaultComparisonEvents().map((event) => event.id);
   const requested = [
     valueOf(query.event1, defaults[0] ?? ""),
     valueOf(query.event2, defaults[1] ?? ""),
@@ -53,20 +55,41 @@ function selectedEvents(requestedIds: readonly string[]): EventEdition[] {
     }
   }
 
-  return selected.length ? selected : events.slice(0, 3);
+  return selected.length ? selected : defaultComparisonEvents();
+}
+
+function defaultComparisonEvents() {
+  const now = new Date();
+  return filterEvents(
+    events.filter((event) => deriveEventStatus(event, now) !== "ended"),
+    {
+      region: "전체",
+      genre: "전체",
+      scale: "전체",
+      business: "전체",
+      sort: "deadline",
+    },
+    now,
+  ).slice(0, 3);
 }
 
 function earliestDeadline(eventsToCompare: EventEdition[]) {
-  return [...eventsToCompare].sort(
+  return eventsToCompare.filter((event) => event.applicationDeadline).sort(
     (left, right) =>
-      new Date(left.applicationDeadline).getTime() -
-      new Date(right.applicationDeadline).getTime(),
+      new Date(left.applicationDeadline as string).getTime() -
+      new Date(right.applicationDeadline as string).getTime(),
   )[0];
 }
 
 function lowestFee(eventsToCompare: EventEdition[]) {
-  return [...eventsToCompare].sort(
-    (left, right) => left.boothFee - right.boothFee,
+  const candidates = eventsToCompare.filter(
+    (event) => event.boothFee !== null && event.boothFeeCurrency !== null,
+  );
+  if (new Set(candidates.map((event) => event.boothFeeCurrency)).size !== 1) {
+    return undefined;
+  }
+  return candidates.sort(
+    (left, right) => (left.boothFee as number) - (right.boothFee as number),
   )[0];
 }
 
@@ -83,6 +106,11 @@ export default async function EventComparePage({
   const selected = selectedEvents(requestedIds);
   const deadlineLeader = earliestDeadline(selected);
   const feeLeader = lowestFee(selected);
+  const feeCurrencies = new Set(
+    selected
+      .filter((event) => event.boothFee !== null && event.boothFeeCurrency !== null)
+      .map((event) => event.boothFeeCurrency),
+  );
   const noBusinessRequired = selected.filter(
     (event) => event.businessRequired === false,
   );
@@ -146,9 +174,9 @@ export default async function EventComparePage({
       <aside className="source-notice source-notice--strong">
         <strong>공식 정보 비교</strong>
         <p>
-          편집자가 공식 원문과 연결한 현재 입력값입니다. 확인되지 않은 값은
-          추정하지 않고 정보 없음으로 표시하며, 신청 전 원문과 확인 날짜를
-          다시 확인하세요.
+          공식 원문에서 정규화한 현재 입력값입니다. 세부 검수 중인 회차를
+          포함하며, 확인되지 않은 값은 추정하지 않고 정보 없음으로 표시합니다.
+          신청 전 원문과 확인 날짜를 다시 확인하세요.
         </p>
       </aside>
 
@@ -161,23 +189,36 @@ export default async function EventComparePage({
           <div>
             <dt>가장 이른 신청 일정</dt>
             <dd>
-              {deadlineLeader.shortName}
-              <small>
-                {deadlineLeader.applicationDeadlineLabel ?? "접수 마감"} ·{" "}
-                {formatDate(deadlineLeader.applicationDeadline, {
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </small>
+              {deadlineLeader ? deadlineLeader.shortName : "확인된 신청 마감 없음"}
+              {deadlineLeader ? (
+                <small>
+                  {deadlineLeader.applicationDeadlineLabel ?? "접수 마감"} ·{" "}
+                  {formatDate(deadlineLeader.applicationDeadline, {
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </small>
+              ) : null}
             </dd>
           </div>
           <div>
             <dt>낮은 참가비</dt>
             <dd>
-              {feeLeader.shortName}
-              <small>{formatCurrency(feeLeader.boothFee)}</small>
+              {feeLeader
+                ? feeLeader.shortName
+                : feeCurrencies.size > 1
+                  ? "통화가 달라 직접 비교하지 않음"
+                  : "확인된 참가비 없음"}
+              {feeLeader ? (
+                <small>
+                  {formatCurrency(
+                    feeLeader.boothFee,
+                    feeLeader.boothFeeCurrency ?? "KRW",
+                  )}
+                </small>
+              ) : null}
             </dd>
           </div>
           <div>
@@ -250,21 +291,23 @@ export default async function EventComparePage({
                 <th scope="row">지역·장소</th>
                 {selected.map((event) => (
                   <td key={event.id}>
-                    {event.region} · {event.venue}
+                    {event.region} · {event.venue ?? "장소 확인 중"}
                   </td>
                 ))}
               </tr>
               <tr>
                 <th scope="row">참가비</th>
                 {selected.map((event) => (
-                  <td key={event.id}>{formatCurrency(event.boothFee)}</td>
+                  <td key={event.id}>
+                    {formatCurrency(event.boothFee, event.boothFeeCurrency ?? "KRW")}
+                  </td>
                 ))}
               </tr>
               <tr>
                 <th scope="row">부스</th>
                 {selected.map((event) => (
                   <td key={event.id}>
-                    {event.boothSize} ·{" "}
+                    {event.boothSize ?? "크기 정보 없음"} ·{" "}
                     {event.boothCount === null
                       ? "정보 없음"
                       : `${event.boothCount.toLocaleString("ko-KR")}개`}
@@ -274,7 +317,7 @@ export default async function EventComparePage({
               <tr>
                 <th scope="row">선정 방식</th>
                 {selected.map((event) => (
-                  <td key={event.id}>{event.selection}</td>
+                  <td key={event.id}>{event.selection ?? "정보 없음"}</td>
                 ))}
               </tr>
               <tr>
@@ -288,7 +331,11 @@ export default async function EventComparePage({
               <tr>
                 <th scope="row">제출 자료</th>
                 {selected.map((event) => (
-                  <td key={event.id}>{event.application.documents.join(" · ")}</td>
+                  <td key={event.id}>
+                    {event.application.documents.length
+                      ? event.application.documents.join(" · ")
+                      : "정보 없음"}
+                  </td>
                 ))}
               </tr>
               <tr>

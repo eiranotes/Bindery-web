@@ -42,8 +42,21 @@ function icsDates(start: string, end = start) {
 
 export function GET(request: Request) {
   const host = new URL(request.url).origin;
-  const entries = events.flatMap((event) => [
-    [
+  const entries = events.flatMap((event) => {
+    const eventEntry = [
+      "BEGIN:VEVENT",
+      `UID:${event.id}-event@bindery`,
+      `DTSTAMP:${utc(new Date().toISOString())}`,
+      ...icsDates(event.startDate, event.endDate),
+      `SUMMARY:${escapeIcs(event.name)}`,
+      ...(event.venue
+        ? [`LOCATION:${escapeIcs([event.venue, event.address].filter(Boolean).join(", "))}`]
+        : []),
+      `URL:${host}/events/${event.slug}/${event.edition}`,
+      "END:VEVENT",
+    ].join("\r\n");
+    if (!event.applicationDeadline) return [eventEntry];
+    const deadlineEntry = [
       "BEGIN:VEVENT",
       `UID:${event.id}-deadline@bindery`,
       `DTSTAMP:${utc(new Date().toISOString())}`,
@@ -52,18 +65,9 @@ export function GET(request: Request) {
       `DESCRIPTION:${escapeIcs("신청 전 공식 원문을 확인하세요.")}`,
       `URL:${host}/events/${event.slug}/${event.edition}`,
       "END:VEVENT",
-    ].join("\r\n"),
-    [
-      "BEGIN:VEVENT",
-      `UID:${event.id}-event@bindery`,
-      `DTSTAMP:${utc(new Date().toISOString())}`,
-      ...icsDates(event.startDate, event.endDate),
-      `SUMMARY:${escapeIcs(event.name)}`,
-      `LOCATION:${escapeIcs(`${event.venue}, ${event.address}`)}`,
-      `URL:${host}/events/${event.slug}/${event.edition}`,
-      "END:VEVENT",
-    ].join("\r\n"),
-  ]);
+    ].join("\r\n");
+    return [deadlineEntry, eventEntry];
+  });
   const body = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",

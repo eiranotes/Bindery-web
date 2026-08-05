@@ -112,11 +112,38 @@
 
 ## Event-data roadmap
 
+- [x] Run a broad Pro-model official-source discovery pass and quarantine the
+  exact 63-master/76-edition/116-source artifact behind hash, reference, and
+  live reachability checks.
+- [x] Generate a reachable top-20 editor-review queue while keeping all
+  unnormalized editions out of the public generator.
+- [x] Normalize all 63 masters, 76 editions, and 116 source records into
+  canonical catalog collections; publish 52 dated editions with reachable
+  S1/S2 source chains and hold 24 unsafe editions.
+- [x] Preserve unknown deadline, fee, venue, selection, and operation values as
+  null across generation, list, detail, compare, archive, calendar, ICS, and
+  Binder surfaces.
+- [x] Generate a complete held/public-incomplete review report and align the
+  account Binder database allowlist with all 55 generated public editions.
+- [x] Register an international stationery research batch; collect Japan,
+  Taiwan, and mainland China from reachable official sources; normalize 10
+  masters, 15 editions, and 16 source records with country, time zone, language,
+  and native-currency fields; publish all 15 source-checked editions and keep a
+  separate international review list.
+- [x] Add Design Festa vol.64 from four official organizer, application-policy,
+  and venue sources with dates, scale, closed lottery, JPY booth fees, original-
+  work sales rules, refund policy, address, and onsite facts.
+- [x] Verify international detail rendering, CNY formatting, unlike-currency
+  comparison boundaries, all generated Binder allowlist IDs, 116 Node tests, 29
+  client tests, 31 browser tests, and a 92-screen static Pages export.
 - [ ] Split `EventMaster`, `EventEdition`, and `SourceRecord` into explicit
   domain types and canonical data collections.
 - [ ] Separate product-validation examples from verified public event records.
 - [ ] Add the first verified batch of 20 real event masters and their available
   historical editions.
+- [ ] Resolve or replace the seven HTTP-error and five fetch-error candidate
+  sources, then manually normalize the first queue entries without inventing
+  missing fees, deadlines, selection methods, or logistics.
 - [ ] Reach 50 event masters and 120 editions with official-source coverage and
   freshness tracking.
 - [ ] Add domain tests for archive deduplication, edition ordering, and compare

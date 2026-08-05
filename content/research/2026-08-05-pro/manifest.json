@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-05",
+  "origin": {
+    "model": "ChatGPT Pro",
+    "conversationUrl": "https://chatgpt.com/g/g-p-6a6ff91f692081918b78d1307233799c-bindery-web/c/6a727dfd-a328-83ee-9232-fcb0db043062",
+    "archiveName": "bindery-event-candidates-2026-08-05.zip",
+    "archiveSha256": "896e42c6e7a243f0db272f3763a7f8df82474fbd1a42f60fd94f21f261ff8bcf"
+  },
+  "files": {
+    "bindery-event-research-2026-08-05.md": {
+      "sha256": "96a87058f02f9ac4b46e4b3c2b2d81b9130cbe31d28468c6946e5a31b48e71aa",
+      "bytes": 14290,
+      "lines": 143
+    },
+    "event-masters.candidates.jsonl": {
+      "sha256": "bd226215845573d163fd62f4d1749305c42b7dddfadb9993d018f7d99613344f",
+      "bytes": 27245,
+      "lines": 63
+    },
+    "event-editions.candidates.jsonl": {
+      "sha256": "88428580f75ae51f94b81ca1e1f63baa1a2cdcb6cfa3b79fa362ee082fa909aa",
+      "bytes": 165681,
+      "lines": 76
+    },
+    "source-records.candidates.jsonl": {
+      "sha256": "ece7b3541641425621d45505b5dfada9f8d929d7b7f73085411e59c3eb5b905e",
+      "bytes": 40677,
+      "lines": 116
+    }
+  }
+}

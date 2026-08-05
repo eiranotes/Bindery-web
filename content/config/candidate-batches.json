@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "batches": [
+    {
+      "id": "pro-domestic-2026-08-05",
+      "directory": "research/2026-08-05-pro",
+      "scope": "domestic-broad",
+      "enabled": true
+    },
+    {
+      "id": "international-stationery-2026-08-05",
+      "directory": "research/2026-08-05-international-stationery",
+      "scope": "international-stationery",
+      "enabled": true
+    }
+  ]
+}

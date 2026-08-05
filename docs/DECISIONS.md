@@ -376,3 +376,72 @@ using self-named language labels. Until translated event data exists, only share
 navigation and controls change. Keep the page language Korean and state that event
 names and bodies remain Korean originals; a locale preference must not imply a
 translation that does not exist.
+
+## D-032 — Large discovery batches remain quarantined until editor promotion
+
+Model-assisted web research may discover EventMaster, EventEdition, and
+SourceRecord candidates at a larger scale than the maintained public registry.
+Preserve each received batch exactly with file hashes and provenance, but keep
+it under `content/research/` with `research_candidate`, `needs_source`, and
+`existing_overlap` states. The public generator, comparison, feeds, and
+Community event allowlist must not read this directory.
+
+Candidate validation checks JSONL parsing, IDs, references, evidence backlinks,
+dates, source tiers, canonical HTTPS URLs, existing-series overlap, and the
+received artifact hashes. A separate live GET audit records reachability because
+a source URL that existed during research can later fail, redirect, or block an
+automated client. HTTP and fetch failure do not prove that an event is fictional,
+but they block automatic promotion until an editor reopens or replaces the source.
+
+The editor-review queue may rank reachable candidates by evidence and populated
+fields, but its score is operational triage rather than product quality or
+publishability. Promotion still requires manual S1/S2 review, normalization to
+the public schema, complete critical FieldEvidence, an accessible collected
+source record, and the existing deterministic content gates. Unknown official
+facts remain unknown rather than being inferred to satisfy the schema.
+
+## D-033 — Source-checked editions may precede field-complete editor review
+
+The product owner's 2026-08-05 instruction supersedes D-032 only where it kept
+all normalized candidates out of public generation until full field review.
+Normalize the complete research bundle into canonical EventMaster, EventEdition,
+and SourceRecord collections. A candidate edition may enter the public catalog
+as `source_checked` when its master is not `needs_source`, its primary source is
+S1 or S2, every linked source passed the recorded accessibility check, and both
+event dates are present. `editor_checked` remains a separate, stronger state.
+
+Source accessibility proves that an official URL can be reached, not that every
+structured value received human review. Public source-checked screens therefore
+name the pending review state, link the official original, and render unknown
+deadlines, fees, venues, booth sizes, selection methods, refunds, and operations
+as `정보 없음`. They must not infer placeholder prices, dates, requirements, or
+application state. Undated editions, `needs_source` masters, non-S1/S2 primary
+sources, and editions with any inaccessible linked source remain normalized but
+held from public generation.
+
+Keep one generated review report separating held editions from public-but-
+incomplete editions. The calendar and ICS omit unknown application deadlines;
+comparison summaries exclude unknown fees and deadlines from leader claims; the
+account Binder allowlist follows exactly the generated public event IDs.
+
+## D-034 — International event batches preserve local facts without conversion
+
+Register international research as independent hash-verified candidate batches
+instead of mixing hand-edited rows into the domestic artifact. Each edition
+stores ISO country code, Korean country label, city, IANA time zone, source
+language, and the official local-language name when available. Search results
+may locate a page, but only reachable S1/S2 organizer, association, venue,
+official factsheet, or public trade-show authority pages support publication.
+
+Keep fees in their stated ISO 4217 currency and original amount. Do not invent a
+KRW conversion, compare unlike currencies for a lowest-fee claim, or treat a
+visitor ticket as an exhibitor booth fee. A confirmed event date and reachable
+official source can produce `source_checked`; unknown exhibitor deadlines,
+selection, tax treatment, refund policy, and onsite operations remain null and
+enter the separate international review report.
+
+An adjacent creator market may enter this batch when its official material
+explicitly supports original art, stationery-adjacent goods, illustration, or
+handmade sales. Store it as a broad `복합` event and state that boundary in its
+summary; do not relabel it as a stationery-only fair. Design Festa vol.64 is the
+first application of this rule.

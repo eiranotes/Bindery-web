@@ -6,9 +6,22 @@ import type {
 
 const day = 24 * 60 * 60 * 1000;
 
-function eventTime(value: string, endOfDay = false): number {
+const timeZoneOffsets: Record<string, string> = {
+  "Asia/Seoul": "+09:00",
+  "Asia/Tokyo": "+09:00",
+  "Asia/Taipei": "+08:00",
+  "Asia/Shanghai": "+08:00",
+};
+
+function eventTime(
+  value: string | null,
+  endOfDay = false,
+  timeZone = "Asia/Seoul",
+): number | null {
+  if (!value) return null;
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return new Date(`${value}T${endOfDay ? "23:59:59" : "00:00:00"}+09:00`).getTime();
+    const offset = timeZoneOffsets[timeZone] ?? "+00:00";
+    return new Date(`${value}T${endOfDay ? "23:59:59" : "00:00:00"}${offset}`).getTime();
   }
   return new Date(value).getTime();
 }
@@ -18,10 +31,10 @@ export function deriveEventStatus(
   now = new Date(),
 ): EventStatus {
   const current = now.getTime();
-  const applicationOpen = eventTime(event.applicationOpen);
-  const deadline = eventTime(event.applicationDeadline, true);
-  const start = eventTime(event.startDate);
-  const end = eventTime(event.endDate, true);
+  const applicationOpen = eventTime(event.applicationOpen, false, event.timeZone);
+  const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
+  const start = eventTime(event.startDate, false, event.timeZone) as number;
+  const end = eventTime(event.endDate, true, event.timeZone) as number;
   const deadlineIsFinal = (event.applicationDeadlineKind ?? "final") === "final";
 
   if (current > end) return "ended";
@@ -29,41 +42,53 @@ export function deriveEventStatus(
   if (event.applicationStatus === "closed") {
     return start - current <= 14 * day ? "soon" : "closed";
   }
-  if (deadlineIsFinal && current > deadline && start - current <= 14 * day) {
+  if (deadlineIsFinal && deadline !== null && current > deadline && start - current <= 14 * day) {
     return "soon";
   }
-  if (deadlineIsFinal && current > deadline) return "closed";
-  if (current < applicationOpen) return "upcoming";
-  if (current <= deadline && deadline - current <= 14 * day) return "urgent";
-  return "open";
+  if (deadlineIsFinal && deadline !== null && current > deadline) return "closed";
+  if (applicationOpen !== null && current < applicationOpen) return "upcoming";
+  if (deadline !== null && current <= deadline && deadline - current <= 14 * day) return "urgent";
+  if (event.applicationStatus === "scheduled") return "upcoming";
+  if (event.applicationStatus === "open" || event.applicationStatus === "capacity") return "open";
+  return "unknown";
 }
 
 export function daysUntilDeadline(
   event: EventEdition,
   now = new Date(),
-): number {
+): number | null {
+  const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
+  if (deadline === null) return null;
   return Math.max(
     0,
-    Math.ceil(
-      (eventTime(event.applicationDeadline, true) - now.getTime()) / day,
-    ),
+    Math.ceil((deadline - now.getTime()) / day),
   );
 }
 
 export function nextEventMilestone(event: EventEdition, now = new Date()) {
-  const deadline = eventTime(event.applicationDeadline, true);
-  if (deadline >= now.getTime()) {
+  const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
+  if (deadline !== null && event.applicationDeadline && deadline >= now.getTime()) {
     return {
       date: event.applicationDeadline,
-      days: daysUntilDeadline(event, now),
+      days: daysUntilDeadline(event, now) ?? 0,
       label: event.applicationDeadlineLabel ?? "접수 마감",
       kind: "application" as const,
     };
   }
+  const start = eventTime(event.startDate, false, event.timeZone) as number;
+  if (start >= now.getTime()) {
+    return {
+      date: event.startDate,
+      days: daysUntilEvent(event, now),
+      label: "행사 시작",
+      kind: "event" as const,
+    };
+  }
+  const end = eventTime(event.endDate, true, event.timeZone) as number;
   return {
-    date: event.startDate,
-    days: daysUntilEvent(event, now),
-    label: "행사 시작",
+    date: event.endDate,
+    days: Math.max(0, Math.ceil((end - now.getTime()) / day)),
+    label: "행사 종료",
     kind: "event" as const,
   };
 }
@@ -72,9 +97,10 @@ export function daysUntilEvent(
   event: EventEdition,
   now = new Date(),
 ): number {
+  const start = eventTime(event.startDate, false, event.timeZone) as number;
   return Math.max(
     0,
-    Math.ceil((eventTime(event.startDate) - now.getTime()) / day),
+    Math.ceil((start - now.getTime()) / day),
   );
 }
 
@@ -116,7 +142,10 @@ export function filterEvents(
     const rightIsPast = rightStatus === "ended" ? 1 : 0;
 
     if (leftIsPast !== rightIsPast) return leftIsPast - rightIsPast;
-    return eventTime(nextEventMilestone(left, now).date, true) - eventTime(nextEventMilestone(right, now).date, true);
+    return (
+      (eventTime(nextEventMilestone(left, now).date, true, left.timeZone) as number) -
+      (eventTime(nextEventMilestone(right, now).date, true, right.timeZone) as number)
+    );
   });
 }
 
@@ -138,12 +167,13 @@ export function getEventByPath(
 import { events as defaultEvents } from "./data.ts";
 
 export function formatDate(
-  value: string,
+  value: string | null,
   options: Intl.DateTimeFormatOptions = {
     month: "2-digit",
     day: "2-digit",
   },
 ): string {
+  if (!value) return "정보 없음";
   return new Intl.DateTimeFormat("ko-KR", {
     timeZone: "Asia/Seoul",
     ...options,
@@ -163,10 +193,11 @@ export function formatDateRange(event: EventEdition): string {
   return `${start} – ${end}`;
 }
 
-export function formatCurrency(value: number): string {
+export function formatCurrency(value: number | null, currency = "KRW"): string {
+  if (value === null) return "정보 없음";
   return new Intl.NumberFormat("ko-KR", {
     style: "currency",
-    currency: "KRW",
+    currency,
     maximumFractionDigits: 0,
   }).format(value);
 }
@@ -176,6 +207,7 @@ export const statusLabels: Record<EventStatus, string> = {
   open: "접수 중",
   urgent: "마감 임박",
   closed: "접수 마감",
+  unknown: "접수 정보 없음",
   soon: "개최 임박",
   ongoing: "진행 중",
   ended: "종료",

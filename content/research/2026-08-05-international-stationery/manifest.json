@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "createdAt": "2026-08-05",
+  "origin": {
+    "method": "manual official-source research",
+    "scope": "international stationery events",
+    "countries": ["JP", "TW", "CN"]
+  },
+  "files": {
+    "README.md": {
+      "sha256": "06ce0382534ab1a598ffbf931e54045a5501c421d1bb4b1e59e89ef48ea87b91",
+      "bytes": 1235,
+      "lines": 23
+    },
+    "batch.json": {
+      "sha256": "7e6269911229f0751ab8e4cf4f22c878cf8fd33a42e5223251561b015b3291bb",
+      "bytes": 286,
+      "lines": 8
+    },
+    "event-masters.candidates.jsonl": {
+      "sha256": "1c6957e582985cc5b4162a56c4bab11f2f7efbf36ae07bb6669b4f2e757badad",
+      "bytes": 5397,
+      "lines": 10
+    },
+    "event-editions.candidates.jsonl": {
+      "sha256": "554bcc413ef7e0fafbc09a50398d7aedc04d36ef64f12dcb44d2fe5e223f5bbc",
+      "bytes": 35956,
+      "lines": 15
+    },
+    "source-records.candidates.jsonl": {
+      "sha256": "2dff301e23a27ba50a7ee8cf46ff00b6777b9b3597a074939baa5ded5b264a1d",
+      "bytes": 5857,
+      "lines": 16
+    }
+  }
+}

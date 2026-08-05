@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AdSlot } from "./components/AdSlot";
 import { DDay } from "./components/DDay";
 import { events } from "./lib/data.ts";
-import { nextEventMilestone } from "./lib/events.ts";
+import { deriveEventStatus, nextEventMilestone } from "./lib/events.ts";
 
 export const metadata: Metadata = {
   title: "창작자 행사 마감·회차 아카이브",
@@ -23,6 +23,7 @@ export default function Home() {
     timeZone: "Asia/Seoul",
   });
   const deadlines = [...events]
+    .filter((event) => deriveEventStatus(event, now) !== "ended")
     .sort(
       (left, right) =>
         new Date(nextEventMilestone(left, now).date).getTime() -
@@ -89,7 +90,7 @@ export default function Home() {
                 <Link href={`/events/${event.slug}/${event.edition}`}>
                   <strong>{event.shortName}</strong>
                   <span>
-                    {milestone.label} · {event.region} {event.venue}
+                    {milestone.label} · {event.region} {event.venue ?? "장소 확인 중"}
                   </span>
                 </Link>
               </li>;

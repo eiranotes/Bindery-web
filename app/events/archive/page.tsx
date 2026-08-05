@@ -194,14 +194,19 @@ export default function EventArchivePage() {
                         ) : null}
                       </th>
                       <td>{edition.dates}</td>
-                      <td>{edition.venue}</td>
-                      <td>{formatCurrency(edition.boothFee)}</td>
+                      <td>{edition.venue ?? "정보 없음"}</td>
+                      <td>
+                        {formatCurrency(
+                          edition.boothFee,
+                          edition.boothFeeCurrency ?? "KRW",
+                        )}
+                      </td>
                       <td>
                         {edition.booths === null
                           ? "정보 없음"
                           : edition.booths.toLocaleString("ko-KR")}
                       </td>
-                      <td>{edition.selection}</td>
+                      <td>{edition.selection ?? "정보 없음"}</td>
                     </tr>
                   ))}
                 </tbody>

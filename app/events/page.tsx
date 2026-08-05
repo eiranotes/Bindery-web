@@ -8,6 +8,7 @@ import {
   deriveEventStatus,
   eventPath,
   filterEvents,
+  formatCurrency,
   formatDate,
   nextEventMilestone,
 } from "../lib/events.ts";
@@ -139,7 +140,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                     <StatusStamp status={status} />
                     <Link href={eventPath(event)}>{event.name}</Link>
                     <span>
-                      {event.region} · {event.venue}
+                      {event.region} · {event.venue ?? "장소 확인 중"}
+                      {event.reviewNeeded ? " · 세부 검수 중" : ""}
                     </span>
                   </div>
                   <dl>
@@ -155,11 +157,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                     </div>
                     <div>
                       <dt>참가비</dt>
-                      <dd>₩{event.boothFee.toLocaleString("ko-KR")}</dd>
+                      <dd>{formatCurrency(event.boothFee, event.boothFeeCurrency ?? "KRW")}</dd>
                     </div>
                     <div>
                       <dt>선정</dt>
-                      <dd>{event.selection}</dd>
+                      <dd>{event.selection ?? "정보 없음"}</dd>
                     </div>
                   </dl>
                   <DDay
@@ -183,8 +185,9 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <aside className="source-notice">
         <strong>정보 경계</strong>
         <p>
-          공식 원문에서 확인한 1차 수집 데이터입니다. 신청 전 회차별 원문과
-          확인 날짜를 다시 확인하세요.
+          공식 원문과 연결된 정규화 데이터입니다. 세부 검수 중인 회차는
+          확인되지 않은 값을 정보 없음으로 표시하므로 신청 전 원문을 다시
+          확인하세요.
         </p>
       </aside>
     </div>

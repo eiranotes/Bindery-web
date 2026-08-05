@@ -60,11 +60,20 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     startDate: event.startDate,
     endDate: event.endDate,
     eventStatus: "https://schema.org/EventScheduled",
-    location: {
-      "@type": "Place",
-      name: event.venue,
-      address: event.address,
-    },
+    ...(event.venue
+      ? {
+          location: {
+            "@type": "Place",
+            name: event.venue,
+            address: {
+              "@type": "PostalAddress",
+              ...(event.address ? { streetAddress: event.address } : {}),
+              ...(event.city ? { addressLocality: event.city } : {}),
+              addressCountry: event.countryCode,
+            },
+          },
+        }
+      : {}),
     organizer: {
       "@type": "Organization",
       name: event.organizer,
@@ -88,7 +97,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           <StatusStamp status={status} />
           <h1>{event.name}</h1>
           <p>
-            {event.region} {event.venue} · {formatDateRange(event)}
+            {event.region} {event.venue ?? "장소 확인 중"} · {formatDateRange(event)}
           </p>
         </div>
         <div className="detail-dday">
@@ -98,13 +107,17 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
       </header>
 
       <aside className="origin-bar">
-        <strong>공식 정보 원본</strong>
+        <strong>
+          {event.dataStatus === "official" ? "편집 검수된 공식 정보" : "공식 원문 연결 정보"}
+        </strong>
         <a href={event.sourceUrl} target="_blank" rel="noreferrer">
           {event.sourceLabel} 확인 ↗
         </a>
         <span>
-          {event.verifiedAt} 확인 · 공식 출처 {event.sourceCount ?? 1}건을 연결했습니다.
-          신청 전 반드시 회차 원문을 확인하세요.
+          {event.verifiedAt} 확인 · {event.countryName} · 원문 언어 {event.sourceLanguage} ·
+          공식 출처 {event.sourceCount ?? 1}건을 연결했습니다.
+          {event.reviewNeeded ? " 세부 필드는 검수 중입니다." : ""} 신청 전 반드시
+          회차 원문을 확인하세요.
         </span>
       </aside>
 
@@ -120,11 +133,15 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             <div>
               <dt>필요 자료</dt>
               <dd>
-                <ul>
-                  {event.application.documents.map((document) => (
-                    <li key={document}>{document}</li>
-                  ))}
-                </ul>
+                {event.application.documents.length ? (
+                  <ul>
+                    {event.application.documents.map((document) => (
+                      <li key={document}>{document}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="unknown-value">정보 없음</span>
+                )}
               </dd>
             </div>
             <div>
@@ -202,18 +219,25 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 <tr key={history.edition}>
                   <th scope="row">{history.edition}</th>
                   <td>{history.dates}</td>
-                  <td>{history.venue}</td>
+                  <td><InfoValue value={history.venue} /></td>
                   <td>
-                    {formatCurrency(history.boothFee)}
+                    {formatCurrency(
+                      history.boothFee,
+                      history.boothFeeCurrency ?? event.boothFeeCurrency ?? "KRW",
+                    )}
                     {history.previousBoothFee &&
+                      history.boothFee !== null &&
                       history.boothFee > history.previousBoothFee && (
                         <small className="fee-change">
-                          +{formatCurrency(history.boothFee - history.previousBoothFee)}
+                          +{formatCurrency(
+                            history.boothFee - history.previousBoothFee,
+                            history.boothFeeCurrency ?? event.boothFeeCurrency ?? "KRW",
+                          )}
                         </small>
                       )}
                   </td>
                   <td><InfoValue value={history.booths === null ? null : history.booths.toLocaleString("ko-KR")} /></td>
-                  <td>{history.selection}</td>
+                  <td><InfoValue value={history.selection} /></td>
                 </tr>
               ))}
             </tbody>
@@ -247,11 +271,11 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </div>
             <div>
               <dt>부스비</dt>
-              <dd>{formatCurrency(event.boothFee)}</dd>
+              <dd>{formatCurrency(event.boothFee, event.boothFeeCurrency ?? "KRW")}</dd>
             </div>
             <div>
               <dt>부스 크기</dt>
-              <dd>{event.boothSize}</dd>
+              <dd><InfoValue value={event.boothSize} /></dd>
             </div>
             <div>
               <dt>사업자</dt>
@@ -259,7 +283,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </div>
             <div>
               <dt>선정 방식</dt>
-              <dd>{event.selection}</dd>
+              <dd><InfoValue value={event.selection} /></dd>
             </div>
           </dl>
           <BookmarkButton eventId={event.id} className="button button--primary" />

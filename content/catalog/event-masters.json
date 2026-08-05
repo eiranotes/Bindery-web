@@ -1,0 +1,2143 @@
+[
+  {
+    "id": "agf-korea",
+    "canonicalName": "Anime × Game Festival",
+    "aliases": [
+      "AGF Korea"
+    ],
+    "organizerId": "agf-organizing-committee",
+    "organizerName": "AGF 조직위원회",
+    "formats": [
+      "기업·창작 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "애니메이션",
+      "게임",
+      "캐릭터",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-agf-korea-2026-home",
+      "src-agf-korea-2026-exhibitor-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "asyaaf",
+    "canonicalName": "아시아프",
+    "aliases": [
+      "ASYAAF"
+    ],
+    "organizerId": "chosun-ilbo",
+    "organizerName": "조선일보사",
+    "formats": [
+      "작가 출품",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "현대미술",
+      "디자인",
+      "공예",
+      "일러스트"
+    ],
+    "officialSourceIds": [
+      "src-asyaaf-2026-artist-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "biaf",
+    "canonicalName": "부천국제애니메이션페스티벌",
+    "aliases": [
+      "BIAF"
+    ],
+    "organizerId": "biaf-organizing-committee",
+    "organizerName": "부천국제애니메이션페스티벌 조직위원회",
+    "formats": [
+      "작품 출품",
+      "상영",
+      "전시"
+    ],
+    "genres": [
+      "애니메이션",
+      "일러스트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-biaf-2026-home",
+      "src-biaf-2026-submission"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "bitgoeul-handmade-fair",
+    "canonicalName": "빛고을핸드메이드페어",
+    "aliases": [],
+    "organizerId": "gwangju-design-promotion-institute",
+    "organizerName": "광주디자인진흥원",
+    "formats": [
+      "공예 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "핸드메이드",
+      "공예",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-bitgoeul-handmade-fair-2026-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "boardgamecon",
+    "canonicalName": "보드게임콘",
+    "aliases": [
+      "BoardGameCon"
+    ],
+    "organizerId": "korea-boardgame-industry-association",
+    "organizerName": "한국보드게임산업협회",
+    "formats": [
+      "기업·창작자 부스",
+      "시연",
+      "판매"
+    ],
+    "genres": [
+      "보드게임",
+      "일러스트",
+      "게임 디자인"
+    ],
+    "officialSourceIds": [
+      "src-boardgamecon-official-home",
+      "src-boardgamecon-visitkorea"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "breeze-art-fair",
+    "canonicalName": "브리즈 아트페어",
+    "aliases": [],
+    "organizerId": "a-company",
+    "organizerName": "에이컴퍼니",
+    "formats": [
+      "작가 출품",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "현대미술",
+      "일러스트",
+      "회화",
+      "조형"
+    ],
+    "officialSourceIds": [
+      "src-breeze-art-fair-2026-home",
+      "src-breeze-art-fair-artist-invitation"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "bucheon-international-comics-festival",
+    "canonicalName": "부천국제만화축제",
+    "aliases": [
+      "BICOF"
+    ],
+    "organizerId": "korea-manhwa-content-agency",
+    "organizerName": "한국만화영상진흥원",
+    "formats": [
+      "야외 마켓 부스",
+      "출품",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "만화",
+      "웹툰",
+      "일러스트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-bucheon-comics-festival-2026-market-call",
+      "src-bucheon-comics-festival-2026-visitkorea"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-design-festival",
+    "canonicalName": "부산디자인페스티벌",
+    "aliases": [
+      "BDF"
+    ],
+    "organizerId": "busan-design-festival-organizers",
+    "organizerName": "부산디자인진흥원·㈜디자인하우스·KNN",
+    "formats": [
+      "브랜드 부스",
+      "디자이너 전시",
+      "판매"
+    ],
+    "genres": [
+      "디자인",
+      "디자인 굿즈",
+      "리빙",
+      "공예"
+    ],
+    "officialSourceIds": [
+      "src-busan-design-festival-2026-busan-city",
+      "src-busan-design-festival-official-home"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-handmade-fair",
+    "canonicalName": "부산핸드메이드페어",
+    "aliases": [],
+    "organizerId": "maru-convention",
+    "organizerName": "㈜마루컨벤션",
+    "formats": [
+      "개인·브랜드 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "핸드메이드",
+      "공예",
+      "문구",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-busan-handmade-fair-2026-home",
+      "src-busan-handmade-fair-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-illustration-fair",
+    "canonicalName": "부산일러스트레이션페어",
+    "aliases": [
+      "BIF",
+      "부일페"
+    ],
+    "organizerId": "oc-makers",
+    "organizerName": "㈜오씨메이커스",
+    "formats": [
+      "부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "일러스트",
+      "문구",
+      "독립출판",
+      "캐릭터",
+      "그래픽디자인"
+    ],
+    "officialSourceIds": [
+      "src-ocreo-official-platform",
+      "src-busan-illustration-fair-v7-visitkorea"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-indie-connect-festival",
+    "canonicalName": "부산인디커넥트페스티벌",
+    "aliases": [
+      "BIC Festival"
+    ],
+    "organizerId": "bic-festival-organizing-committee",
+    "organizerName": "부산인디커넥트페스티벌 조직위원회",
+    "formats": [
+      "인디게임 출품",
+      "선정작 부스",
+      "전시"
+    ],
+    "genres": [
+      "인디게임",
+      "게임 아트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-busan-indie-connect-2026-submission"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-international-childrens-book-fair",
+    "canonicalName": "부산국제아동도서전",
+    "aliases": [
+      "BICBF"
+    ],
+    "organizerId": "busan-childrens-book-fair-secretariat",
+    "organizerName": "부산국제아동도서전 사무국",
+    "formats": [
+      "출판사·작가 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "그림책",
+      "아동도서",
+      "일러스트",
+      "독립출판"
+    ],
+    "officialSourceIds": [
+      "src-busan-childrens-book-fair-official-home",
+      "src-busan-childrens-book-fair-2026-official-linktree"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "busan-international-design-award",
+    "canonicalName": "부산국제디자인어워드",
+    "aliases": [
+      "IBDA"
+    ],
+    "organizerId": "design-council-busan",
+    "organizerName": "부산디자인진흥원",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "시각 디자인",
+      "제품 디자인",
+      "공예",
+      "디지털 디자인"
+    ],
+    "officialSourceIds": [
+      "src-busan-international-design-award-2026-guide"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "character-licensing-fair",
+    "canonicalName": "캐릭터 라이선싱 페어",
+    "aliases": [],
+    "organizerId": "kocca-character-fair",
+    "organizerName": "한국콘텐츠진흥원·캐릭터 라이선싱 페어 사무국",
+    "formats": [
+      "기업 부스",
+      "루키 프로젝트",
+      "전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "캐릭터",
+      "콘텐츠 IP",
+      "일러스트",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-character-licensing-fair-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "cheongju-international-craft-competition",
+    "canonicalName": "청주국제공예공모전",
+    "aliases": [],
+    "organizerId": "cheongju-craft-biennale-organizing-committee",
+    "organizerName": "청주공예비엔날레조직위원회",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "공예",
+      "현대 공예",
+      "조형"
+    ],
+    "officialSourceIds": [
+      "src-cheongju-international-craft-competition-2027-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "comic-world",
+    "canonicalName": "코믹월드",
+    "aliases": [
+      "Comic World"
+    ],
+    "organizerId": "comic-world",
+    "organizerName": "코믹월드",
+    "formats": [
+      "동아리 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "서브컬처",
+      "만화",
+      "일러스트",
+      "회지"
+    ],
+    "officialSourceIds": [
+      "src-comic-world-home",
+      "src-comic-world-booth-types",
+      "src-comic-world-2026-summer-kintex",
+      "src-comic-world-2026-328-busan",
+      "src-comic-world-2026-329-cheongju",
+      "src-comic-world-2026-330-ilsan",
+      "src-comic-world-2026-331-busan",
+      "src-comic-world-2026-332-suwon",
+      "src-comic-world-2026-333-busan",
+      "src-comic-world-summer-2026-official-edition",
+      "src-comic-world-2026-335-ilsan",
+      "src-comic-world-2026-336-ilsan"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "craft-trend-fair",
+    "canonicalName": "공예트렌드페어",
+    "aliases": [
+      "Craft Trend Fair"
+    ],
+    "organizerId": "korea-craft-design-foundation",
+    "organizerName": "한국공예·디자인문화진흥원",
+    "formats": [
+      "작가·브랜드 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "공예",
+      "핸드메이드",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-craft-trend-fair-2026-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "d-festa",
+    "canonicalName": "D.Festa",
+    "aliases": [
+      "디.페스타",
+      "디페스타"
+    ],
+    "organizerId": "dongin-network",
+    "organizerName": "동인 네트워크",
+    "formats": [
+      "서클 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "서브컬처",
+      "동인",
+      "만화",
+      "일러스트"
+    ],
+    "officialSourceIds": [
+      "src-d-festa-dongne"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "daegu-content-fair",
+    "canonicalName": "대구콘텐츠페어",
+    "aliases": [],
+    "organizerId": "daegu-content-fair-secretariat",
+    "organizerName": "대구콘텐츠페어 사무국",
+    "formats": [
+      "창작자·기업 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "캐릭터",
+      "일러스트",
+      "게임",
+      "웹툰"
+    ],
+    "officialSourceIds": [
+      "src-daegu-content-fair-official-home"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "daejeon-content-fair",
+    "canonicalName": "대전콘텐츠페어",
+    "aliases": [],
+    "organizerId": "daejeon-tourism-organization",
+    "organizerName": "대전관광공사",
+    "formats": [
+      "창작자·기업 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "캐릭터",
+      "일러스트",
+      "게임",
+      "웹툰",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-daejeon-content-fair-2026-home",
+      "src-daejeon-content-fair-2026-exhibitor-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "ddp-design-fair",
+    "canonicalName": "DDP디자인페어",
+    "aliases": [
+      "DDP Design Fair",
+      "서울디자인위크 DDP디자인페어"
+    ],
+    "organizerId": "seoul-design-foundation",
+    "organizerName": "서울디자인재단",
+    "formats": [
+      "디자이너·기업 전시",
+      "제품 출품",
+      "판매·비즈니스"
+    ],
+    "genres": [
+      "디자인",
+      "공예",
+      "디자인 굿즈",
+      "리빙"
+    ],
+    "officialSourceIds": [
+      "src-ddp-design-fair-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "design-korea",
+    "canonicalName": "디자인코리아",
+    "aliases": [
+      "DK Festival"
+    ],
+    "organizerId": "korea-institute-of-design-promotion",
+    "organizerName": "한국디자인진흥원",
+    "formats": [
+      "기업·브랜드 부스",
+      "디자이너 전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "디자인",
+      "디자인 굿즈",
+      "산업 디자인"
+    ],
+    "officialSourceIds": [
+      "src-design-korea-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "g-fair-korea",
+    "canonicalName": "G-FAIR KOREA",
+    "aliases": [
+      "대한민국우수상품전시회"
+    ],
+    "organizerId": "gyeonggido-business-science-accelerator",
+    "organizerName": "경기도경제과학진흥원",
+    "formats": [
+      "기업 부스",
+      "수출·유통 상담",
+      "전시"
+    ],
+    "genres": [
+      "소비재",
+      "디자인 굿즈",
+      "생활용품",
+      "소규모 브랜드"
+    ],
+    "officialSourceIds": [
+      "src-g-fair-korea-official-home",
+      "src-g-fair-korea-2026-bizinfo"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "g-star",
+    "canonicalName": "지스타",
+    "aliases": [
+      "G-STAR"
+    ],
+    "organizerId": "korea-association-of-game-industry",
+    "organizerName": "한국게임산업협회",
+    "formats": [
+      "게임 전시 부스",
+      "인디·중소기업 부스",
+      "B2B·B2C"
+    ],
+    "genres": [
+      "게임",
+      "인디게임",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-g-star-2026-participation"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "gift-show-in-seoul",
+    "canonicalName": "Gift Show in Seoul",
+    "aliases": [
+      "서울 기프트쇼"
+    ],
+    "organizerId": "business-guide-sha",
+    "organizerName": "Business Guide-Sha, Inc.",
+    "formats": [
+      "브랜드 부스",
+      "전시",
+      "유통 상담"
+    ],
+    "genres": [
+      "디자인 굿즈",
+      "문구",
+      "기프트",
+      "생활용품"
+    ],
+    "officialSourceIds": [
+      "src-gift-show-in-seoul-2026-exhibitor"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "good-design-korea",
+    "canonicalName": "우수디자인(GD)상품선정",
+    "aliases": [
+      "Good Design Korea",
+      "GD 상품선정"
+    ],
+    "organizerId": "korea-institute-of-design-promotion",
+    "organizerName": "한국디자인진흥원",
+    "formats": [
+      "상품 출품",
+      "심사",
+      "전시·홍보"
+    ],
+    "genres": [
+      "제품 디자인",
+      "시각 디자인",
+      "공예",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-good-design-korea-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "gwangju-ace-fair",
+    "canonicalName": "광주에이스페어",
+    "aliases": [
+      "ACE Fair"
+    ],
+    "organizerId": "gwangju-ace-fair-organizers",
+    "organizerName": "광주광역시·김대중컨벤션센터",
+    "formats": [
+      "콘텐츠 기업 부스",
+      "전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "애니메이션",
+      "캐릭터",
+      "게임",
+      "콘텐츠 IP"
+    ],
+    "officialSourceIds": [
+      "src-gwangju-ace-fair-official-participation"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "gxg",
+    "canonicalName": "GXG",
+    "aliases": [
+      "Game culture eXperience Generation"
+    ],
+    "organizerId": "seongnam-city-industry-promotion-agency",
+    "organizerName": "성남시·성남산업진흥원",
+    "formats": [
+      "창작 콘텐츠 출품",
+      "공연·전시",
+      "게임문화 행사"
+    ],
+    "genres": [
+      "게임",
+      "게임 음악",
+      "일러스트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-gxg-2026-official-home",
+      "src-gxg-2026-creative-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "gyeonggi-ceramics-competition",
+    "canonicalName": "경기세계도자비엔날레 국제공모전",
+    "aliases": [],
+    "organizerId": "korea-ceramic-foundation",
+    "organizerName": "한국도자재단",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "도자 공예",
+      "공예",
+      "조형"
+    ],
+    "officialSourceIds": [
+      "src-gyeonggi-ceramics-competition-2026-guide"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "gyeonggi-crafts-competition",
+    "canonicalName": "경기도 공예품대전",
+    "aliases": [],
+    "organizerId": "gyeonggi-province",
+    "organizerName": "경기도",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "공예",
+      "전통 공예",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-gyeonggi-crafts-competition-2026-gimpo"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "gyeonggi-international-webtoon-fair",
+    "canonicalName": "경기국제웹툰페어",
+    "aliases": [],
+    "organizerId": "gyeonggi-content-agency",
+    "organizerName": "경기콘텐츠진흥원",
+    "formats": [
+      "부스",
+      "전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "웹툰",
+      "캐릭터",
+      "일러스트",
+      "콘텐츠 IP"
+    ],
+    "officialSourceIds": [
+      "src-gyeonggi-webtoon-fair-official"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "hanbok-store",
+    "canonicalName": "한복상점",
+    "aliases": [
+      "Hanbok Store"
+    ],
+    "organizerId": "korea-craft-design-foundation",
+    "organizerName": "한국공예·디자인문화진흥원",
+    "formats": [
+      "한복 브랜드 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "한복",
+      "공예",
+      "디자인 굿즈",
+      "전통문화"
+    ],
+    "officialSourceIds": [
+      "src-hanbok-store-2026-call",
+      "src-hanbok-store-2026-application-detail"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "handarty-korea",
+    "canonicalName": "핸드아티코리아",
+    "aliases": [
+      "Handarty Korea"
+    ],
+    "organizerId": "messe-esang",
+    "organizerName": "메쎄이상",
+    "formats": [
+      "개인·브랜드 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "핸드메이드",
+      "공예",
+      "디자인 굿즈",
+      "일러스트"
+    ],
+    "officialSourceIds": [
+      "src-handarty-korea-2026-home",
+      "src-handarty-korea-2026-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "home-table-deco-fair",
+    "canonicalName": "홈·테이블데코페어",
+    "aliases": [
+      "HOME·TABLE DECO FAIR",
+      "더 메종"
+    ],
+    "organizerId": "rx-k-fairs-casa-living",
+    "organizerName": "RX케이훼어스·CSLV 까사리빙",
+    "formats": [
+      "브랜드 부스",
+      "전시",
+      "판매·상담"
+    ],
+    "genres": [
+      "리빙",
+      "공예",
+      "디자인 굿즈",
+      "소규모 브랜드"
+    ],
+    "officialSourceIds": [
+      "src-home-table-deco-2026-home",
+      "src-home-table-deco-2026-exhibitor-guide",
+      "src-the-maison-2026-home",
+      "src-the-maison-2026-exhibitor-guide"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "illustar-fes",
+    "canonicalName": "일러스타 페스",
+    "aliases": [
+      "ILLUSTAR FES"
+    ],
+    "organizerId": "illustar-fes-office",
+    "organizerName": "일러스타 페스 사무국",
+    "formats": [
+      "서클 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "서브컬처",
+      "일러스트",
+      "만화",
+      "게임",
+      "1차 창작"
+    ],
+    "officialSourceIds": [
+      "src-illustar-fes-home",
+      "src-illustar-fes-introduction",
+      "src-illustar-fes-circle-participation"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "illustration-korea",
+    "canonicalName": "일러스트코리아",
+    "aliases": [
+      "Illustration Korea"
+    ],
+    "organizerId": "messe-esang",
+    "organizerName": "메쎄이상",
+    "formats": [
+      "부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "일러스트",
+      "문구",
+      "독립출판",
+      "캐릭터",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-illustration-korea-official-home",
+      "src-illustration-korea-2026-seoul-coex"
+    ],
+    "researchStatus": "existing_overlap",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "indiecraft",
+    "canonicalName": "인디크래프트",
+    "aliases": [
+      "INDIE CRAFT"
+    ],
+    "organizerId": "korea-mobile-game-association",
+    "organizerName": "한국모바일게임협회",
+    "formats": [
+      "인디게임 출품",
+      "선정작 전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "인디게임",
+      "게임 아트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-indiecraft-2026-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "jeju-book-fair",
+    "canonicalName": "제주북페어",
+    "aliases": [],
+    "organizerId": "jeju-book-fair-organizers",
+    "organizerName": "제주북페어 운영위원회",
+    "formats": [
+      "독립출판 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "독립출판",
+      "아트북",
+      "진",
+      "지역 출판"
+    ],
+    "officialSourceIds": [
+      "src-jeju-book-fair-2026-visitjeju"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "jeonju-book-fair",
+    "canonicalName": "전주독립출판 북페어",
+    "aliases": [],
+    "organizerId": "jeonju-city",
+    "organizerName": "전주시",
+    "formats": [
+      "독립출판 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "독립출판",
+      "지역 출판",
+      "아트북",
+      "진"
+    ],
+    "officialSourceIds": [
+      "src-jeonju-book-fair-2026-city-program"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "k-handmade-fair",
+    "canonicalName": "K-핸드메이드페어",
+    "aliases": [
+      "K-Handmade Fair"
+    ],
+    "organizerId": "korea-international-exhibition",
+    "organizerName": "㈜한국국제전시",
+    "formats": [
+      "개인·브랜드 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "핸드메이드",
+      "공예",
+      "문구",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-k-handmade-fair-official-home",
+      "src-k-handmade-fair-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "k-illustration-fair",
+    "canonicalName": "K-일러스트레이션페어",
+    "aliases": [
+      "K-IF",
+      "케일페"
+    ],
+    "organizerId": "korea-international-exhibition",
+    "organizerName": "㈜한국국제전시",
+    "formats": [
+      "부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "일러스트",
+      "문구",
+      "캐릭터",
+      "독립출판",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-k-illustration-fair-home",
+      "src-k-illustration-fair-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "kofurn",
+    "canonicalName": "한국국제가구 및 인테리어산업대전",
+    "aliases": [
+      "KOFURN"
+    ],
+    "organizerId": "korea-furniture-industries-cooperative",
+    "organizerName": "대한가구산업협동조합연합회",
+    "formats": [
+      "기업 부스",
+      "전시",
+      "비즈니스"
+    ],
+    "genres": [
+      "가구",
+      "공예",
+      "리빙 디자인"
+    ],
+    "officialSourceIds": [
+      "src-kofurn-official-home"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "korea-craft-week",
+    "canonicalName": "공예주간",
+    "aliases": [
+      "Korea Craft Week"
+    ],
+    "organizerId": "korea-craft-design-foundation",
+    "organizerName": "한국공예·디자인문화진흥원",
+    "formats": [
+      "참여 프로그램",
+      "전시",
+      "마켓",
+      "워크숍"
+    ],
+    "genres": [
+      "공예",
+      "핸드메이드",
+      "지역 창작"
+    ],
+    "officialSourceIds": [
+      "src-korea-craft-week-2026-home",
+      "src-korea-craft-week-2026-participation-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "korea-crafts-competition",
+    "canonicalName": "대한민국공예품대전",
+    "aliases": [],
+    "organizerId": "korea-federation-of-handicrafts-cooperatives",
+    "organizerName": "한국공예협동조합연합회",
+    "formats": [
+      "작품 출품",
+      "지역 예선",
+      "전시·판매 지원"
+    ],
+    "genres": [
+      "공예",
+      "전통 공예",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-korea-crafts-competition-official-home",
+      "src-korea-crafts-competition-2026-seoul-preliminary"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "korea-design-exhibition",
+    "canonicalName": "대한민국디자인전람회",
+    "aliases": [
+      "Korea Design Exhibition"
+    ],
+    "organizerId": "korea-institute-of-design-promotion",
+    "organizerName": "한국디자인진흥원",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "시각 디자인",
+      "제품 디자인",
+      "공예",
+      "디지털 콘텐츠"
+    ],
+    "officialSourceIds": [
+      "src-korea-design-exhibition-2026-notice"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "korea-hanji-art-competition",
+    "canonicalName": "대한민국한지대전",
+    "aliases": [
+      "대한민국한지문화제 한지대전"
+    ],
+    "organizerId": "hanji-culture-foundation",
+    "organizerName": "한지문화재단",
+    "formats": [
+      "작품 출품",
+      "심사",
+      "전시"
+    ],
+    "genres": [
+      "한지 공예",
+      "전통 공예",
+      "미술"
+    ],
+    "officialSourceIds": [
+      "src-korea-hanji-art-competition-2026-call",
+      "src-korea-hanji-art-competition-2026-exhibition"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "korea-tourism-souvenir-contest-and-fair",
+    "canonicalName": "대한민국 관광기념품 공모전·박람회",
+    "aliases": [],
+    "organizerId": "korea-tourism-organization",
+    "organizerName": "한국관광공사",
+    "formats": [
+      "상품 출품",
+      "심사",
+      "박람회 전시·판매"
+    ],
+    "genres": [
+      "기념품",
+      "디자인 굿즈",
+      "공예",
+      "지역 창작"
+    ],
+    "officialSourceIds": [
+      "src-korea-tourism-souvenir-2026-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "megashow",
+    "canonicalName": "메가쇼",
+    "aliases": [],
+    "organizerId": "megashow",
+    "organizerName": "메가쇼",
+    "formats": [
+      "브랜드 부스",
+      "판매",
+      "유통 상담"
+    ],
+    "genres": [
+      "생활용품",
+      "디자인 굿즈",
+      "문구",
+      "소규모 브랜드"
+    ],
+    "officialSourceIds": [
+      "src-megashow-official-home",
+      "src-megashow-2026-season-1",
+      "src-suwon-megashow-2026-season-1",
+      "src-suwon-megashow-2026-season-2"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "mungu-jeon",
+    "canonicalName": "문구전",
+    "aliases": [
+      "Moongu Fair"
+    ],
+    "organizerId": "comic-world",
+    "organizerName": "㈜코믹월드",
+    "formats": [
+      "창작자 부스",
+      "문구·일러스트 판매",
+      "전시"
+    ],
+    "genres": [
+      "문구",
+      "일러스트",
+      "캐릭터",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-mungu-jeon-official-home",
+      "src-mungu-jeon-2026-spring-booth-notice",
+      "src-mungu-jeon-2026-busan-32",
+      "src-mungu-jeon-2026-summer",
+      "src-mungu-jeon-2026-autumn"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "playx4",
+    "canonicalName": "플레이엑스포",
+    "aliases": [
+      "PlayX4"
+    ],
+    "organizerId": "gyeonggi-content-agency",
+    "organizerName": "경기콘텐츠진흥원",
+    "formats": [
+      "게임 전시 부스",
+      "인디게임 출품",
+      "B2B·B2C"
+    ],
+    "genres": [
+      "게임",
+      "인디게임",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-playx4-2026-b2c-application"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "seoul-design-award",
+    "canonicalName": "서울디자인어워드",
+    "aliases": [],
+    "organizerId": "seoul-design-foundation",
+    "organizerName": "서울디자인재단",
+    "formats": [
+      "프로젝트 출품",
+      "심사",
+      "전시·발표"
+    ],
+    "genres": [
+      "공공 디자인",
+      "지속가능 디자인",
+      "서비스 디자인"
+    ],
+    "officialSourceIds": [
+      "src-seoul-design-award-2026-home"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-design-festival",
+    "canonicalName": "서울디자인페스티벌",
+    "aliases": [
+      "SDF"
+    ],
+    "organizerId": "designhouse",
+    "organizerName": "㈜디자인하우스",
+    "formats": [
+      "브랜드 부스",
+      "영 디자이너 프로모션",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "디자인",
+      "디자인 굿즈",
+      "리빙",
+      "문구",
+      "공예"
+    ],
+    "officialSourceIds": [
+      "src-seoul-design-festival-2026-home",
+      "src-seoul-design-festival-2026-brand-application"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-illustration-fair",
+    "canonicalName": "서울일러스트레이션페어",
+    "aliases": [
+      "SIF",
+      "서일페"
+    ],
+    "organizerId": "oc-makers",
+    "organizerName": "㈜오씨메이커스",
+    "formats": [
+      "부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "일러스트",
+      "문구",
+      "독립출판",
+      "캐릭터",
+      "그래픽디자인"
+    ],
+    "officialSourceIds": [
+      "src-ocreo-official-platform",
+      "src-seoul-illustration-fair-v21-coex",
+      "src-seoul-illustration-fair-v22-coex"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-indie-anifest",
+    "canonicalName": "서울인디애니페스트",
+    "aliases": [
+      "Indie-AniFest"
+    ],
+    "organizerId": "korean-independent-animation-association",
+    "organizerName": "한국독립애니메이션협회",
+    "formats": [
+      "작품 출품",
+      "상영"
+    ],
+    "genres": [
+      "독립 애니메이션",
+      "일러스트",
+      "서브컬처"
+    ],
+    "officialSourceIds": [
+      "src-seoul-indie-anifest-2026-home",
+      "src-seoul-indie-anifest-2026-rules-pdf"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-international-book-fair",
+    "canonicalName": "서울국제도서전",
+    "aliases": [
+      "SIBF"
+    ],
+    "organizerId": "korean-publishers-association",
+    "organizerName": "대한출판문화협회",
+    "formats": [
+      "출판사·독립출판 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "독립출판",
+      "도서",
+      "아트북",
+      "진"
+    ],
+    "officialSourceIds": [
+      "src-seoul-international-book-fair-2026-domestic-exhibitor-call",
+      "src-seoul-international-book-fair-2026-home"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-living-design-fair",
+    "canonicalName": "서울리빙디자인페어",
+    "aliases": [],
+    "organizerId": "seoul-living-design-fair-organizers",
+    "organizerName": "㈜디자인하우스·코엑스·MBN",
+    "formats": [
+      "브랜드 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "리빙 디자인",
+      "공예",
+      "디자인 굿즈",
+      "소규모 브랜드"
+    ],
+    "officialSourceIds": [
+      "src-seoul-living-design-fair-2026-coex",
+      "src-seoul-living-design-fair-official-home"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "seoul-mechanical-keyboard-expo",
+    "canonicalName": "서울 기계식 키보드 엑스포",
+    "aliases": [
+      "SMKX"
+    ],
+    "organizerId": "smkx-organizers",
+    "organizerName": "서울 기계식 키보드 엑스포 운영팀",
+    "formats": [
+      "메이커·브랜드 부스",
+      "전시",
+      "판매"
+    ],
+    "genres": [
+      "키보드",
+      "메이커",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-seoul-mechanical-keyboard-expo-official-home",
+      "src-seoul-mechanical-keyboard-expo-setec"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "seoul-publishers-table",
+    "canonicalName": "서울 퍼블리셔스 테이블",
+    "aliases": [
+      "SPT"
+    ],
+    "organizerId": "seoul-publishers-table-organizers",
+    "organizerName": "서울 퍼블리셔스 테이블 운영팀",
+    "formats": [
+      "독립출판 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "독립출판",
+      "아트북",
+      "진",
+      "일러스트"
+    ],
+    "officialSourceIds": [
+      "src-seoul-publishers-table-official-home",
+      "src-seoul-publishers-table-official-instagram"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "sisofair",
+    "canonicalName": "서울국제문구·사무용품종합전시회",
+    "aliases": [
+      "SISO FAIR"
+    ],
+    "organizerId": "korea-stationery-industry-cooperative",
+    "organizerName": "한국문구공업협동조합",
+    "formats": [
+      "기업 부스",
+      "전시",
+      "판매·상담"
+    ],
+    "genres": [
+      "문구",
+      "사무용품",
+      "디자인 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-sisofair-official-notice"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "sourcing-in-market",
+    "canonicalName": "소싱인마켓",
+    "aliases": [
+      "서울국제소싱페어"
+    ],
+    "organizerId": "sourcing-in-market-organizers",
+    "organizerName": "㈜코엑스·(사)한국MD협회",
+    "formats": [
+      "브랜드 부스",
+      "B2B 상담",
+      "전시"
+    ],
+    "genres": [
+      "문구",
+      "디자인 굿즈",
+      "리빙",
+      "소비재"
+    ],
+    "officialSourceIds": [
+      "src-sourcing-in-market-2026-application",
+      "src-sourcing-in-market-2026-coex"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "under-39",
+    "canonicalName": "UNDER 39",
+    "aliases": [],
+    "organizerId": "busan-cultural-foundation",
+    "organizerName": "부산문화재단",
+    "formats": [
+      "작가 출품",
+      "전시",
+      "판매 지원"
+    ],
+    "genres": [
+      "청년 미술",
+      "일러스트",
+      "회화",
+      "조형"
+    ],
+    "officialSourceIds": [
+      "src-under-39-2026-artist-call"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "unlimited-edition",
+    "canonicalName": "언리미티드 에디션",
+    "aliases": [
+      "UE"
+    ],
+    "organizerId": "unlimited-edition-organizers",
+    "organizerName": "언리미티드 에디션 운영팀",
+    "formats": [
+      "독립출판 부스",
+      "판매",
+      "전시"
+    ],
+    "genres": [
+      "독립출판",
+      "아트북",
+      "진",
+      "그래픽 디자인"
+    ],
+    "officialSourceIds": [
+      "src-unlimited-edition-official-home",
+      "src-unlimited-edition-official-instagram"
+    ],
+    "researchStatus": "needs_source",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "needs_review"
+  },
+  {
+    "id": "urban-break",
+    "canonicalName": "어반브레이크",
+    "aliases": [],
+    "organizerId": "urban-break-organizing-committee",
+    "organizerName": "어반브레이크 조직위원회",
+    "formats": [
+      "작가 출품",
+      "갤러리·브랜드 부스",
+      "전시·판매"
+    ],
+    "genres": [
+      "어반 아트",
+      "일러스트",
+      "그래픽",
+      "현대미술"
+    ],
+    "officialSourceIds": [
+      "src-urban-break-official-home",
+      "src-urban-break-artist-participation"
+    ],
+    "researchStatus": "verified_existing",
+    "researchBatchId": "pro-domestic-2026-08-05",
+    "countryCode": "KR",
+    "countryName": "대한민국",
+    "sourceLanguage": "ko",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "bungu-joshi-haku",
+    "canonicalName": "문구여자박람회",
+    "localName": "文具女子博",
+    "aliases": [
+      "Bungu Joshi Haku"
+    ],
+    "organizerId": "bungu-joshi-haku-committee",
+    "organizerName": "문구여자박람회 실행위원회",
+    "formats": [
+      "문구 판매 행사",
+      "팝업"
+    ],
+    "genres": [
+      "문구",
+      "종이제품",
+      "다이어리",
+      "창작 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-bungu-joshi-tokyo-2026",
+      "src-bungu-joshi-niigata-2026",
+      "src-bungu-joshi-hiroshima-2026",
+      "src-bungu-joshi-yokohama-2026"
+    ],
+    "countryCode": "JP",
+    "countryName": "일본",
+    "sourceLanguage": "ja",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "isot-tokyo",
+    "canonicalName": "국제 문구·종이제품전 ISOT",
+    "localName": "国際 文具・紙製品展 ISOT",
+    "aliases": [
+      "International Stationery & Office Products Fair Tokyo"
+    ],
+    "organizerId": "rx-japan",
+    "organizerName": "RX Japan",
+    "formats": [
+      "B2B 전시",
+      "상담회"
+    ],
+    "genres": [
+      "문구",
+      "종이제품",
+      "사무용품",
+      "페이퍼크래프트"
+    ],
+    "officialSourceIds": [
+      "src-isot-tokyo-official"
+    ],
+    "countryCode": "JP",
+    "countryName": "일본",
+    "sourceLanguage": "ja",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "tokyo-international-gift-show",
+    "canonicalName": "도쿄 인터내셔널 기프트 쇼",
+    "localName": "東京インターナショナル・ギフト・ショー",
+    "aliases": [
+      "TIGS"
+    ],
+    "organizerId": "business-guide-sha",
+    "organizerName": "Business Guide-Sha",
+    "formats": [
+      "B2B 전시",
+      "상담회"
+    ],
+    "genres": [
+      "문구",
+      "선물",
+      "디자인",
+      "생활잡화"
+    ],
+    "officialSourceIds": [
+      "src-tokyo-gift-show-2026-autumn"
+    ],
+    "countryCode": "JP",
+    "countryName": "일본",
+    "sourceLanguage": "ja",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "osaka-international-gift-show",
+    "canonicalName": "오사카 인터내셔널 기프트 쇼",
+    "localName": "大阪インターナショナル・ギフト・ショー",
+    "aliases": [
+      "OIGS"
+    ],
+    "organizerId": "business-guide-sha-osaka",
+    "organizerName": "Business Guide-Sha Osaka",
+    "formats": [
+      "B2B 전시",
+      "상담회"
+    ],
+    "genres": [
+      "문구",
+      "선물",
+      "디자인",
+      "생활잡화"
+    ],
+    "officialSourceIds": [
+      "src-osaka-gift-show-2026"
+    ],
+    "countryCode": "JP",
+    "countryName": "일본",
+    "sourceLanguage": "en",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "taiwan-creative-stationery-fair",
+    "canonicalName": "대만 국제 창의문구전",
+    "localName": "台灣國際創意文具展",
+    "aliases": [
+      "Taiwan International Creative Stationery Fair"
+    ],
+    "organizerId": "tasi-top-link",
+    "organizerName": "대만 교육용품공업동업공회·상련국제전람",
+    "formats": [
+      "소비자 전시",
+      "판매"
+    ],
+    "genres": [
+      "문구",
+      "사무용품",
+      "창의생활"
+    ],
+    "officialSourceIds": [
+      "src-taiwan-creative-stationery-fair-2026"
+    ],
+    "countryCode": "TW",
+    "countryName": "대만",
+    "sourceLanguage": "zh-Hant",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "dg-taiwan",
+    "canonicalName": "DG Taiwan 대만 국제 창의선물문구전",
+    "localName": "台灣國際創意禮品文具展",
+    "aliases": [
+      "Designed Giftionery Taiwan"
+    ],
+    "organizerId": "taitra-twtc",
+    "organizerName": "TAITRA·타이베이 세계무역센터",
+    "formats": [
+      "B2B 전시",
+      "라이선싱"
+    ],
+    "genres": [
+      "문구",
+      "선물",
+      "일러스트",
+      "캐릭터"
+    ],
+    "officialSourceIds": [
+      "src-dg-taiwan-2026"
+    ],
+    "countryCode": "TW",
+    "countryName": "대만",
+    "sourceLanguage": "zh-Hant",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "play-stationery-handcraft-fair",
+    "canonicalName": "플레이 문구·핸드메이드 창의전",
+    "localName": "玩轉文具暨手作創意展",
+    "aliases": [
+      "Play Stationery & Handcraft Fair"
+    ],
+    "organizerId": "sheng-dong",
+    "organizerName": "성동국제전람",
+    "formats": [
+      "소비자 전시",
+      "판매",
+      "핸드메이드"
+    ],
+    "genres": [
+      "문구",
+      "다이어리",
+      "일러스트",
+      "창작 굿즈"
+    ],
+    "officialSourceIds": [
+      "src-play-stationery-handcraft-fair-2026"
+    ],
+    "countryCode": "TW",
+    "countryName": "대만",
+    "sourceLanguage": "zh-Hant",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "china-stationery-fair",
+    "canonicalName": "중국 문화용품상품교역회 CSF",
+    "localName": "中国文化用品商品交易会",
+    "aliases": [
+      "China Stationery Fair",
+      "CSF"
+    ],
+    "organizerId": "comexposium-gaobaiying",
+    "organizerName": "Gaobaiying Exhibition Shanghai",
+    "formats": [
+      "B2B 전시",
+      "상담회"
+    ],
+    "genres": [
+      "문구",
+      "사무용품",
+      "미술재료",
+      "문창"
+    ],
+    "officialSourceIds": [
+      "src-china-stationery-fair-2026"
+    ],
+    "countryCode": "CN",
+    "countryName": "중국",
+    "sourceLanguage": "zh-Hans",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "paperworld-china",
+    "canonicalName": "페이퍼월드 차이나",
+    "localName": "中国国际文具及办公用品展览会",
+    "aliases": [
+      "Paperworld China"
+    ],
+    "organizerId": "messe-frankfurt-shanghai",
+    "organizerName": "Messe Frankfurt Shanghai·중국문교체육용품협회",
+    "formats": [
+      "B2B 전시",
+      "상담회"
+    ],
+    "genres": [
+      "문구",
+      "종이제품",
+      "사무용품",
+      "미술·수공예"
+    ],
+    "officialSourceIds": [
+      "src-paperworld-china-2026-factsheet"
+    ],
+    "countryCode": "CN",
+    "countryName": "중국",
+    "sourceLanguage": "zh-Hans",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  },
+  {
+    "id": "design-festa",
+    "canonicalName": "디자인 페스타",
+    "localName": "デザインフェスタ",
+    "aliases": [
+      "DESIGN FESTA",
+      "デザフェス"
+    ],
+    "organizerId": "design-festa-ltd",
+    "organizerName": "디자인 페스타 유한회사",
+    "formats": [
+      "아트페어",
+      "판매",
+      "전시",
+      "워크숍"
+    ],
+    "genres": [
+      "일러스트",
+      "문구",
+      "핸드메이드",
+      "잡화",
+      "회화"
+    ],
+    "officialSourceIds": [
+      "src-design-festa-vol64-official",
+      "src-design-festa-vol64-booth",
+      "src-design-festa-exhibitor-faq",
+      "src-tokyo-big-sight-access"
+    ],
+    "countryCode": "JP",
+    "countryName": "일본",
+    "sourceLanguage": "ja",
+    "researchStatus": "verified_existing",
+    "researchBatchId": "international-stationery-2026-08-05",
+    "catalogStatus": "normalized_candidate"
+  }
+]

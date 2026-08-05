@@ -15,6 +15,18 @@ const sourceById = new Map(registry.sources.map((source) => [source.id, source])
 const recordFiles = await listJsonFiles(path.join(contentDirectory, "sources"));
 const records = await Promise.all(recordFiles.map((file) => readJson(file)));
 const editions = (await loadEditions()).map(({ value }) => value);
+const normalizedEditions = await readJson(
+  path.join(contentDirectory, "catalog", "event-editions.json"),
+);
+const sourceCheckedEditions = normalizedEditions.filter(
+  (edition) => edition.publicationStatus === "public",
+);
+const heldEditions = normalizedEditions.filter(
+  (edition) => edition.publicationStatus === "held",
+);
+const internationalEditions = normalizedEditions.filter(
+  (edition) => edition.countryCode !== "KR",
+);
 const queuePath = path.join(contentDirectory, "queues", "recheck.jsonl");
 const queueLines = (await pathExists(queuePath))
   ? (await readFile(queuePath, "utf8")).split(/\r?\n/).filter(Boolean)
@@ -30,7 +42,11 @@ const lines = [
   `- 수집 완료 레코드: ${records.length}건`,
   `- 접근 가능: ${records.filter((record) => record.availability === "accessible").length}건`,
   `- 운영자 재확인 큐: ${queueLines.length}건`,
-  `- 발행 가능한 공식 행사 회차: ${editions.length}건`,
+  `- 편집 검수 완료 행사 회차: ${editions.length}건`,
+  `- 공식 원문 연결·세부 검수 중 회차: ${sourceCheckedEditions.length}건`,
+  `- 정규화 후 공개 보류 회차: ${heldEditions.length}건`,
+  `- 사이트 생성 회차 합계: ${editions.length + sourceCheckedEditions.length}건`,
+  `- 해외 문구 행사: ${internationalEditions.length}회차 (${[...new Set(internationalEditions.map((edition) => edition.countryName))].join(" · ")})`,
   "- 로컬 후기 자료: 이 공식 보고서의 입력·집계 대상에서 제외",
   "",
   "## 공식 출처 상태",
@@ -43,6 +59,14 @@ const lines = [
       (record) =>
         `| ${record.tier} | [${record.publisher}](${record.url}) | ${record.availability} | ${record.changeStatus} | ${record.checkedAt.slice(0, 10)} | \`${(record.contentHash ?? "-").slice(0, 12)}\` |`,
     ),
+  "",
+  "## 정규화 후보 카탈로그",
+  "",
+  `- 전체 후보 ${normalizedEditions.length}회차를 정규화했습니다.`,
+  `- 공식 S1/S2 출처 연결과 날짜가 확인된 ${sourceCheckedEditions.length}회차는 세부 검수 중 상태로 공개합니다.`,
+  `- 날짜 없음 또는 출처 접근 실패가 있는 ${heldEditions.length}회차는 공개 생성에서 제외합니다.`,
+  "- 전체 보강·보류 사유는 [후보 검수 목록](candidate-review.md)에 분리했습니다.",
+  "- 해외 회차만의 보강 항목은 [해외 문구 행사 검수 목록](international-stationery-review.md)에 분리했습니다.",
   "",
   "## 발행 회차",
   "",

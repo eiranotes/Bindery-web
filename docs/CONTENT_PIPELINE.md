@@ -6,7 +6,7 @@ Bindery 사이트에는 확인된 행사 공식 정보만 생성합니다. 참�
 후보 발굴과 재확인 단서로만 쓰며, 공개 데이터·집계·검색 인덱스에 합류하지 않습니다.
 
 ```text
-공식 허용 목록 → 원문 캐시 → SourceRecord → FieldEvidence → 편집자 확인 → 사이트 생성
+공식 허용 목록/등록 후보 배치 → 원문 캐시·접근성 감사 → SourceRecord → FieldEvidence → 정규화 → 사이트 생성
 커뮤니티 URL → 공식 API/twscrape/수동 import → 익명화 JSONL → 로컬 ArchiveBox (공개 경로 없음)
 ```
 
@@ -39,6 +39,13 @@ npm run content:check-generated
 - `content:generate`: 결정론적으로 사이트 TypeScript/JSON을 생성.
 - `content:report`: 사람이 확인할 Markdown 보고서를 생성. 로컬 후기 저장소를 읽지 않음.
 - `content:guard`: 로컬 경로의 Git 추적과 공개 생성물의 후기 필드 유입을 차단.
+
+후보 배치는 `content/config/candidate-batches.json`에 등록합니다. 각 배치는 JSONL
+3종, SHA-256 `manifest.json`, 독립 `source-reachability-audit.json`을 가지며
+`content:candidates:validate`와 `content:candidates:check-sources`가 활성 배치를 모두
+검사합니다. 해외 회차는 `countryCode`, `countryName`, `city`, `timeZone`,
+`sourceLanguage`를 기록하고 참가비는 ISO 4217 통화와 원 금액을 함께 보존합니다.
+통화 환산값은 수집 시점에 따라 달라지므로 생성하지 않습니다.
 
 해시 변경이나 접근 실패는 `content/queues/recheck.jsonl`에 들어갑니다. 자동 수집은
 편집자가 확인한 값을 덮어쓰지 않습니다.

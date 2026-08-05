@@ -286,7 +286,7 @@ export function BinderClient({
               </p>
               <div className="binder-list-copy">
                 <p className="entry-meta">
-                  {formatDateRange(saved.event)} · {saved.event.region} · {saved.event.venue}
+                  {formatDateRange(saved.event)} · {saved.event.region} · {saved.event.venue ?? "장소 확인 중"}
                 </p>
                 <h3>
                   <Link href={eventPath(saved.event)}>{saved.event.name}</Link>

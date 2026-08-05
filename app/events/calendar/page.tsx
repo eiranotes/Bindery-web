@@ -43,11 +43,14 @@ export default async function CalendarPage({
 
   const entriesFor = (day: number) =>
     events.flatMap((event) => {
-      const deadline = new Date(event.applicationDeadline);
+      const deadline = event.applicationDeadline
+        ? new Date(event.applicationDeadline)
+        : null;
       const start = new Date(event.startDate);
       const entries: { kind: "deadline" | "event"; label: string; href: string }[] =
         [];
       if (
+        deadline &&
         deadline.getFullYear() === year &&
         deadline.getMonth() === monthIndex &&
         deadline.getDate() === day
