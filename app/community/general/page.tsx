@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { AdSlot } from "../../components/AdSlot";
 import { CommunityBoardNav } from "../../components/CommunityBoardNav";
 import { CommunityPostList } from "../../components/CommunityPostList";
 import { PageIntro } from "../../components/PageIntro";
@@ -243,14 +242,11 @@ export default async function GeneralCommunityPage({
               mode={liveMode ? "live" : "example"}
             />
             {trailingPosts.length ? (
-              <>
-                <AdSlot placement="community-general-feed" />
-                <CommunityPostList
-                  posts={trailingPosts}
-                  startIndex={leadingPosts.length}
-                  mode={liveMode ? "live" : "example"}
-                />
-              </>
+              <CommunityPostList
+                posts={trailingPosts}
+                startIndex={leadingPosts.length}
+                mode={liveMode ? "live" : "example"}
+              />
             ) : null}
             {nextCursor ? (
               <div className="page-actions">

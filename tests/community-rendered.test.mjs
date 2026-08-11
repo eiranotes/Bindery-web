@@ -15,7 +15,7 @@ test("community hub exposes two distinct free boards and an honest boundary", as
   assert.match(html, /href="\/community\/general"/);
   assert.match(html, /현재 글은 예시입니다/);
   assert.match(html, /공개 게시와 신고는 아직 연결되지 않았습니다/);
-  assert.match(html, /data-ad-placement="community-hub"/);
+  assert.doesNotMatch(html, /data-ad-placement=/);
 });
 
 test("artist board fails closed without exposing post content", async () => {
@@ -50,7 +50,7 @@ test("general board filters and safely falls back from unknown query values", as
   assert.match(fallbackHtml, /포장 작업대에 늘 올려두는/);
   assert.match(fallbackHtml, /예시 작성자/);
   assert.match(fallbackHtml, /예시 답변/);
-  assert.match(fallbackHtml, /data-ad-placement="community-general-feed"/);
+  assert.doesNotMatch(fallbackHtml, /data-ad-placement=/);
 });
 
 test("general post detail links to real write, report, and related screens", async () => {

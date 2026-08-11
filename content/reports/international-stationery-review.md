@@ -1,6 +1,6 @@
 # International stationery event review targets
 
-- Source snapshot: 2026-08-05T07:16:13.567Z
+- Source snapshot: 2026-08-11T02:36:43.015Z
 - Countries: 대만 4회차 · 일본 9회차 · 중국 2회차
 - Event masters: 10
 - Editions: 15

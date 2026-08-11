@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LocaleControl } from "./LocaleControl";
 import { useShellLocale } from "./useShellLocale";
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const { messages } = useShellLocale();
   const primaryNavigation = [
     { href: "/events", label: messages.events },
@@ -16,6 +18,8 @@ export function SiteHeader() {
     { href: "/news", label: messages.news },
     { href: "/community", label: messages.community },
   ];
+  const isCurrent = (href: string) =>
+    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   return (
     <header className="site-header">
@@ -31,11 +35,11 @@ export function SiteHeader() {
 
         <nav className="desktop-nav" aria-label={messages.primaryNavigation}>
           {primaryNavigation.map((item) => (
-            <Link key={item.href} href={item.href}>
+            <Link aria-current={isCurrent(item.href) ? "page" : undefined} key={item.href} href={item.href}>
               {item.label}
             </Link>
           ))}
-          <Link className="binder-link" href="/me">
+          <Link aria-current={isCurrent("/me") ? "page" : undefined} className="binder-link" href="/me">
             {messages.binder}
           </Link>
           <LocaleControl className="locale-control--desktop" />
@@ -45,18 +49,18 @@ export function SiteHeader() {
           <summary>{messages.menu}</summary>
           <nav aria-label={messages.mobileNavigation}>
             {primaryNavigation.map((item) => (
-              <Link key={item.href} href={item.href}>
+              <Link aria-current={isCurrent(item.href) ? "page" : undefined} key={item.href} href={item.href}>
                 {item.label}
               </Link>
             ))}
             <div className="mobile-nav__support">
               {supportingNavigation.map((item) => (
-                <Link key={item.href} href={item.href}>
+                <Link aria-current={isCurrent(item.href) ? "page" : undefined} key={item.href} href={item.href}>
                   {item.label}
                 </Link>
               ))}
             </div>
-            <Link href="/me">{messages.binder}</Link>
+            <Link aria-current={isCurrent("/me") ? "page" : undefined} href="/me">{messages.binder}</Link>
             <div className="mobile-nav__locale">
               <LocaleControl className="locale-control--mobile" />
             </div>

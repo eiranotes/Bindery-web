@@ -8,18 +8,18 @@
     "illustration-korea"
   ],
   "recheckDays": 3,
-  "checkedAt": "2026-08-03T00:07:11.471Z",
-  "recheckDueAt": "2026-08-06T00:07:11.471Z",
+  "checkedAt": "2026-08-11T02:36:21.622Z",
+  "recheckDueAt": "2026-08-14T02:36:21.622Z",
   "availability": "accessible",
   "robots": "allowed",
   "httpStatus": 200,
   "contentType": "text/html",
   "contentHash": "0bd658e471c6b10cf9d0d0c1fec59ae6f22f8787d172033303adb5fc330f7834",
-  "payloadHash": "766264d76d864c1bd3a8cbb8e4e8554bb229bb7368d51c5276b6462a9ba0eaf6",
+  "payloadHash": "3071ada89ebe78ada10cc2e5f54ba7a1af2d0115865d962fb6a37b5399de8aae",
   "previousContentHash": "0bd658e471c6b10cf9d0d0c1fec59ae6f22f8787d172033303adb5fc330f7834",
   "changeStatus": "unchanged",
   "title": "출품안내 - 일러스트레이션 - at",
-  "bytes": 1596680,
+  "bytes": 1596666,
   "normalizedTextBytes": 5938,
   "cachePath": ".content-cache/official/ilko-2026-at-participating.html"
 }

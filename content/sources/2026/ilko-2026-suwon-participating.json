@@ -8,18 +8,18 @@
     "illustration-korea"
   ],
   "recheckDays": 3,
-  "checkedAt": "2026-08-03T00:07:11.965Z",
-  "recheckDueAt": "2026-08-06T00:07:11.965Z",
+  "checkedAt": "2026-08-11T02:36:22.720Z",
+  "recheckDueAt": "2026-08-14T02:36:22.720Z",
   "availability": "accessible",
   "robots": "allowed",
   "httpStatus": 200,
   "contentType": "text/html",
   "contentHash": "5dcdc925114dbaf1a50c98840755d7452e2a06cd96837fcbddf78cdcbc093908",
-  "payloadHash": "4e305f0bf76cffe8858fe615bcc6c0884f9752b2eca28761854ed1e50c91fc3a",
+  "payloadHash": "347b5c5962feab06c0de277332fad5d38dee02164e54d139850080d75dd4bed6",
   "previousContentHash": "5dcdc925114dbaf1a50c98840755d7452e2a06cd96837fcbddf78cdcbc093908",
   "changeStatus": "unchanged",
   "title": "출품안내_12월 - 일러스트레이션 - 수원",
-  "bytes": 1603061,
+  "bytes": 1603195,
   "normalizedTextBytes": 6433,
   "cachePath": ".content-cache/official/ilko-2026-suwon-participating.html"
 }

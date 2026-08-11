@@ -32,9 +32,9 @@ type ThemeDefinition = {
 };
 
 const sharedFonts = {
-  fontDisplay: '"Hahmlet"',
-  fontBody: '"IBM Plex Sans KR"',
-  fontUtility: '"Space Mono"',
+  fontDisplay: '"Hahmlet", "AppleMyungjo", "Batang", serif',
+  fontBody: '"IBM Plex Sans KR", "Apple SD Gothic Neo", sans-serif',
+  fontUtility: '"Space Mono", "SFMono-Regular", Menlo, monospace',
 } satisfies Pick<
   ThemeTokens,
   "fontDisplay" | "fontBody" | "fontUtility"

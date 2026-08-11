@@ -72,7 +72,7 @@ test("news timeline summarizes and links each named source", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /업계 소식/);
+  assert.match(html, /행사 변경 기록/);
   assert.match(html, /2026\.07\.24/);
   assert.match(html, /서울일러스트레이션페어 참가자 프로필 공개 방식 확인/);
   assert.match(html, /href="https:\/\/seoulillustrationfair\.co\.kr\/"/);
@@ -80,6 +80,6 @@ test("news timeline summarizes and links each named source", async () => {
     html,
     /서울일러스트레이션페어(?:<!-- -->)? 원문 확인/,
   );
-  assert.match(html, /공지를 원문과 함께 정리합니다/);
+  assert.match(html, /공식 공지만 원문과 함께 정리합니다/);
   assert.match(html, /최종 판단은 연결된 공식 원문에서 확인/);
 });

@@ -12,13 +12,20 @@ test("generated public events contain official-source evidence boundaries only",
 
   assert.equal(events.length, 70);
   assert.equal(events.filter((event) => event.dataStatus === "official").length, 3);
-  assert.equal(events.filter((event) => event.dataStatus === "source_checked").length, 67);
+  assert.equal(events.filter((event) => event.dataStatus === "decision_ready").length, 2);
+  assert.equal(events.filter((event) => event.dataStatus === "source_reachable").length, 65);
   for (const event of events) {
     assert.equal(event.reviewCount, 0);
     assert.equal(Object.hasOwn(event, "reviewAggregate"), false);
     assert.equal(event.sourceUrl.startsWith("https://"), true);
     assert.ok(event.sourceCount >= 1);
-    assert.ok(event.evidenceCoverage > 0);
+    assert.ok(event.evidenceCoverage > 0 && event.evidenceCoverage <= 100);
+    assert.ok(event.masterId);
+    assert.ok(Array.isArray(event.boothOptions));
+    assert.equal(event.decisionCoverage.total, 6);
+    assert.ok(event.decisionCoverage.percent >= 0 && event.decisionCoverage.percent <= 100);
+    assert.ok(event.history.length >= 1);
+    assert.ok(event.history.every((history) => history.path.startsWith("/events/")));
     assert.match(event.countryCode, /^[A-Z]{2}$/);
     assert.ok(event.countryName);
     assert.ok(event.timeZone);
@@ -26,7 +33,7 @@ test("generated public events contain official-source evidence boundaries only",
     if (event.dataStatus === "official") {
       assert.equal(event.reviewNeeded, false);
       assert.ok(event.sourceCount >= 3);
-      assert.ok(event.evidenceCoverage >= 80);
+      assert.ok(event.decisionCoverage.percent >= 80);
     } else {
       assert.equal(event.reviewNeeded, true);
     }
@@ -50,6 +57,8 @@ test("normalizes every candidate while holding unsafe editions out of public gen
   assert.equal(editions.filter((edition) => edition.publicationStatus === "public").length, 67);
   assert.equal(editions.filter((edition) => edition.publicationStatus === "held").length, 24);
   assert.equal(sources.filter((source) => source.availability === "accessible").length, 120);
+  assert.equal(sources.filter((source) => source.recheckDueAt).length, 132);
+  assert.equal(sources.filter((source) => Object.hasOwn(source, "changeStatus")).length, 132);
 
   const agf = editions.find((edition) => edition.id === "agf-korea-2026");
   assert.ok(agf);
@@ -97,6 +106,21 @@ test("account Binder allowlist covers every generated public event", async () =>
     )
   ).join("\n");
   for (const event of events) assert.match(migrations, new RegExp(`'${event.id}'`));
+});
+
+test("expired source checks become an explicit operator recheck queue", async () => {
+  const queue = (
+    await readFile(path.join(root, "content/queues/recheck.jsonl"), "utf8")
+  )
+    .trim()
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+
+  assert.equal(queue.length, 14);
+  assert.ok(queue.every((item) => item.status === "needs_review"));
+  assert.ok(queue.every((item) => item.reason.startsWith("source-")));
+  assert.equal(new Set(queue.map((item) => item.sourceId)).size, queue.length);
 });
 
 test("first collection has eleven hashed accessible official records", async () => {

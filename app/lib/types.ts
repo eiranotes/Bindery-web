@@ -12,9 +12,37 @@ export type EventGenre = "문구" | "일러스트" | "서브컬처" | "복합";
 export type EventScale = "소형" | "중형" | "대형" | "확인 중";
 export type ApplicationDeadlineKind = "final" | "early-bird" | "capacity";
 export type ApplicationStatus = "scheduled" | "open" | "capacity" | "closed";
+export type EventDataStatus =
+  | "official"
+  | "decision_ready"
+  | "source_reachable"
+  | "example";
+export type EventFreshnessStatus = "fresh" | "stale" | "unknown";
+
+export interface BoothOption {
+  id: string;
+  label: string;
+  feeAmount: number | null;
+  currency: string | null;
+  size: string | null;
+  vatIncluded: boolean | null;
+  note: string | null;
+  includes: string[];
+}
+
+export interface DecisionFieldCoverage {
+  known: number;
+  total: number;
+  percent: number;
+  missing: string[];
+}
 
 export interface EventHistory {
+  id?: string;
+  path?: string;
   edition: string;
+  startDate?: string;
+  endDate?: string;
   dates: string;
   venue: string | null;
   boothFee: number | null;
@@ -26,6 +54,7 @@ export interface EventHistory {
 
 export interface EventEdition {
   id: string;
+  masterId?: string;
   slug: string;
   edition: string;
   name: string;
@@ -50,6 +79,7 @@ export interface EventEdition {
   boothFeeCurrency: string | null;
   boothFeeIncludesVat?: boolean | null;
   boothSize: string | null;
+  boothOptions?: BoothOption[];
   boothCount: number | null;
   selection: "선착순" | "추첨" | "심사" | null;
   businessRequired: boolean | null;
@@ -59,7 +89,10 @@ export interface EventEdition {
   sourceLabel: string;
   sourceCount?: number;
   evidenceCoverage?: number;
-  dataStatus?: "official" | "source_checked" | "example";
+  decisionCoverage?: DecisionFieldCoverage;
+  dataStatus?: EventDataStatus;
+  sourceCheckedAt?: string | null;
+  sourceRecheckDueAt?: string | null;
   reviewNeeded?: boolean;
   verifiedAt: string;
   summary: string;
@@ -92,6 +125,8 @@ export interface EventFilters {
   genre: string;
   scale: string;
   business: string;
+  stage: "apply" | "upcoming" | "archived" | "all";
+  data: "all" | "decision_ready" | "source_reachable";
   sort: "deadline" | "date";
 }
 

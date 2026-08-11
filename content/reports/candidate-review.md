@@ -1,6 +1,6 @@
 # Candidate normalization and review targets
 
-- Source snapshot: 2026-08-05T07:16:13.567Z
+- Source snapshot: 2026-08-11T02:36:43.015Z
 - Normalized masters: 73
 - Normalized editions: 91
 - Public source-checked editions: 67

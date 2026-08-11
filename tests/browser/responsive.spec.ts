@@ -88,7 +88,7 @@ test("wide event, comparison, archive, and calendar data scroll inside their own
 
   for (const route of [
     "/events/illustration-korea/2026-incheon",
-    "/events/compare",
+    "/events/compare?event1=illustration-korea-2026-incheon&event2=illustration-korea-2026-suwon",
     "/events/archive",
   ]) {
     await page.goto(route);
@@ -112,7 +112,7 @@ test("wide event, comparison, archive, and calendar data scroll inside their own
 
   await page.goto("/events/calendar");
   const calendar = await page.evaluate(() => {
-    const calendarSheet = document.querySelector(".calendar-sheet");
+    const calendarSheet = document.querySelector(".calendar-scroll");
     return {
       pageOverflow:
         document.documentElement.scrollWidth -
@@ -131,7 +131,10 @@ test("comparison and archive expose keyboard-scrollable tables with sticky row l
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
 
-  for (const route of ["/events/compare", "/events/archive"]) {
+  for (const route of [
+    "/events/compare?event1=illustration-korea-2026-incheon&event2=illustration-korea-2026-suwon",
+    "/events/archive",
+  ]) {
     await page.goto(route);
 
     const region = page.locator('[data-ui="event-data-scroll"]').first();

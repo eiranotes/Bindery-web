@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -285,6 +284,12 @@ small {
   color: var(--ink-blue);
 }
 
+.desktop-nav a[aria-current="page"],
+.mobile-nav nav a[aria-current="page"] {
+  box-shadow: inset 0 -2px var(--ink-pink);
+  color: var(--ink-blue);
+}
+
 .locale-control {
   display: grid;
   grid-template-columns: auto minmax(5.5rem, 1fr);
@@ -433,6 +438,15 @@ small {
   margin-top: var(--space-5);
   margin-bottom: 0;
   color: var(--text-soft);
+}
+
+.mockup-hero__copy > .home-opportunity-summary {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-3);
+  color: var(--ink-blue);
+  font-family: var(--font-utility), monospace;
+  font-size: 0.75rem;
 }
 
 .mockup-deadline {
@@ -756,9 +770,36 @@ button.button--primary:hover {
 
 .filter-sheet form {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
   gap: var(--space-3);
   padding-block: var(--space-5);
+}
+
+.event-coverage {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+  border-block: 1px solid var(--rule);
+}
+
+.event-coverage p {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  border-right: 1px solid var(--rule);
+  padding: var(--space-2) var(--space-4);
+}
+
+.event-coverage strong {
+  color: var(--ink-blue);
+  font-family: var(--font-utility), monospace;
+}
+
+.event-coverage span {
+  color: var(--text-soft);
+  font-size: 0.75rem;
 }
 
 .filter-sheet label {
@@ -1351,9 +1392,15 @@ select {
 
 .event-ledger dl {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 0.7fr;
+  grid-template-columns: 1.3fr 1fr 0.8fr 0.7fr;
   gap: var(--space-4);
   margin-bottom: 0;
+}
+
+.event-ended-label {
+  color: var(--text-faint);
+  font-family: var(--font-utility), monospace;
+  font-size: 0.75rem;
 }
 
 .event-ledger dl div,
@@ -1472,6 +1519,13 @@ dd {
   letter-spacing: 0.1em;
 }
 
+.detail-dday__past {
+  display: block;
+  color: var(--text-faint);
+  font-family: var(--font-utility), monospace;
+  font-size: 1.5rem;
+}
+
 .origin-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1579,12 +1633,73 @@ dd {
   line-height: 1.6;
 }
 
+.detail-side > small a {
+  color: var(--ink-blue);
+}
+
+.detail-booth-options {
+  margin-block: var(--space-4);
+  border-top: 1px solid var(--rule-ink);
+  padding-top: var(--space-3);
+}
+
+.detail-booth-options h3 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.8125rem;
+}
+
+.detail-booth-options ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail-booth-options li {
+  display: grid;
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-2);
+  color: var(--text-soft);
+  font-size: 0.75rem;
+}
+
+.detail-booth-options li strong {
+  color: var(--ink-blue);
+}
+
+.lined-section--empty {
+  padding-bottom: var(--space-5);
+}
+
+.unknown-section-copy {
+  max-width: 38rem;
+  margin: var(--space-4) 0 0;
+  color: var(--text-soft);
+}
+
 .bookmark-feedback {
   display: block;
   min-height: 1.5rem;
   margin-top: var(--space-2);
   color: var(--text-soft);
   font-size: 0.75rem;
+}
+
+.bookmark-next-actions,
+.binder-event-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-2);
+  font-size: 0.75rem;
+}
+
+.bookmark-next-actions a,
+.binder-event-actions a {
+  color: var(--ink-blue);
+  text-underline-offset: 0.18em;
 }
 
 .fact-sheet dl {
@@ -1751,8 +1866,8 @@ tbody th {
 }
 
 .calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 56rem;
+  table-layout: fixed;
   border-top: 1px solid var(--rule);
   border-left: 1px solid var(--rule);
 }
@@ -1764,15 +1879,26 @@ tbody th {
 }
 
 .calendar-weekday {
-  padding: var(--space-2);
+  background: var(--sheet);
   color: var(--text-soft);
+  padding: var(--space-2);
   font-size: 0.75rem;
+  font-weight: 400;
   text-align: center;
 }
 
 .calendar-day {
+  width: calc(100% / 7);
+  vertical-align: top;
   min-height: 7.5rem;
+  height: 7.5rem;
   padding: var(--space-2);
+}
+
+.calendar-scroll {
+  contain: paint;
+  max-width: 100%;
+  scrollbar-gutter: stable;
 }
 
 .calendar-day--empty {
@@ -2501,6 +2627,48 @@ progress::-webkit-progress-value {
   padding-block: var(--space-6);
 }
 
+.binder-workbench {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border-bottom: 1px solid var(--rule-ink);
+  padding-block: var(--space-4);
+}
+
+.binder-workbench p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.binder-workbench > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.binder-workbench .button[aria-disabled="true"] {
+  border-color: var(--rule-ink);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+.binder-event-select {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink-blue);
+  font-size: 0.75rem;
+}
+
+.binder-event-select input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--ink-blue);
+}
+
 .binder-list-item h3 {
   margin: var(--space-2) 0;
 }
@@ -2525,7 +2693,7 @@ progress::-webkit-progress-value {
   }
 
   .mockup-hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7);
   }
 
@@ -2652,6 +2820,15 @@ progress::-webkit-progress-value {
     padding-block: var(--space-7);
   }
 
+  .mockup-hero h1 {
+    font-size: 2rem;
+  }
+
+  .mockup-hero h1 em {
+    max-width: 100%;
+    white-space: normal;
+  }
+
   .deadline-list li {
     min-height: 5.25rem;
   }
@@ -2749,10 +2926,6 @@ progress::-webkit-progress-value {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .event-ledger dl div:last-child {
-    display: none;
-  }
-
   .source-notice,
   .trust-notice,
   .boundary-note {
@@ -2806,14 +2979,9 @@ progress::-webkit-progress-value {
     border-bottom: 1px solid var(--rule);
   }
 
-  .calendar-sheet {
-    overflow-x: auto;
-  }
-
   .calendar-toolbar,
-  .calendar-legend,
-  .calendar-grid {
-    min-width: 42rem;
+  .calendar-legend {
+    min-width: 20rem;
   }
 
   .note-list-item article {
@@ -2829,6 +2997,15 @@ progress::-webkit-progress-value {
   .binder-list-item .text-action {
     grid-column: 2;
     justify-self: start;
+  }
+
+  .binder-workbench {
+    align-items: stretch;
+  }
+
+  .binder-workbench > div,
+  .binder-workbench .button {
+    width: 100%;
   }
 
   .note-list-item .text-action {

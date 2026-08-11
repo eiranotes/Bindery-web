@@ -104,6 +104,13 @@ function unique(values) {
   return [...new Set(values)];
 }
 
+function addDaysIso(value, days) {
+  if (!value) return null;
+  const due = new Date(value);
+  due.setUTCDate(due.getUTCDate() + days);
+  return due.toISOString();
+}
+
 function normalizedReviewReasons(edition, master, sourceById, sourceAuditById, normalized) {
   const reasons = [];
   if (master?.researchStatus === "needs_source") reasons.push("master:needs-source");
@@ -246,11 +253,23 @@ export async function buildNormalizedCatalog() {
 
   const sources = rawSources.map((source) => {
     const audit = sourceAuditById.get(source.id);
+    const checkedAt = audit?.checkedAt ?? null;
+    const availability = audit?.availability ?? "fetch-error";
     return {
       ...source,
-      checkedAt: audit?.checkedAt ?? null,
-      availability: audit?.availability ?? "fetch-error",
+      checkedAt,
+      recheckDueAt: addDaysIso(checkedAt, source.recheckDays),
+      availability,
       httpStatus: audit?.httpStatus ?? null,
+      contentType: audit?.contentType ?? null,
+      contentHash: audit?.contentHash ?? null,
+      previousContentHash: null,
+      changeStatus:
+        availability === "accessible"
+          ? "new"
+          : availability === "http-error" || availability === "fetch-error"
+            ? "error"
+            : "blocked",
       finalUrl: audit?.finalUrl ?? null,
       redirected: audit?.redirected ?? false,
       error: audit?.error ?? null,

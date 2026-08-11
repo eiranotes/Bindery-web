@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { events } from "../lib/data";
@@ -79,6 +80,17 @@ export function BookmarkButton({
       <span className="bookmark-feedback" role="status" aria-live="polite">
         {feedback}
       </span>
+      {saved && feedback ? (
+        <span className="bookmark-next-actions" aria-label="저장 후 다음 작업">
+          <a href={`/events/calendar.ics?event=${encodeURIComponent(eventId)}&kind=deadline`}>
+            마감 ICS
+          </a>
+          <Link href={`/events/compare?event1=${encodeURIComponent(eventId)}`}>
+            다른 행사와 비교
+          </Link>
+          <Link href="/me">Binder에서 작업</Link>
+        </span>
+      ) : null}
     </span>
   );
 }

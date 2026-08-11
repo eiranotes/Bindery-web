@@ -1,6 +1,7 @@
 import type {
   EventEdition,
   EventFilters,
+  EventFreshnessStatus,
   EventStatus,
 } from "./types";
 
@@ -13,7 +14,7 @@ const timeZoneOffsets: Record<string, string> = {
   "Asia/Shanghai": "+08:00",
 };
 
-function eventTime(
+export function eventTime(
   value: string | null,
   endOfDay = false,
   timeZone = "Asia/Seoul",
@@ -59,13 +60,22 @@ export function daysUntilDeadline(
 ): number | null {
   const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
   if (deadline === null) return null;
-  return Math.max(
-    0,
-    Math.ceil((deadline - now.getTime()) / day),
-  );
+  if (deadline < now.getTime()) return null;
+  return Math.ceil((deadline - now.getTime()) / day);
 }
 
-export function nextEventMilestone(event: EventEdition, now = new Date()) {
+export type EventMilestone = {
+  date: string;
+  days: number | null;
+  label: string;
+  kind: "application" | "event";
+  state: "future" | "current" | "past";
+};
+
+export function nextEventMilestone(
+  event: EventEdition,
+  now = new Date(),
+): EventMilestone {
   const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
   if (deadline !== null && event.applicationDeadline && deadline >= now.getTime()) {
     return {
@@ -73,6 +83,7 @@ export function nextEventMilestone(event: EventEdition, now = new Date()) {
       days: daysUntilDeadline(event, now) ?? 0,
       label: event.applicationDeadlineLabel ?? "접수 마감",
       kind: "application" as const,
+      state: "future",
     };
   }
   const start = eventTime(event.startDate, false, event.timeZone) as number;
@@ -82,14 +93,25 @@ export function nextEventMilestone(event: EventEdition, now = new Date()) {
       days: daysUntilEvent(event, now),
       label: "행사 시작",
       kind: "event" as const,
+      state: "future",
     };
   }
   const end = eventTime(event.endDate, true, event.timeZone) as number;
+  if (end >= now.getTime()) {
+    return {
+      date: event.endDate,
+      days: Math.ceil((end - now.getTime()) / day),
+      label: "행사 종료",
+      kind: "event" as const,
+      state: "current",
+    };
+  }
   return {
     date: event.endDate,
-    days: Math.max(0, Math.ceil((end - now.getTime()) / day)),
+    days: null,
     label: "행사 종료",
     kind: "event" as const,
+    state: "past",
   };
 }
 
@@ -110,6 +132,27 @@ export function filterEvents(
   now = new Date(),
 ): EventEdition[] {
   const filtered = source.filter((event) => {
+    const status = deriveEventStatus(event, now);
+    const stage =
+      status === "ended"
+        ? "archived"
+        : status === "open" || status === "urgent" || status === "upcoming"
+          ? "apply"
+          : "upcoming";
+    if (filters.stage !== "all" && filters.stage !== stage) return false;
+    if (
+      filters.data === "decision_ready" &&
+      (!isDecisionReady(event, now) || isEventDataStale(event, now))
+    ) {
+      return false;
+    }
+    if (
+      filters.data === "source_reachable" &&
+      isDecisionReady(event, now) &&
+      !isEventDataStale(event, now)
+    ) {
+      return false;
+    }
     if (filters.region !== "전체" && event.region !== filters.region) {
       return false;
     }
@@ -172,12 +215,16 @@ export function formatDate(
     month: "2-digit",
     day: "2-digit",
   },
+  timeZone = "Asia/Seoul",
 ): string {
   if (!value) return "정보 없음";
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T12:00:00Z`)
+    : new Date(value);
   return new Intl.DateTimeFormat("ko-KR", {
-    timeZone: "Asia/Seoul",
+    timeZone,
     ...options,
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function formatDateRange(event: EventEdition): string {
@@ -185,12 +232,57 @@ export function formatDateRange(event: EventEdition): string {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
+  }, event.timeZone);
   const end = formatDate(event.endDate, {
     month: "2-digit",
     day: "2-digit",
-  });
+  }, event.timeZone);
   return `${start} – ${end}`;
+}
+
+export function eventDateParts(value: string, timeZone: string) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, date] = value.split("-").map(Number);
+    return { year, month, date };
+  }
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date(value));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((item) => item.type === type)?.value);
+  return { year: part("year"), month: part("month"), date: part("day") };
+}
+
+export function getEventFreshness(
+  event: EventEdition,
+  now = new Date(),
+): EventFreshnessStatus {
+  if (!event.sourceRecheckDueAt) return "unknown";
+  return new Date(event.sourceRecheckDueAt).getTime() < now.getTime()
+    ? "stale"
+    : "fresh";
+}
+
+export function isEventDataStale(event: EventEdition, now = new Date()) {
+  return getEventFreshness(event, now) === "stale";
+}
+
+export function isDecisionReady(event: EventEdition, now = new Date()) {
+  return (event.decisionCoverage?.percent ?? 0) >= 80 && !isEventDataStale(event, now);
+}
+
+export function eventDataLabel(event: EventEdition, now = new Date()) {
+  if (isEventDataStale(event, now)) return "재확인 필요";
+  if (event.dataStatus === "official") {
+    return isDecisionReady(event, now)
+      ? "편집 검수된 공식 정보 · 참가 판단 가능"
+      : "편집 검수된 공식 정보";
+  }
+  if (isDecisionReady(event, now)) return "참가 판단 가능";
+  return "공식 일정 확인";
 }
 
 export function formatCurrency(value: number | null, currency = "KRW"): string {

@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { PageIntro } from "../../components/PageIntro";
 import { events } from "../../lib/data.ts";
-import { eventPath, formatCurrency } from "../../lib/events.ts";
-import type { EventEdition, EventHistory } from "../../lib/types.ts";
+import { deriveEventStatus, eventPath, formatCurrency, formatDateRange } from "../../lib/events.ts";
+import type { EventEdition } from "../../lib/types.ts";
 import styles from "../event-tools.module.css";
 
 export const metadata: Metadata = {
@@ -13,9 +13,18 @@ export const metadata: Metadata = {
     "독립 창작자 행사의 일정, 장소, 참가비, 부스 수와 선정 방식 변화를 회차별로 비교합니다.",
 };
 
-type ArchivedEdition = EventHistory & {
-  path: string | null;
+type ArchivedEdition = {
+  id: string;
+  edition: string;
+  dates: string;
+  venue: string | null;
+  boothFee: number | null;
+  boothFeeCurrency: string | null;
+  booths: number | null;
+  selection: string | null;
+  path: string;
   current: boolean;
+  currentLabel: "현재 회차" | "최근 회차";
 };
 
 type EventArchive = {
@@ -28,48 +37,55 @@ type EventArchive = {
   editions: ArchivedEdition[];
 };
 
-function buildEventArchives(source: EventEdition[]): EventArchive[] {
+function buildEventArchives(source: EventEdition[], now = new Date()): EventArchive[] {
   const grouped = new Map<string, EventEdition[]>();
 
   for (const event of source) {
-    const editions = grouped.get(event.slug) ?? [];
+    const key = event.masterId ?? event.slug;
+    const editions = grouped.get(key) ?? [];
     editions.push(event);
-    grouped.set(event.slug, editions);
+    grouped.set(key, editions);
   }
 
   return Array.from(grouped.entries())
-    .map(([slug, sourceEditions]) => {
+    .filter(([, sourceEditions]) => sourceEditions.length >= 2)
+    .map(([masterId, sourceEditions]) => {
       const ordered = sourceEditions.toSorted(
         (left, right) =>
           new Date(right.startDate).getTime() -
           new Date(left.startDate).getTime(),
       );
-      const latest = ordered[0];
-      const historyByEdition = new Map<string, ArchivedEdition>();
-
-      for (const event of ordered) {
-        event.history.forEach((history, index) => {
-          const current = index === 0;
-          const existing = historyByEdition.get(history.edition);
-
-          if (!existing || (current && !existing.current)) {
-            historyByEdition.set(history.edition, {
-              ...history,
-              path: current ? eventPath(event) : null,
-              current,
-            });
-          }
-        });
-      }
+      const active = ordered
+        .filter((event) => deriveEventStatus(event, now) !== "ended")
+        .toSorted(
+          (left, right) =>
+            new Date(left.startDate).getTime() - new Date(right.startDate).getTime(),
+        );
+      const current = active[0] ?? ordered[0];
+      const currentLabel: ArchivedEdition["currentLabel"] = active.length
+        ? "현재 회차"
+        : "최근 회차";
 
       return {
-        slug,
-        name: latest.shortName,
-        organizer: latest.organizer,
-        region: latest.region,
-        verifiedAt: latest.verifiedAt,
-        latestPath: eventPath(latest),
-        editions: Array.from(historyByEdition.values()),
+        slug: masterId,
+        name: current.shortName,
+        organizer: current.organizer,
+        region: current.region,
+        verifiedAt: current.verifiedAt,
+        latestPath: eventPath(current),
+        editions: ordered.map((event) => ({
+          id: event.id,
+          edition: event.name,
+          dates: formatDateRange(event),
+          venue: event.venue,
+          boothFee: event.boothFee,
+          boothFeeCurrency: event.boothFeeCurrency,
+          booths: event.boothCount,
+          selection: event.selection,
+          path: eventPath(event),
+          current: event.id === current.id,
+          currentLabel,
+        })),
       };
     })
     .toSorted((left, right) => left.name.localeCompare(right.name, "ko-KR"));
@@ -154,7 +170,7 @@ export default function EventArchivePage() {
           >
             <div className="section-line-heading">
               <h2 id={`archive-title-${archive.slug}`}>{archive.name}</h2>
-              <Link href={archive.latestPath}>최신 회차 보기</Link>
+              <Link href={archive.latestPath}>기준 회차 보기</Link>
             </div>
             <p>
               {archive.organizer} · {archive.region} · {archive.verifiedAt} 확인
@@ -184,13 +200,9 @@ export default function EventArchivePage() {
                   {archive.editions.map((edition) => (
                     <tr key={edition.edition}>
                       <th scope="row">
-                        {edition.path ? (
-                          <Link href={edition.path}>{edition.edition}</Link>
-                        ) : (
-                          edition.edition
-                        )}
+                        <Link href={edition.path}>{edition.edition}</Link>
                         {edition.current ? (
-                          <span className={styles.currentEdition}>현재 회차</span>
+                          <span className={styles.currentEdition}>{edition.currentLabel}</span>
                         ) : null}
                       </th>
                       <td>{edition.dates}</td>

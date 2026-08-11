@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import {
   contentDirectory,
+  listJsonFiles,
   loadEditions,
   loadMasters,
   pathExists,
@@ -20,8 +21,12 @@ if (validation.errors.length) {
 
 const registry = await readJson(path.join(contentDirectory, "config", "source-registry.json"));
 const normalizedSources = await readJson(path.join(contentDirectory, "catalog", "source-records.json"));
+const collectedSourceFiles = await listJsonFiles(path.join(contentDirectory, "sources"));
+const collectedSources = await Promise.all(
+  collectedSourceFiles.map((file) => readJson(file)),
+);
 const sourceById = new Map(
-  [...normalizedSources, ...registry.sources].map((source) => [source.id, source]),
+  [...normalizedSources, ...registry.sources, ...collectedSources].map((source) => [source.id, source]),
 );
 const masters = await loadMasters();
 const normalizedMasters = await readJson(path.join(contentDirectory, "catalog", "event-masters.json"));
@@ -35,7 +40,15 @@ const editionEntries = [
     .filter((edition) => edition.publicationStatus === "public")
     .map((value) => ({ file: path.join(contentDirectory, "catalog", "event-editions.json"), value })),
 ];
-const evidenceFieldCount = 9;
+const evidenceFieldCount = 16;
+const decisionFieldLabels = [
+  "신청 마감",
+  "부스 옵션",
+  "선정 방식",
+  "사업자 요건",
+  "제출 자료",
+  "환불 규정",
+];
 
 function dateLabel(startDate, endDate) {
   const start = startDate.slice(5, 10).replace("-", ".");
@@ -43,22 +56,71 @@ function dateLabel(startDate, endDate) {
   return `${start}–${end}`;
 }
 
-const generatedEvents = editionEntries
+function sourceFreshness(edition) {
+  const sources = edition.sourceIds
+    .map((sourceId) => sourceById.get(sourceId))
+    .filter(Boolean);
+  const checkedAt = sources
+    .map((source) => source.checkedAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1) ?? null;
+  const recheckDueAt = sources
+    .map((source) => source.recheckDueAt)
+    .filter(Boolean)
+    .sort()
+    .at(0) ?? null;
+  return { checkedAt, recheckDueAt };
+}
+
+function decisionCoverage(edition, boothOptions) {
+  const knownStates = [
+    edition.application.deadline.at !== null,
+    boothOptions.some((option) => Number.isInteger(option.feeAmount)),
+    edition.application.selection !== null,
+    edition.application.businessRequired !== null,
+    edition.application.documents.length > 0,
+    edition.application.refundPolicy !== null,
+  ];
+  const missing = decisionFieldLabels.filter((_, index) => !knownStates[index]);
+  const known = decisionFieldLabels.length - missing.length;
+  return {
+    known,
+    total: decisionFieldLabels.length,
+    percent: Math.round((known / decisionFieldLabels.length) * 100),
+    missing,
+  };
+}
+
+const baseEvents = editionEntries
   .map(({ value: edition }) => {
-      const master = masterById.get(edition.masterId);
-      const primarySource = sourceById.get(edition.primarySourceId);
-    const boothOptions = [...edition.application.boothOptions]
-      .filter((option) => Number.isInteger(option.feeAmount ?? option.feeKrw))
+    const master = masterById.get(edition.masterId);
+    const primarySource = sourceById.get(edition.primarySourceId);
+    const boothOptions = [...edition.application.boothOptions].map((option) => ({
+      id: option.id,
+      label: option.label,
+      feeAmount: option.feeAmount ?? option.feeKrw ?? null,
+      currency: option.currency ?? (Number.isInteger(option.feeKrw) ? "KRW" : null),
+      size: option.size ?? null,
+      vatIncluded: option.vatIncluded ?? null,
+      note: option.note ?? null,
+      includes: option.includes ?? [],
+    }));
+    const pricedBoothOptions = boothOptions
+      .filter((option) => Number.isInteger(option.feeAmount))
       .sort(
         (left, right) =>
-          (left.feeAmount ?? left.feeKrw) - (right.feeAmount ?? right.feeKrw),
+          left.feeAmount - right.feeAmount,
       );
-    const minimumBooth = boothOptions[0] ?? null;
-    const evidenceCoverage = Math.round(
+    const minimumBooth = pricedBoothOptions[0] ?? null;
+    const coverage = decisionCoverage(edition, boothOptions);
+    const freshness = sourceFreshness(edition);
+    const evidenceCoverage = Math.min(100, Math.round(
       (Object.keys(edition.fieldEvidence ?? {}).length / evidenceFieldCount) * 100,
-    );
+    ));
     return {
       id: edition.id,
+      masterId: edition.masterId,
       slug: edition.slug,
       edition: edition.edition,
       name: edition.name,
@@ -79,10 +141,11 @@ const generatedEvents = editionEntries
       applicationDeadlineKind: edition.application.deadline.kind ?? null,
       applicationDeadlineLabel: edition.application.deadline.label ?? null,
       applicationStatus: edition.application.status ?? null,
-      boothFee: minimumBooth?.feeAmount ?? minimumBooth?.feeKrw ?? null,
-      boothFeeCurrency: minimumBooth?.currency ?? (minimumBooth ? "KRW" : null),
+      boothFee: minimumBooth?.feeAmount ?? null,
+      boothFeeCurrency: minimumBooth?.currency ?? null,
       boothFeeIncludesVat: minimumBooth?.vatIncluded ?? null,
       boothSize: minimumBooth?.size ?? null,
+      boothOptions,
       boothCount: edition.boothCount,
       selection: edition.application.selection ?? null,
       businessRequired: edition.application.businessRequired,
@@ -92,7 +155,15 @@ const generatedEvents = editionEntries
       sourceLabel: `${master.canonicalName} 공식 원문 (${primarySource.publisher})`,
       sourceCount: edition.sourceIds.length,
       evidenceCoverage,
-      dataStatus: edition.contentStatus === "editor_checked" ? "official" : "source_checked",
+      decisionCoverage: coverage,
+      dataStatus:
+        edition.contentStatus === "editor_checked"
+          ? "official"
+          : coverage.percent >= 80
+            ? "decision_ready"
+            : "source_reachable",
+      sourceCheckedAt: freshness.checkedAt,
+      sourceRecheckDueAt: freshness.recheckDueAt,
       reviewNeeded: edition.contentStatus !== "editor_checked",
       verifiedAt: edition.verifiedAt,
       summary: edition.summary,
@@ -103,20 +174,39 @@ const generatedEvents = editionEntries
         note: edition.application.note,
       },
       onsite: edition.onsite,
-      history: [
-        {
-          edition: edition.name,
-          dates: dateLabel(edition.startDate, edition.endDate),
-          venue: edition.venue ?? null,
-          boothFee: minimumBooth?.feeAmount ?? minimumBooth?.feeKrw ?? null,
-          boothFeeCurrency: minimumBooth?.currency ?? (minimumBooth ? "KRW" : null),
-          booths: edition.boothCount,
-          selection: edition.application.selection ?? null,
-        },
-      ],
+      history: [],
       reviewCount: 0,
     };
-  })
+  });
+
+const historiesByMaster = new Map();
+for (const event of baseEvents) {
+  const history = historiesByMaster.get(event.masterId) ?? [];
+  history.push({
+    id: event.id,
+    path: `/events/${event.slug}/${event.edition}`,
+    edition: event.name,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    dates: dateLabel(event.startDate, event.endDate),
+    venue: event.venue,
+    boothFee: event.boothFee,
+    boothFeeCurrency: event.boothFeeCurrency,
+    booths: event.boothCount,
+    selection: event.selection,
+  });
+  historiesByMaster.set(event.masterId, history);
+}
+
+for (const history of historiesByMaster.values()) {
+  history.sort(
+    (left, right) =>
+      new Date(right.startDate).getTime() - new Date(left.startDate).getTime(),
+  );
+}
+
+const generatedEvents = baseEvents
+  .map((event) => ({ ...event, history: historiesByMaster.get(event.masterId) ?? [] }))
   .sort(
     (left, right) =>
       new Date(left.applicationDeadline ?? left.startDate).getTime() -

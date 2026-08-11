@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { AdSlot } from "../components/AdSlot";
 import { CommunityBoardNav } from "../components/CommunityBoardNav";
 import { CommunityPostList } from "../components/CommunityPostList";
 import { PageIntro } from "../components/PageIntro";
@@ -83,8 +82,6 @@ export default async function CommunityPage() {
           ))}
         </div>
       </section>
-
-      <AdSlot placement="community-hub" />
 
       <section
         className="community-post-ledger"

@@ -41,8 +41,24 @@ function icsDates(start: string, end = start) {
 }
 
 export function GET(request: Request) {
-  const host = new URL(request.url).origin;
-  const entries = events.flatMap((event) => {
+  const url = new URL(request.url);
+  const host = url.origin;
+  const requestedIds = (url.searchParams.get("event") ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const kind = url.searchParams.get("kind");
+  const entryKind = kind === "event" || kind === "deadline" ? kind : "all";
+  const selectedEvents = requestedIds.length
+    ? requestedIds.flatMap((id) => {
+        const event = events.find((candidate) => candidate.id === id);
+        return event ? [event] : [];
+      })
+    : events;
+  if (requestedIds.length && selectedEvents.length !== new Set(requestedIds).size) {
+    return new Response("Unknown event", { status: 404 });
+  }
+  const entries = selectedEvents.flatMap((event) => {
     const eventEntry = [
       "BEGIN:VEVENT",
       `UID:${event.id}-event@bindery`,
@@ -55,7 +71,9 @@ export function GET(request: Request) {
       `URL:${host}/events/${event.slug}/${event.edition}`,
       "END:VEVENT",
     ].join("\r\n");
-    if (!event.applicationDeadline) return [eventEntry];
+    if (!event.applicationDeadline) {
+      return entryKind === "deadline" ? [] : [eventEntry];
+    }
     const deadlineEntry = [
       "BEGIN:VEVENT",
       `UID:${event.id}-deadline@bindery`,
@@ -66,6 +84,8 @@ export function GET(request: Request) {
       `URL:${host}/events/${event.slug}/${event.edition}`,
       "END:VEVENT",
     ].join("\r\n");
+    if (entryKind === "deadline") return [deadlineEntry];
+    if (entryKind === "event") return [eventEntry];
     return [deadlineEntry, eventEntry];
   });
   const body = [
@@ -82,7 +102,9 @@ export function GET(request: Request) {
   return new Response(body, {
     headers: {
       "content-type": "text/calendar; charset=utf-8",
-      "content-disposition": 'attachment; filename="bindery-events.ics"',
+      "content-disposition": `attachment; filename="${
+        selectedEvents.length === 1 ? selectedEvents[0].id : "bindery-events"
+      }-${entryKind}.ics"`,
       "cache-control": "public, max-age=3600",
     },
   });

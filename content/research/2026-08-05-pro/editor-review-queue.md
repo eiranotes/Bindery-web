@@ -1,7 +1,7 @@
 # Candidate editor-review queue
 
-- Generated: 2026-08-05T01:53:09.532Z
-- Source audit: 2026-08-05T01:52:56.280Z
+- Generated: 2026-08-11T02:36:43.009Z
+- Source audit: 2026-08-11T02:36:36.311Z
 - Structurally valid candidates: 76
 - Directly publishable candidates: 0
 - Inaccessible or erroring source URLs: 12

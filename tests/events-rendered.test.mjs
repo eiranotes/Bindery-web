@@ -3,20 +3,22 @@ import test from "node:test";
 
 import { render } from "./worker-harness.mjs";
 
-test("home follows the checked-in HTML mockup language at reduced density", async () => {
+test("home leads with current application opportunities without substituting event dates", async () => {
   const response = await render("/");
   const html = await response.text();
 
   assert.equal(response.status, 200);
-  assert.match(html, /신청 마감을 놓치면/);
-  assert.match(html, /1년을 기다립니다/);
+  assert.match(html, /지금 지원할 수 있는/);
+  assert.match(html, /창작 행사를 찾습니다/);
   assert.match(html, /오늘 · <time dateTime="\d{4}-\d{2}-\d{2}">/);
-  assert.match(html, /다가오는 신청·행사 일정/);
+  assert.match(html, /다가오는 지원 일정/);
+  assert.match(html, /현재 확인된 지원 일정/);
   assert.match(html, /행사 비교하기/);
   assert.match(html, /회차 아카이브 보기/);
   assert.match(html, /class="colorbar"/);
   assert.equal((html.match(/class="d-day"/g) ?? []).length, 3);
   assert.equal((html.match(/class="list-number"/g) ?? []).length, 4);
+  assert.doesNotMatch(html, /class="ad-slot/);
   assert.match(html, /href="\/community"/);
   assert.doesNotMatch(html, /href="\/groupbuy"/);
   assert.doesNotMatch(html, /calendar-grid|groupbuy-progress|news-timeline/);
@@ -48,16 +50,32 @@ test("event comparison normalizes duplicates, allows empty slots, and keeps deci
   assert.match(text, /공식 정보 비교/);
   assert.match(text, /비교 요약/);
   assert.match(text, /가장 이른 신청 일정/);
-  assert.match(text, /낮은 참가비/);
+  assert.match(text, /동일 부스 옵션 최저비용/);
   assert.match(text, /사업자 없이 신청/);
   assert.match(text, /확인된 회차 없음/);
   assert.match(text, /정보 없음/);
   assert.match(text, /공식 원문/);
   assert.match(text, /제출 자료/);
+  assert.match(text, /데이터 상태/);
+  assert.match(text, /핵심 필드/);
   assert.match(text, /선택 안 함/);
   assert.match(text, /모바일에서는 비교표를 좌우로 밀어/);
   assert.match(html, /data-ui="event-data-scroll"/);
   assert.match(html, /tabindex="0"/i);
+});
+
+test("comparison starts empty and never promotes a past application deadline", async () => {
+  const empty = await render("/events/compare");
+  const emptyText = (await empty.text()).replaceAll("<!-- -->", "");
+  assert.match(emptyText, /비교할 행사를 2개 이상 선택하세요/);
+  assert.doesNotMatch(emptyText, /조건 비교표/);
+
+  const ended = await render(
+    "/events/compare?event1=hanbok-store-2026&event2=design-festa-2026-64",
+  );
+  const endedText = (await ended.text()).replaceAll("<!-- -->", "");
+  assert.match(endedText, /확인된 신청 마감 없음/);
+  assert.match(endedText, /동일 구성이 없어 직접 비교하지 않음/);
 });
 
 test("event archive groups edition history and exposes scalable wayfinding", async () => {
@@ -74,7 +92,7 @@ test("event archive groups edition history and exposes scalable wayfinding", asy
   assert.match(text, /₩550,000/);
   assert.match(text, /정보 없음/);
   assert.match(text, /현재 회차/);
-  assert.match(text, /최신 회차 보기/);
+  assert.match(text, /기준 회차 보기/);
   assert.match(text, /모바일에서는 각 회차 표를 좌우로 밀어/);
   assert.match(html, /href="#archive-illustration-korea"/);
   assert.match(html, /data-ui="event-data-scroll"/);
@@ -102,7 +120,7 @@ test("source-checked event details disclose pending review and preserve unknowns
 
   assert.equal(response.status, 200);
   assert.match(text, /Anime × Game Festival 2026/);
-  assert.match(text, /공식 원문 연결 정보/);
+  assert.match(text, /재확인 필요|공식 일정 확인/);
   assert.match(text, /세부 필드는 검수 중입니다/);
   assert.match(text, /정보 없음/);
   assert.doesNotMatch(text, />undefined<|NaN/);
@@ -118,7 +136,7 @@ test("international stationery details expose country provenance and native curr
   assert.match(text, /중국·상하이/);
   assert.match(text, /원문 언어 zh-Hans/);
   assert.match(text, /CN¥990|CNY\s*990/);
-  assert.match(text, /공식 원문 연결 정보/);
+  assert.match(text, /재확인 필요|공식 일정 확인/);
   assert.match(html, /"addressCountry":"CN"/);
   assert.doesNotMatch(text, />undefined<|NaN/);
 });
@@ -145,9 +163,20 @@ test("comparison does not rank unlike booth-fee currencies", async () => {
   const text = (await response.text()).replaceAll("<!-- -->", "");
 
   assert.equal(response.status, 200);
-  assert.match(text, /통화가 달라 직접 비교하지 않음/);
+  assert.match(text, /동일 구성이 없어 직접 비교하지 않음/);
   assert.match(text, /CN¥990|CNY\s*990/);
   assert.match(text, /₩550,000/);
+});
+
+test("comparison names equal equivalent booth fees as a tie", async () => {
+  const response = await render(
+    "/events/compare?event1=illustration-korea-2026-incheon&event2=illustration-korea-2026-suwon",
+  );
+  const text = (await response.text()).replaceAll("<!-- -->", "");
+
+  assert.equal(response.status, 200);
+  assert.match(text, /두 행사 동일/);
+  assert.doesNotMatch(text, /동일 부스 옵션 최저비용<\/dt><dd>인천 일러스트코리아/);
 });
 
 test("calendar route and ICS feed expose both event and deadline semantics", async () => {
@@ -164,4 +193,18 @@ test("calendar route and ICS feed expose both event and deadline semantics", asy
   assert.match(icsText, /2026 인천 일러스트코리아/);
   assert.match(icsText, /조기 신청 할인 마감/);
   assert.match(icsText, /DTSTART;VALUE=DATE:20260830/);
+
+  const eventOnly = await render(
+    "/events/calendar.ics?event=illustration-korea-2026-incheon&kind=event",
+  );
+  const eventOnlyText = await eventOnly.text();
+  assert.match(eventOnlyText, /2026 인천 일러스트코리아/);
+  assert.doesNotMatch(eventOnlyText, /조기 신청 할인 마감/);
+
+  const deadlineOnly = await render(
+    "/events/calendar.ics?event=illustration-korea-2026-incheon&kind=deadline",
+  );
+  const deadlineOnlyText = await deadlineOnly.text();
+  assert.match(deadlineOnlyText, /조기 신청 할인 마감/);
+  assert.doesNotMatch(deadlineOnlyText, /DTSTART;VALUE=DATE:20261030/);
 });

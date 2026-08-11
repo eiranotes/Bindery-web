@@ -81,7 +81,7 @@ test("artist board fails closed and exposes verification recovery", async ({
   ).toHaveCount(0);
 });
 
-test("community ad inventory stays labeled, reserved, and clear of controls", async ({
+test("unvalidated ad inventory stays absent from public product routes", async ({
   page,
 }) => {
   for (const viewport of [
@@ -94,65 +94,7 @@ test("community ad inventory stays labeled, reserved, and clear of controls", as
     for (const route of ["/", "/community", "/community/general"]) {
       await page.goto(route);
       const slots = page.locator(".ad-slot");
-      const slotCount = await slots.count();
-      expect(slotCount, `${route} at ${viewport.width}px`).toBeGreaterThan(0);
-
-      const metrics = await slots.evaluateAll((elements) =>
-        elements.map((element) => {
-          const rect = element.getBoundingClientRect();
-          return {
-            label: element.getAttribute("aria-label"),
-            placement: element.getAttribute("data-ad-placement"),
-            height: Math.round(rect.height),
-            width: Math.round(rect.width),
-          };
-        }),
-      );
-
-      expect(new Set(metrics.map((metric) => metric.placement)).size).toBe(
-        metrics.length,
-      );
-      for (const metric of metrics) {
-        expect(metric.label).toBe("광고 영역");
-        expect(metric.height).toBeGreaterThanOrEqual(128);
-        expect(metric.width).toBeGreaterThan(0);
-      }
-
-      const overlaps = await page.evaluate(() => {
-        const slots = [...document.querySelectorAll<HTMLElement>(".ad-slot")];
-        const controls = [
-          ...document.querySelectorAll<HTMLElement>(
-            "a[href], button, input, select, textarea",
-          ),
-        ].filter((element) => {
-          const style = getComputedStyle(element);
-          const rect = element.getBoundingClientRect();
-          return (
-            style.display !== "none" &&
-            style.visibility !== "hidden" &&
-            rect.width > 0 &&
-            rect.height > 0
-          );
-        });
-
-        return slots.flatMap((slot) => {
-          const slotRect = slot.getBoundingClientRect();
-
-          return controls
-            .filter((control) => {
-              const controlRect = control.getBoundingClientRect();
-              return !(
-                controlRect.right <= slotRect.left ||
-                controlRect.left >= slotRect.right ||
-                controlRect.bottom <= slotRect.top ||
-                controlRect.top >= slotRect.bottom
-              );
-            })
-            .map((control) => control.textContent?.trim() ?? control.tagName);
-        });
-      });
-
-      expect(overlaps, `${route} at ${viewport.width}px`).toEqual([]);
+      await expect(slots, `${route} at ${viewport.width}px`).toHaveCount(0);
     }
   }
 });

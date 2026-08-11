@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: "My Binder",
   description:
     "관심 있는 행사 페이지를 이 기기에 모으고, 로그인하면 계정 Binder와 직접 합칠 수 있습니다.",
+  robots: { index: false, follow: false },
 };
 
 export default async function MyBinderPage() {

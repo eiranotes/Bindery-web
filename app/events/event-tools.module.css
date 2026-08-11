@@ -54,6 +54,13 @@
   font-size: 0.75rem;
 }
 
+.optionList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 1rem;
+}
+
 .scrollHint {
   display: none;
   margin: var(--space-3) 0 0;
@@ -198,11 +205,18 @@
   .picker.picker {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .picker.picker label,
+  .picker.picker select,
+  .picker.picker > div {
+    min-width: 0;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 680px) {
   .picker.picker {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .summaryList {

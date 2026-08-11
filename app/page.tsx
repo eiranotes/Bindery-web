@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdSlot } from "./components/AdSlot";
 import { DDay } from "./components/DDay";
 import { events } from "./lib/data.ts";
-import { deriveEventStatus, nextEventMilestone } from "./lib/events.ts";
+import {
+  deriveEventStatus,
+  eventDataLabel,
+  eventTime,
+  nextEventMilestone,
+} from "./lib/events.ts";
 
 export const metadata: Metadata = {
   title: "창작자 행사 마감·회차 아카이브",
@@ -22,14 +26,24 @@ export default function Home() {
   const todayIso = now.toLocaleDateString("sv-SE", {
     timeZone: "Asia/Seoul",
   });
-  const deadlines = [...events]
-    .filter((event) => deriveEventStatus(event, now) !== "ended")
+  const allDeadlines = [...events]
+    .filter((event) => {
+      const deadline = eventTime(event.applicationDeadline, true, event.timeZone);
+      return (
+        deriveEventStatus(event, now) !== "ended" &&
+        deadline !== null &&
+        deadline >= now.getTime()
+      );
+    })
     .sort(
       (left, right) =>
-        new Date(nextEventMilestone(left, now).date).getTime() -
-        new Date(nextEventMilestone(right, now).date).getTime(),
-    )
-    .slice(0, 3);
+        (eventTime(left.applicationDeadline, true, left.timeZone) as number) -
+        (eventTime(right.applicationDeadline, true, right.timeZone) as number),
+    );
+  const deadlines = allDeadlines.slice(0, 3);
+  const finalDeadlineCount = allDeadlines.filter(
+    (event) => (event.applicationDeadlineKind ?? "final") === "final",
+  ).length;
   const indexes = [
     {
       number: "01",
@@ -65,11 +79,18 @@ export default function Home() {
             오늘 · <time dateTime={todayIso}>{today}</time>
           </p>
           <h1 id="home-title">
-            신청 마감을 놓치면
+            지금 지원할 수 있는
             <br />
-            <em>1년을 기다립니다.</em>
+            <em>창작 행사를 찾습니다.</em>
           </h1>
-          <p>창작자 행사의 회차·부스비·신청 조건을 쌓는 아카이브.</p>
+          <p>
+            부스 유형·비용·자격·최종 마감과 지난 회차 변경점을 공식
+            원문까지 추적하는 참가 기회 레지스트리.
+          </p>
+          <p className="home-opportunity-summary">
+            현재 확인된 지원 일정 {allDeadlines.length}건 · 최종 마감 {finalDeadlineCount}건 ·{" "}
+            <time dateTime={todayIso}>{todayIso} 기준</time>
+          </p>
           <div className="intro-actions">
             <Link className="button button--primary" href="/events/compare">
               행사 비교하기
@@ -81,21 +102,24 @@ export default function Home() {
         </div>
 
         <aside className="mockup-deadline" aria-labelledby="deadline-title">
-          <h2 id="deadline-title">다가오는 신청·행사 일정</h2>
+          <h2 id="deadline-title">다가오는 지원 일정</h2>
           <ol className="deadline-list">
             {deadlines.map((event) => {
               const milestone = nextEventMilestone(event, now);
               return <li key={event.id}>
-                <DDay days={milestone.days} label={`${event.shortName} ${milestone.label}`} />
+                <DDay days={milestone.days ?? 0} label={`${event.shortName} ${milestone.label}`} />
                 <Link href={`/events/${event.slug}/${event.edition}`}>
                   <strong>{event.shortName}</strong>
                   <span>
-                    {milestone.label} · {event.region} {event.venue ?? "장소 확인 중"}
+                    {milestone.label} · {eventDataLabel(event, now)}
                   </span>
                 </Link>
               </li>;
             })}
           </ol>
+          {deadlines.length === 0 ? (
+            <p className="empty-state">현재 확인된 미래 신청 일정이 없습니다.</p>
+          ) : null}
           <p className="mockup-deadline__note">
             신청 전 공식 공지를 확인하세요.
           </p>
@@ -117,12 +141,10 @@ export default function Home() {
 
       <nav className="home-support" aria-label="보조 정보">
         <span>SUPPORTING</span>
-        <Link href="/news">공식 소식</Link>
+        <Link href="/news">행사 변경 기록</Link>
         <Link href="/events/calendar">일정 달력</Link>
         <Link href="/community">커뮤니티 참고</Link>
       </nav>
-
-      <AdSlot placement="home-lower" />
 
       <div className="home-binder-link">
         <Link className="text-action" href="/me">

@@ -5,7 +5,9 @@ import { events } from "../app/lib/data.ts";
 import {
   daysUntilDeadline,
   deriveEventStatus,
+  eventDateParts,
   filterEvents,
+  getEventFreshness,
   getEventByPath,
   nextEventMilestone,
 } from "../app/lib/events.ts";
@@ -36,6 +38,14 @@ test("derives event status and D-day from dates", () => {
     deriveEventStatus(incheon, new Date("2026-11-02T12:00:00+09:00")),
     "ended",
   );
+  assert.equal(
+    daysUntilDeadline(incheon, new Date("2026-11-02T12:00:00+09:00")),
+    null,
+  );
+  assert.equal(
+    nextEventMilestone(incheon, new Date("2026-11-02T12:00:00+09:00")).days,
+    null,
+  );
 });
 
 test("filters and sorts using shareable query values", () => {
@@ -46,6 +56,8 @@ test("filters and sorts using shareable query values", () => {
       genre: "전체",
       scale: "전체",
       business: "전체",
+      stage: "all",
+      data: "all",
       sort: "deadline",
     },
     referenceNow,
@@ -63,6 +75,8 @@ test("filters and sorts using shareable query values", () => {
       genre: "전체",
       scale: "전체",
       business: "전체",
+      stage: "all",
+      data: "all",
       sort: "deadline",
     },
     referenceNow,
@@ -91,4 +105,12 @@ test("resolves stable event paths and preserves missing information", () => {
   assert.equal(paperworld?.timeZone, "Asia/Shanghai");
   assert.equal(paperworld?.boothFee, 990);
   assert.equal(paperworld?.boothFeeCurrency, "CNY");
+  assert.deepEqual(
+    eventDateParts("2026-08-30T00:30:00+08:00", "Asia/Shanghai"),
+    { year: 2026, month: 8, date: 30 },
+  );
+  assert.equal(
+    getEventFreshness(paperworld!, new Date("2026-08-11T00:00:00+09:00")),
+    "fresh",
+  );
 });

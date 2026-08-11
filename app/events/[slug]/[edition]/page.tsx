@@ -7,10 +7,12 @@ import { StatusStamp } from "../../../components/StatusStamp";
 import { events } from "../../../lib/data.ts";
 import {
   deriveEventStatus,
+  eventDataLabel,
   formatCurrency,
   formatDate,
   formatDateRange,
   getEventByPath,
+  isEventDataStale,
   nextEventMilestone,
 } from "../../../lib/events.ts";
 
@@ -52,6 +54,20 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   if (!event) notFound();
   const status = deriveEventStatus(event);
   const milestone = nextEventMilestone(event);
+  const now = new Date();
+  const applicationKnownCount = [
+    event.application.documents.length > 0,
+    event.application.resalePolicy,
+    event.application.refundPolicy,
+    event.application.note,
+  ].filter(Boolean).length;
+  const onsiteKnownCount = Object.values(event.onsite).filter(Boolean).length;
+  const schemaEventStatus =
+    status === "ended"
+      ? "https://schema.org/EventCompleted"
+      : status === "ongoing"
+        ? "https://schema.org/EventInProgress"
+        : "https://schema.org/EventScheduled";
 
   const eventJsonLd = {
     "@context": "https://schema.org",
@@ -59,7 +75,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     name: event.name,
     startDate: event.startDate,
     endDate: event.endDate,
-    eventStatus: "https://schema.org/EventScheduled",
+    eventStatus: schemaEventStatus,
     ...(event.venue
       ? {
           location: {
@@ -101,21 +117,28 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           </p>
         </div>
         <div className="detail-dday">
-          <DDay days={milestone.days} label={`${event.shortName} ${milestone.label}`} />
-          <span className="detail-dday__label">{milestone.label}까지</span>
+          {milestone.days === null ? (
+            <strong className="detail-dday__past">종료</strong>
+          ) : (
+            <DDay days={milestone.days} label={`${event.shortName} ${milestone.label}`} />
+          )}
+          <span className="detail-dday__label">
+            {milestone.state === "past" ? milestone.label : `${milestone.label}까지`}
+          </span>
         </div>
       </header>
 
       <aside className="origin-bar">
         <strong>
-          {event.dataStatus === "official" ? "편집 검수된 공식 정보" : "공식 원문 연결 정보"}
+          {eventDataLabel(event, now)}
         </strong>
         <a href={event.sourceUrl} target="_blank" rel="noreferrer">
           {event.sourceLabel} 확인 ↗
         </a>
         <span>
-          {event.verifiedAt} 확인 · {event.countryName} · 원문 언어 {event.sourceLanguage} ·
+          {event.sourceCheckedAt?.slice(0, 10) ?? event.verifiedAt} 확인 · {event.countryName} · 원문 언어 {event.sourceLanguage} ·
           공식 출처 {event.sourceCount ?? 1}건을 연결했습니다.
+          {isEventDataStale(event, now) ? " 재검수 기한이 지나 현재 원문 확인이 필요합니다." : ""}
           {event.reviewNeeded ? " 세부 필드는 검수 중입니다." : ""} 신청 전 반드시
           회차 원문을 확인하세요.
         </span>
@@ -124,80 +147,76 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
       <div className="detail-body-grid">
         <div className="event-detail-main">
           <div className="detail-columns">
-        <section className="lined-section" aria-labelledby="application-title">
+        <section className={`lined-section${applicationKnownCount ? "" : " lined-section--empty"}`} aria-labelledby="application-title">
           <div className="section-line-heading">
             <h2 id="application-title">신청 준비</h2>
             <span>BEFORE APPLY</span>
           </div>
-          <dl className="definition-list">
-            <div>
+          {applicationKnownCount ? <dl className="definition-list">
+            {event.application.documents.length ? <div>
               <dt>필요 자료</dt>
               <dd>
-                {event.application.documents.length ? (
-                  <ul>
-                    {event.application.documents.map((document) => (
-                      <li key={document}>{document}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <span className="unknown-value">정보 없음</span>
-                )}
+                <ul>
+                  {event.application.documents.map((document) => (
+                    <li key={document}>{document}</li>
+                  ))}
+                </ul>
               </dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.application.resalePolicy ? <div>
               <dt>재판매 기준</dt>
               <dd><InfoValue value={event.application.resalePolicy} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.application.refundPolicy ? <div>
               <dt>환불 기준</dt>
               <dd><InfoValue value={event.application.refundPolicy} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.application.note ? <div>
               <dt>메모</dt>
               <dd><InfoValue value={event.application.note} /></dd>
-            </div>
-          </dl>
+            </div> : null}
+          </dl> : <p className="unknown-section-copy">공식 원문에서 확인·검수된 신청 준비 세부정보가 아직 없습니다.</p>}
         </section>
 
-        <section className="lined-section" aria-labelledby="onsite-title">
+        <section className={`lined-section${onsiteKnownCount ? "" : " lined-section--empty"}`} aria-labelledby="onsite-title">
           <div className="section-line-heading">
             <h2 id="onsite-title">현장 준비</h2>
             <span>ON SITE</span>
           </div>
-          <dl className="definition-list">
-            <div>
+          {onsiteKnownCount ? <dl className="definition-list">
+            {event.onsite.loadIn ? <div>
               <dt>반입</dt>
               <dd><InfoValue value={event.onsite.loadIn} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.loadOut ? <div>
               <dt>철수</dt>
               <dd><InfoValue value={event.onsite.loadOut} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.electricity ? <div>
               <dt>전기</dt>
               <dd><InfoValue value={event.onsite.electricity} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.wallUse ? <div>
               <dt>벽면 사용</dt>
               <dd><InfoValue value={event.onsite.wallUse} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.parking ? <div>
               <dt>주차</dt>
               <dd><InfoValue value={event.onsite.parking} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.logistics ? <div>
               <dt>물류 동선</dt>
               <dd><InfoValue value={event.onsite.logistics} /></dd>
-            </div>
-            <div>
+            </div> : null}
+            {event.onsite.fixtures ? <div>
               <dt>제공 집기</dt>
               <dd><InfoValue value={event.onsite.fixtures} /></dd>
-            </div>
-          </dl>
+            </div> : null}
+          </dl> : <p className="unknown-section-copy">공식 원문에서 확인·검수된 현장 준비 세부정보가 아직 없습니다.</p>}
         </section>
           </div>
 
-          <section className="history-section" aria-labelledby="history-title">
+          {event.history.length >= 2 ? <section className="history-section" aria-labelledby="history-title">
         <div className="section-line-heading">
           <h2 id="history-title">지난 회차 비교</h2>
           <span>{event.history.length} EDITIONS</span>
@@ -217,7 +236,9 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             <tbody>
               {event.history.map((history) => (
                 <tr key={history.edition}>
-                  <th scope="row">{history.edition}</th>
+                  <th scope="row">
+                    {history.path ? <Link href={history.path}>{history.edition}</Link> : history.edition}
+                  </th>
                   <td>{history.dates}</td>
                   <td><InfoValue value={history.venue} /></td>
                   <td>
@@ -243,7 +264,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </tbody>
           </table>
         </div>
-          </section>
+          </section> : null}
 
           <section className="review-boundary" aria-labelledby="review-title">
         <div className="section-line-heading">
@@ -266,8 +287,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 {formatDate(milestone.date, {
                   month: "2-digit",
                   day: "2-digit",
-                })}
+                }, event.timeZone)}
               </dd>
+            </div>
+            <div>
+              <dt>데이터 상태</dt>
+              <dd>{eventDataLabel(event, now)}</dd>
             </div>
             <div>
               <dt>부스비</dt>
@@ -278,6 +303,10 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <dd><InfoValue value={event.boothSize} /></dd>
             </div>
             <div>
+              <dt>부스 수</dt>
+              <dd>{event.boothCount === null ? "정보 없음" : event.boothCount.toLocaleString("ko-KR")}</dd>
+            </div>
+            <div>
               <dt>사업자</dt>
               <dd>{event.businessRequired === null ? "확인 중" : event.businessRequired ? "필요" : "필수 아님"}</dd>
             </div>
@@ -286,13 +315,39 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <dd><InfoValue value={event.selection} /></dd>
             </div>
           </dl>
+          {(event.boothOptions ?? []).length ? (
+            <section className="detail-booth-options" aria-labelledby="booth-options-title">
+              <h3 id="booth-options-title">부스 옵션</h3>
+              <ul>
+                {(event.boothOptions ?? []).map((option) => (
+                  <li key={option.id}>
+                    <strong>{option.label}</strong>
+                    <span>{option.size ?? "규격 확인 필요"}</span>
+                    <span>
+                      {formatCurrency(option.feeAmount, option.currency ?? "KRW")}
+                      {option.vatIncluded === null
+                        ? " · VAT 확인 필요"
+                        : option.vatIncluded
+                          ? " · VAT 포함"
+                          : " · VAT 별도"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
           <BookmarkButton eventId={event.id} className="button button--primary" />
-          <a className="button" href="/events/calendar.ics">
-            캘린더에 추가
+          {event.applicationDeadline ? (
+            <a className="button" href={`/events/calendar.ics?event=${encodeURIComponent(event.id)}&kind=deadline`}>
+              신청 마감 ICS
+            </a>
+          ) : null}
+          <a className="button" href={`/events/calendar.ics?event=${encodeURIComponent(event.id)}&kind=event`}>
+            개최 일정 ICS
           </a>
           <small>
-            이 버튼은 먼저 이 기기의 브라우저에 저장합니다. 로그인한 뒤
-            My Binder에서 직접 실행하면 계정 Binder와 중복 없이 합칠 수 있습니다.
+            <Link href="/events/calendar">전체 행사 달력 보기</Link> · 저장한 행사는
+            My Binder에서 비교와 일정 작업으로 이어갈 수 있습니다.
           </small>
         </aside>
       </div>

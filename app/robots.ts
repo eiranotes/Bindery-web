@@ -8,7 +8,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/groupbuy"],
+      disallow: ["/groupbuy", "/me", "/auth", "/admin", "/api"],
     },
     sitemap: new URL("/sitemap.xml", base).toString(),
   };

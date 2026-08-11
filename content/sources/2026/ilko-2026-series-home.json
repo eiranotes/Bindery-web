@@ -8,18 +8,18 @@
     "illustration-korea"
   ],
   "recheckDays": 7,
-  "checkedAt": "2026-08-03T00:07:08.400Z",
-  "recheckDueAt": "2026-08-10T00:07:08.400Z",
+  "checkedAt": "2026-08-11T02:36:20.975Z",
+  "recheckDueAt": "2026-08-18T02:36:20.975Z",
   "availability": "accessible",
   "robots": "allowed",
   "httpStatus": 200,
   "contentType": "text/html",
   "contentHash": "c453d733f7dbc788be55396cfe5f92223067e5dbc3502c974e08db8ebad5f3d8",
-  "payloadHash": "d8f5856e57e0e636bf784769958a35f610c8eadea92a9d8ccc60658c622b0fba",
+  "payloadHash": "137369915d3313210c3f088846667c75bbd26e8ad3bd0cd933765bdb482fd48a",
   "previousContentHash": "c453d733f7dbc788be55396cfe5f92223067e5dbc3502c974e08db8ebad5f3d8",
   "changeStatus": "unchanged",
   "title": "2026 illustrationkorea - 일러스트코리아",
-  "bytes": 1576855,
+  "bytes": 1576842,
   "normalizedTextBytes": 870,
   "cachePath": ".content-cache/official/ilko-2026-series-home.html"
 }

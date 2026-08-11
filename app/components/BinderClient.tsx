@@ -94,12 +94,17 @@ export function BinderClient({
   const router = useRouter();
   const [savedEvents, setSavedEvents] = useState<SavedEvent[] | null>(null);
   const [savedCommunityPosts, setSavedCommunityPosts] = useState<SavedCommunityPost[] | null>(null);
+  const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
   const [feedback, setFeedback] = useState("");
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     const syncFromStorage = () => {
-      setSavedEvents(getSavedEvents(accountEventIds));
+      const nextSavedEvents = getSavedEvents(accountEventIds);
+      setSavedEvents(nextSavedEvents);
+      setSelectedEventIds((current) =>
+        current.filter((id) => nextSavedEvents.some((saved) => saved.event.id === id)),
+      );
       setSavedCommunityPosts(getSavedCommunityPosts(accountCommunityPosts));
     };
 
@@ -144,6 +149,14 @@ export function BinderClient({
       accountCommunityPosts.some((post) => post.id === postId)
         ? "이 기기 저장에서 뺐습니다. 계정 Binder에는 남아 있습니다."
         : "내 Binder에서 글을 뺐습니다.",
+    );
+  }
+
+  function toggleSelectedEvent(eventId: string) {
+    setSelectedEventIds((current) =>
+      current.includes(eventId)
+        ? current.filter((id) => id !== eventId)
+        : [...current, eventId],
     );
   }
 
@@ -278,6 +291,36 @@ export function BinderClient({
             <span className="section-count">{savedEvents.length}</span>
           </h2>
         </div>
+        <div className="binder-workbench" aria-label="선택한 행사 작업">
+          <p>
+            {selectedEventIds.length
+              ? `${selectedEventIds.length}개 행사 선택`
+              : "비교하거나 일정을 받을 행사를 선택하세요."}
+          </p>
+          <div>
+            {selectedEventIds.length >= 2 ? (
+              <Link
+                className="button button--primary"
+                href={`/events/compare?${selectedEventIds
+                  .slice(0, 3)
+                  .map((id, index) => `event${index + 1}=${encodeURIComponent(id)}`)
+                  .join("&")}`}
+              >
+                선택 행사 비교
+              </Link>
+            ) : (
+              <span className="button" aria-disabled="true">2개 이상 선택해 비교</span>
+            )}
+            {selectedEventIds.length ? (
+              <a
+                className="button"
+                href={`/events/calendar.ics?event=${selectedEventIds.map(encodeURIComponent).join(",")}`}
+              >
+                선택 일정 ICS
+              </a>
+            ) : null}
+          </div>
+        </div>
         <ol className="binder-list">
           {savedEvents.map((saved, index) => (
             <li className="binder-list-item" key={saved.event.id}>
@@ -285,6 +328,14 @@ export function BinderClient({
                 {String(index + 1).padStart(2, "0")}
               </p>
               <div className="binder-list-copy">
+                <label className="binder-event-select">
+                  <input
+                    checked={selectedEventIds.includes(saved.event.id)}
+                    onChange={() => toggleSelectedEvent(saved.event.id)}
+                    type="checkbox"
+                  />
+                  작업 선택
+                </label>
                 <p className="entry-meta">
                   {formatDateRange(saved.event)} · {saved.event.region} · {saved.event.venue ?? "장소 확인 중"}
                 </p>
@@ -292,6 +343,17 @@ export function BinderClient({
                   <Link href={eventPath(saved.event)}>{saved.event.name}</Link>
                 </h3>
                 <p>{saved.event.summary}</p>
+                <nav className="binder-event-actions" aria-label={`${saved.event.shortName} 작업`}>
+                  {saved.event.applicationDeadline ? (
+                    <a href={`/events/calendar.ics?event=${encodeURIComponent(saved.event.id)}&kind=deadline`}>
+                      마감 ICS
+                    </a>
+                  ) : null}
+                  <a href={`/events/calendar.ics?event=${encodeURIComponent(saved.event.id)}&kind=event`}>
+                    개최 ICS
+                  </a>
+                  <Link href={`${eventPath(saved.event)}#application-title`}>준비 정보</Link>
+                </nav>
                 {saved.account ? (
                   <p className="entry-meta">
                     {saved.local ? "계정 Binder에도 저장됨" : "계정 Binder에 저장됨"}

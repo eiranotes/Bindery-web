@@ -9,6 +9,9 @@ const owner = process.env.GITHUB_REPOSITORY_OWNER ?? "eiranotes";
 const basePath = `/${repositoryName}`;
 const publicOrigin = `https://${owner}.github.io`;
 const publicSite = `${publicOrigin}${basePath}`;
+const snapshotDate = new Date(
+  process.env.BINDERY_PAGES_SNAPSHOT_AT ?? Date.now(),
+).toISOString().slice(0, 10);
 const unprefixedPublicUrl = new RegExp(
   `${publicOrigin.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}/(?!${repositoryName}(?:/|$))`,
   "gu",
@@ -82,6 +85,14 @@ function staticHtml(source) {
       '$1 disabled data-static-preview-unavailable="true"',
     )
     .replace(
+      /<(button|select|input|textarea)\b(?![^>]*\bdisabled\b)([^>]*)>/giu,
+      '<$1 disabled data-static-preview-unavailable="true"$2>',
+    )
+    .replace(
+      /<a\b([^>]*href=["'][^"']*\/events\/calendar\?month=[^"']*["'][^>]*)>/giu,
+      '<a aria-disabled="true" data-static-preview-unavailable="true" tabindex="-1"$1>',
+    )
+    .replace(
       /\b(href|src|action|data-rsc-css-href)=(['"])(\/[^'"]*)\2/giu,
       (_, attribute, quote, value) => `${attribute}=${quote}${prefixLocalUrl(value)}${quote}`,
     );
@@ -89,9 +100,13 @@ function staticHtml(source) {
   const previewStyle = `<style data-github-pages-preview>
 .github-pages-preview{margin:0;padding:.72rem clamp(1rem,4vw,3rem);border-bottom:1px solid var(--rule);background:var(--ink-yellow);color:var(--text);font:600 .78rem/1.55 var(--font-body);letter-spacing:.01em}
 .github-pages-preview strong{font-family:var(--font-utility);font-size:.72rem;letter-spacing:.08em}.github-pages-preview a{color:inherit;text-underline-offset:.2em}
+[data-static-preview-unavailable="true"]{cursor:not-allowed!important;opacity:.6}.github-pages-preview+* form{position:relative}
 </style>`;
-  const previewNotice = `<aside class="github-pages-preview" aria-label="정적 프리뷰 안내"><strong>STATIC PREVIEW</strong> · 공식 행사 정보 중심 GitHub Pages 체험판입니다. 언어 전환·로그인·저장·작성 기능은 동작하지 않습니다. <a href="${basePath}/events/">행사 정보 보기</a></aside>`;
-  html = html.replace("</head>", `${previewStyle}</head>`).replace("<body>", `<body>${previewNotice}`);
+  const previewNotice = `<aside class="github-pages-preview" aria-label="정적 프리뷰 안내"><strong>READ-ONLY SNAPSHOT · ${snapshotDate}</strong> · 이 GitHub Pages는 생성일 기준 공식 정보 스냅샷입니다. 필터·비교 선택·월 이동·언어 전환·로그인·Binder 저장·글쓰기는 동작하지 않습니다. <a href="${basePath}/events/">행사 인덱스 보기</a></aside>`;
+  html = html
+    .replace("오늘 · <time", "생성 기준 · <time")
+    .replace("</head>", `${previewStyle}</head>`)
+    .replace("<body>", `<body data-static-preview="${snapshotDate}">${previewNotice}`);
 
   if (html.includes("http://localhost") || /<script\b(?![^>]*type=["']application\/ld\+json["'])/iu.test(html)) {
     throw new Error("static preview contains a local origin or executable application script");
