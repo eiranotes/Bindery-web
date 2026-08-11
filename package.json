@@ -32,6 +32,7 @@
     "test": "npm run content:guard && npm run content:candidates:validate && npm run content:check-normalized && npm run content:validate && npm run content:check-generated && npm run typecheck && npm run build && node --test tests/*.test.mjs tests/*.test.ts && vitest run --config vitest.config.ts && npm run test:browser",
     "test:community-db": "bash scripts/test-community-db.sh supabase/tests/community_rls.test.sql",
     "test:browser": "playwright test --config playwright.config.ts",
+    "screenshots": "playwright test --config playwright.screenshots.config.ts",
     "typecheck": "tsc --noEmit --incremental false",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
