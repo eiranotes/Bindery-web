@@ -29,6 +29,7 @@ const pageRoutes = [
   ...generatedEvents.map((event) => `/events/${event.slug}/${event.edition}`),
   "/notes",
   "/notes/simple-tax-start",
+  "/notes/overseas-shipping-customs",
   "/notes/reading-print-quotes",
   "/notes/first-booth-checklist",
   "/notes/booth-break-even",

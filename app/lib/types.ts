@@ -98,6 +98,29 @@ export interface EventFilters {
 export interface NoteSection {
   heading: string;
   paragraphs: string[];
+  bullets?: string[];
+  caution?: string;
+}
+
+export interface NoteFact {
+  label: string;
+  value: string;
+  detail: string;
+}
+
+export interface NoteStep {
+  marker: string;
+  title: string;
+  description: string;
+}
+
+export interface NoteSource {
+  label: string;
+  publisher: string;
+  url: string;
+  checkedAt: string;
+  tier: "G1" | "G2";
+  supports: string;
 }
 
 export interface Note {
@@ -111,6 +134,14 @@ export interface Note {
   readMinutes: number;
   isStale: boolean;
   legalNotice: boolean;
+  guideType?: "official-guide";
+  sourceCheckedAt?: string;
+  reviewCadence?: string;
+  audience?: string;
+  facts?: NoteFact[];
+  steps?: NoteStep[];
+  warnings?: string[];
+  sources?: NoteSource[];
   sections: NoteSection[];
   checklist: string[];
 }

@@ -53,7 +53,7 @@ export default function Home() {
       number: "04",
       href: "/notes",
       title: "준비 노트",
-      copy: "신청·현장 기준",
+      copy: "세금·발주·통관",
     },
   ];
 

@@ -110,6 +110,20 @@
 - [ ] Approve and execute external Supabase/Turnstile provisioning, hosted
   runtime binding, backup/restore rehearsal, and authenticated production E2E.
 
+## Creator-operations information roadmap
+
+- [x] Review event-adjacent creator information with WebGPT Pro and live official-source samples.
+- [x] Rank 15 candidate information groups and limit the first expansion to a four-layer production decision chain.
+- [x] Define creator-specific source tiers, public/private boundaries, change handling, and an eight-week minimum dataset.
+- [ ] Approve the P0 scope before adding creator-operations schemas, routes, or collectors.
+- [ ] Implement source/snapshot/evidence, specification/alias, offering-version, shipping-rate, and calculation-version types.
+- [ ] Register the first G1/G2/V1 allowlist and add permitted HTML/PDF/API hash checks without collecting authenticated pages.
+- [ ] Build the print/finishing ontology and versioned provider-offering comparison without authenticated quote collection.
+- [ ] Build the public shipping registry and the user-input inventory/cost/profit calculator.
+- [x] Add dated official-source VAT/income-tax and overseas shipping/export/customs Notes with explicit applicability and escalation states.
+- [ ] Add the remaining seller-registration, KC, rights, marketplace-fee, and ecommerce-obligation P1 checklists with explicit escalation states.
+- [ ] Pilot the three creator workflows and pass the source-coverage, stale-data, privacy, and commercial-disclosure release gates.
+
 ## Event-data roadmap
 
 - [x] Run a broad Pro-model official-source discovery pass and quarantine the

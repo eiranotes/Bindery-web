@@ -4,6 +4,7 @@ import type {
   NewsItem,
   Note,
 } from "./types.ts";
+import { creatorGuideNotes } from "./creator-guides.ts";
 import { generatedEvents } from "./generated/events.ts";
 
 /** Product-validation fixtures retained for tests and migration reference only. */
@@ -357,40 +358,7 @@ export const exampleEvents: EventEdition[] = [
 ];
 
 export const notes: Note[] = [
-  {
-    slug: "simple-tax-start",
-    title: "간이과세자로 굿즈 판매를 시작할 때 확인할 것",
-    category: "사업자·세금",
-    tags: ["사업자", "부가세", "시작"],
-    summary:
-      "업종코드와 판매 채널을 먼저 정리하면 신고 방식과 증빙 준비가 한결 단순해집니다.",
-    publishedAt: "2026-03-18",
-    updatedAt: "2026-07-14",
-    readMinutes: 8,
-    isStale: false,
-    legalNotice: true,
-    sections: [
-      {
-        heading: "등록 전에 적어둘 것",
-        paragraphs: [
-          "판매할 품목, 주 판매 채널, 연간 예상 매출을 한 장에 적습니다. 이 세 값이 업종 선택과 과세 유형을 검토할 출발점입니다.",
-          "행사 현장 판매와 온라인 판매를 함께 한다면 현금영수증, 카드 매출, 플랫폼 정산 내역을 같은 기준으로 모을 방법도 정합니다.",
-        ],
-      },
-      {
-        heading: "업종코드는 판매 방식과 함께 본다",
-        paragraphs: [
-          "굿즈의 제작 방식만 보고 제조업으로 단정하지 않습니다. 직접 제작과 외주 제작, 온라인 소매와 행사 판매가 섞이면 실제 운영 형태를 세무 전문가에게 설명하고 확인하는 편이 안전합니다.",
-        ],
-      },
-    ],
-    checklist: [
-      "판매 품목과 채널을 한 줄로 설명할 수 있다.",
-      "예상 매출과 주요 비용을 월 단위로 적었다.",
-      "증빙을 저장할 폴더와 파일 이름을 정했다.",
-      "최신 국세청 안내 또는 전문가 확인 일자를 기록했다.",
-    ],
-  },
+  ...creatorGuideNotes,
   {
     slug: "reading-print-quotes",
     title: "인쇄 견적서 읽는 법 — 후가공 항목별 단가 구조",

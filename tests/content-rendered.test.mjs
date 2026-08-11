@@ -11,11 +11,15 @@ test("notes index renders substantive dated entries", async () => {
 
   const html = await response.text();
   assert.match(html, /실무 노트/);
-  assert.match(html, /간이과세자로 굿즈 판매를 시작할 때 확인할 것/);
-  assert.match(html, /2026\.07\.14/);
+  assert.match(html, /문구작가 개인사업자의 부가세·종소세 한눈에 보기/);
+  assert.match(html, /해외 주문을 보내기 전/);
+  assert.match(html, /공식 출처 (?:<!-- -->)?6(?:<!-- -->)?건/);
+  assert.match(html, /공식 출처 (?:<!-- -->)?13(?:<!-- -->)?건/);
+  assert.match(html, /2026\.08\.07/);
   assert.match(html, /부스비를 회수하려면 몇 개를 팔아야 하나/);
   assert.match(html, /업데이트가 필요한 노트/);
   assert.match(html, /href="\/notes\/booth-break-even"/);
+  assert.match(html, /href="\/notes\/overseas-shipping-customs"/);
 });
 
 test("note detail exposes freshness and legal-information boundaries", async () => {
@@ -34,9 +38,31 @@ test("note detail exposes freshness and legal-information boundaries", async () 
 
   const legalHtml = await legalResponse.text();
   assert.match(legalHtml, /마지막 업데이트/);
-  assert.match(legalHtml, /2026\.07\.14/);
-  assert.match(legalHtml, /법률·세무 자문이 아닙니다/);
-  assert.match(legalHtml, /국세청 안내 또는 전문가에게 다시 확인/);
+  assert.match(legalHtml, /2026\.08\.07/);
+  assert.match(legalHtml, /법률·세무·통관 자문이 아닙니다/);
+  assert.match(legalHtml, /연 1억 400만원 미만/);
+  assert.match(legalHtml, /종합소득세는 부가세 과세유형과 별개입니다/);
+  assert.match(legalHtml, /국세청/);
+  assert.match(legalHtml, /국가법령정보센터/);
+});
+
+test("overseas customs guide keeps transport, export, and destination rules separate", async () => {
+  const response = await render("/notes/overseas-shipping-customs");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /우편 접수 ≠ 수출신고/);
+  assert.match(html, /FOB 200만 · 500만원/);
+  assert.match(html, /FOB 500만원 이하/);
+  assert.match(html, /우편 신고생략 후보/);
+  assert.match(html, /소포수령증/);
+  assert.match(html, /CN23/);
+  assert.match(html, /판매물품을 Gift 또는 Sample로 허위 표시하지 않습니다/);
+  assert.match(html, /미국 저가 우편물 무관세 취급 중단/);
+  assert.match(html, /EU 저가 전자상거래 임시 관세 안내/);
+  assert.match(html, /일본 1만엔 이하 면세와 예외/);
+  assert.match(html, /관세청 고객지원센터/);
+  assert.match(html, /우정사업본부/);
 });
 
 test("news timeline summarizes and links each named source", async () => {

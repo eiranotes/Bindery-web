@@ -50,7 +50,34 @@ Festa vol.64 route returns 200 and visibly contains its dates, 6,500-booth scale
 and JPY 17,000 minimum booth fee. The hosted home, event list, comparison,
 archive, and ICS routes are included in the same 92-screen static artifact.
 
+A 2026-08-07 WebGPT Pro review and independent official-source sample pass now
+define the next possible information expansion:
+normalized print/finishing specifications, versioned provider offering claims,
+public packing/shipping rules, and scenario-based inventory/cost/profit
+calculation. Seller/tax, product-safety, rights, marketplace-fee, and ecommerce
+obligations remain P1 official-source checklists rather than automatic rulings.
+The first two source-traceable P1 Notes are now implemented: a Korean
+personal-business VAT/income-tax guide with six official sources and an
+overseas shipping/export/customs guide with 13 official sources. Both show the
+2026-08-07 check date, applicability boundary, workflow, warnings, checklist,
+source register, and recheck cadence; destination-country rules are explicitly
+time-sensitive rather than universal promises.
+The plan evaluates 15 candidate domains, separates government rules, agency guidance,
+vendor claims, private contract values, and creator experience, and specifies a
+coverage-based eight-week pilot in
+`docs/STATIONERY_CREATOR_INFORMATION_COLLECTION.md`. No creator-operations
+schema or automated collector has been added yet.
+
 ## Completed
+
+- Collaborated with WebGPT Pro on non-event information for Korean stationery
+  creators, checked representative official government, safety, rights, print,
+  shipping, platform, and support-program sources, and documented the P0/P1/P2
+  scope plus a maintainable collection and correction SOP.
+- Added official-source Notes for Korean personal-business VAT/income tax and
+  overseas postal/export/customs preparation. The Notes keep transport,
+  Korean export evidence, and destination import rules separate and expose
+  19 dated primary-source references instead of making personalized determinations.
 
 - Created the WebGPT `Bindery-web` project, uploaded six repository authority
   sources, selected Pro, obtained a current implementation review grounded in
@@ -263,6 +290,13 @@ archive, and ICS routes are included in the same 92-screen static artifact.
 
 ## Next
 
+- Approve or revise the four creator-operations P0 production layers before implementing
+  schemas, collectors, comparison routes, or calculators; then start with source
+  coverage and three end-to-end creator workflows rather than record-count goals.
+- Recheck the two high-risk official-source Notes on their documented cadence,
+  especially destination-country import changes, and move them to a stale state
+  instead of silently retaining expired guidance.
+
 - Review the public Pages preview as a product-direction sample and decide which
   information surfaces should move into the later server-backed custom domain.
 - Restore management access to the existing owner-only Sites project only if the
@@ -290,6 +324,12 @@ archive, and ICS routes are included in the same 92-screen static artifact.
 - Decide whether to keep owner-only access or explicitly approve a wider audience.
 
 ## Known risks
+
+- The two published creator-operation Notes are educational checklists, not
+  personalized legal, tax, customs, product-safety, trademark, certification,
+  vendor-price, or settlement advice. U.S., EU, Japan, carrier, and tax rules can
+  change after the visible check date; destination and individual applicability
+  still require confirmation with the linked authority or a qualified adviser.
 
 - The current owner-only production URL is stale relative to `main`. The signed-in
   URL is viewable from the current account, but its Sites management project is

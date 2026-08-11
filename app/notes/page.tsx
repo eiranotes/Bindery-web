@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "실무 노트 | Bindery",
   description:
-    "문구 작가의 사업자·세금, 제작·발주, 행사 운영, 가격·원가 실무를 날짜와 함께 정리한 노트.",
+    "문구 작가의 사업자·세금, 해외배송·통관, 제작·발주, 행사 운영, 가격·원가 실무를 공식 출처와 날짜로 정리한 노트.",
 };
 
 function formatEditorialDate(value: string): string {
@@ -24,6 +24,12 @@ function formatEditorialDate(value: string): string {
 export default async function NotesPage() {
   const sortedNotes = notes.toSorted((left, right) =>
     right.updatedAt.localeCompare(left.updatedAt),
+  );
+  const officialGuides = sortedNotes.filter(
+    (note) => note.guideType === "official-guide",
+  );
+  const editorialNotes = sortedNotes.filter(
+    (note) => note.guideType !== "official-guide",
   );
   const config = getSupabasePublicConfig();
   let promotedNotes: PromotedCommunityNote[] = [];
@@ -45,18 +51,72 @@ export default async function NotesPage() {
         <p className="eyebrow">NOTES · 실무 기록</p>
         <h1>필요할 때 다시 펴보는 실무 노트</h1>
         <p className="page-lede">
-          신고, 인쇄, 원가, 현장 운영 기준을 업데이트 날짜와 함께 확인합니다.
+          신고, 세금, 해외 통관, 인쇄와 원가 기준을 공식 원문과 확인 날짜까지
+          함께 살펴봅니다.
         </p>
       </header>
 
+      <section
+        className="creator-guide-ledger"
+        aria-labelledby="official-guides-title"
+      >
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">OFFICIAL SOURCE GUIDE</p>
+            <h2 id="official-guides-title">지금 먼저 확인할 운영 안내</h2>
+          </div>
+          <p className="utility-text">{officialGuides.length}개 가이드</p>
+        </div>
+
+        <ol>
+          {officialGuides.map((note, index) => (
+            <li key={note.slug}>
+              <article>
+                <span className="guide-ledger__number" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="guide-ledger__copy">
+                  <div className="note-meta">
+                    <span>{note.category}</span>
+                    <span>공식 출처 {note.sources?.length ?? 0}건</span>
+                    <span>
+                      확인 {formatEditorialDate(note.sourceCheckedAt ?? note.updatedAt)}
+                    </span>
+                  </div>
+                  <h3>
+                    <Link href={`/notes/${note.slug}`}>{note.title}</Link>
+                  </h3>
+                  <p>{note.summary}</p>
+                </div>
+                <dl className="guide-ledger__facts">
+                  {note.facts?.slice(0, 2).map((fact) => (
+                    <div key={fact.label}>
+                      <dt>{fact.label}</dt>
+                      <dd>{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <Link
+                  className="text-action"
+                  href={`/notes/${note.slug}`}
+                  aria-label={`${note.title} 읽기`}
+                >
+                  가이드 펼치기
+                </Link>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       <section className="content-ledger" aria-labelledby="notes-list-title">
         <div className="section-heading">
-          <h2 id="notes-list-title">노트 목록</h2>
-          <p className="utility-text">{sortedNotes.length}권</p>
+          <h2 id="notes-list-title">제작·현장·원가 노트</h2>
+          <p className="utility-text">{editorialNotes.length}권</p>
         </div>
 
         <ol className="note-list">
-          {sortedNotes.map((note, index) => (
+          {editorialNotes.map((note, index) => (
             <li className="note-list-item" key={note.slug}>
               <article>
                 <div className="note-index" aria-hidden="true">
@@ -143,9 +203,9 @@ export default async function NotesPage() {
       <aside className="trust-notice" aria-label="노트 이용 안내">
         <p className="utility-text">READING NOTE</p>
         <p>
-          실무 노트는 확인 과정을 돕는 참고 자료입니다. 법률·세무 판단이나
-          업체별 발주 조건은 연결된 기관과 담당자에게 최신 기준을 다시
-          확인하세요.
+          공식 출처 가이드도 개인의 세액이나 통관 결과를 대신 확정하지
+          않습니다. 적용 조건과 확인 날짜를 본 뒤 연결된 기관·세무서·세관에
+          최신 기준을 다시 확인하세요.
         </p>
       </aside>
     </div>

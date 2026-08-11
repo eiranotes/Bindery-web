@@ -445,3 +445,45 @@ explicitly supports original art, stationery-adjacent goods, illustration, or
 handmade sales. Store it as a broad `복합` event and state that boundary in its
 summary; do not relabel it as a stationery-only fair. Design Festa vol.64 is the
 first application of this rule.
+
+## D-035 — Creator operations expand as four evidence-separated production layers
+
+After event coverage, expand Notes and tools through one four-layer production
+decision chain: normalized print/finishing specifications, versioned provider
+claims for fully specified offerings, public packing/shipping rules, and
+scenario-based inventory/cost/profit calculation. Do not
+start with a broad vendor directory, generic legal chatbot, or opaque creator
+ranking. The first release must prove source coverage and change handling for a
+complete creator workflow rather than maximize record count.
+
+Use a creator-operations source taxonomy separate from event S1–S5. `G1` law and
+official procedures, `G2` public-agency guidance, `V1` vendor/platform public
+claims, `V2` authenticated or contracted user values, and `E1` creator experience
+remain distinct records and visual states. Search results and model extractions
+are unpublishable candidates. A public number must retain its publisher, option
+signature, effective date, checked date, and exceptions; a calculation must expose
+its public sources, private inputs, and assumptions.
+
+Logged-in quotes, seller dashboards, personal tax/registration material, private
+contracts, and raw creator reviews are not collection targets. Automatic fetching
+may cache and hash permitted public HTML/PDF/API sources, but changes only create
+review work. High-risk tax, safety, rights, certification, and fee content becomes
+stale when its check window expires and never produces a personalized legal,
+tax, safety-conformity, or trademark-availability conclusion. Seller/tax,
+product-safety, rights, marketplace-fee, and ecommerce-obligation topics remain
+P1 official-source checklists until those conditional review paths are proven.
+
+## D-036 — High-risk creator guidance is a dated source register, not a ruling
+
+Tax and customs guidance may enter Notes before the broader creator-operations
+schema only as a manually reviewed, source-traceable guide. Each guide must show
+its audience, check date, conditional facts, action sequence, warning ledger,
+checklist, official source register, and recheck cadence. It must not calculate
+a user's tax, decide an HS code, guarantee zero-rating, or promise destination
+duty treatment.
+
+Postal acceptance, Korean export declaration/evidence, and destination import
+tax are separate layers. Country examples are dated watchlist entries, not a
+single global rule; terminology uses current Incoterms such as DAP/DDP rather
+than the obsolete DDU label. Changes to high-risk sources create review work and
+an expired check window must be visible as stale before the guide is reused.

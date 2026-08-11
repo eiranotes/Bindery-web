@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-08-07
+
+- Added two source-traceable creator operation guides under Notes: Korean
+  personal-business VAT/income-tax preparation and overseas postal/export/
+  customs preparation, backed by 19 dated official-source references.
+- Corrected an older 200만원 FAQ boundary against the current 2026-06-26
+  customs notice: FOB 200만원 is now presented as a conditional postal export
+  declaration omission path, while FOB 500만원 is the separate simplified
+  export declaration boundary. Added the statutory postal-receipt zero-rate
+  evidence rule instead of treating every postal receipt as equivalent.
+- Added guide-specific fact ledgers, step workflows, conditional cautions,
+  warning ledgers, checklists, source registers, review cadence, and static
+  export coverage for `/notes/overseas-shipping-customs`.
+- Kept postal acceptance, Korean export evidence, and destination import rules
+  separate; U.S., EU, and Japan examples carry a 2026-08-07 check date and a
+  visible requirement to recheck the destination before shipment.
+- Added a WebGPT Pro-reviewed creator-operations information plan that evaluates
+  15 non-event topics and limits the first expansion to normalized production
+  specifications, versioned provider claims, packing/shipping rules, and
+  scenario-based inventory/cost/profit calculation.
+- Defined `G1/G2/V1/V2/E1/D1/I1/U0` evidence tiers so laws, agency guidance,
+  vendor claims, private contract values, creator experience, derived results,
+  editorial notes, and research candidates cannot silently become the same fact.
+- Documented public HTML/PDF/API collection, private snapshot and hashing,
+  field extraction, human review, publication, change detection, stale states,
+  correction history, no-crawl targets, and an eight-week coverage-based pilot.
+- Recorded live official-source starting points for Government24, NTS, Safety
+  Korea, national law, FTC, KIPRIS, the Copyright Commission, print vendors,
+  Korea Post, Smart Store, Bizinfo, and FSC while leaving all source-derived
+  creator records unimplemented pending scope approval.
+
 ## 2026-08-05
 
 - Added a registered international-stationery candidate pipeline and a

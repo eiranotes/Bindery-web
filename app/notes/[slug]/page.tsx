@@ -114,8 +114,12 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
     inLanguage: "ko-KR",
     mainEntityOfPage: new URL(`/notes/${note.slug}`, siteUrl).toString(),
     articleBody: note.sections
-      .flatMap((section) => section.paragraphs)
+      .flatMap((section) => [
+        ...section.paragraphs,
+        ...(section.bullets ?? []),
+      ])
       .join("\n"),
+    citation: note.sources?.map((source) => source.url),
   };
 
   return (
@@ -156,7 +160,23 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
               <dt>읽는 시간</dt>
               <dd>{note.readMinutes}분</dd>
             </div>
+            {note.sourceCheckedAt ? (
+              <div>
+                <dt>공식 원문 확인</dt>
+                <dd>
+                  <time dateTime={note.sourceCheckedAt}>
+                    {formatEditorialDate(note.sourceCheckedAt)}
+                  </time>
+                </dd>
+              </div>
+            ) : null}
           </dl>
+          {note.audience ? (
+            <p className="note-audience">
+              <strong>이 가이드의 범위</strong>
+              <span>{note.audience}</span>
+            </p>
+          ) : null}
         </header>
 
         {note.isStale ? (
@@ -177,25 +197,90 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
         ) : null}
 
         {note.legalNotice ? (
-          <aside className="trust-notice" aria-label="법률 및 세무 정보 안내">
+          <aside className="trust-notice" aria-label="법률·세무·통관 정보 안내">
             <p className="utility-text">INFORMATION BOUNDARY</p>
             <p>
-              이 노트는 법률·세무 자문이 아닙니다. 신고 전에는 최신 국세청
-              안내 또는 전문가에게 다시 확인하고, 확인한 날짜를 함께
-              기록하세요.
+              이 노트는 법률·세무·통관 자문이 아닙니다. 신고하거나 발송하기
+              전에는 연결된 기관의 최신 안내 또는 전문가에게 다시 확인하고,
+              확인한 날짜를 함께 기록하세요.
             </p>
           </aside>
         ) : null}
 
+        {note.facts ? (
+          <section className="note-fact-ledger" aria-labelledby="note-facts-title">
+            <div className="section-heading">
+              <h2 id="note-facts-title">핵심 기준</h2>
+              <p className="utility-text">기준일 {formatEditorialDate(note.sourceCheckedAt ?? note.updatedAt)}</p>
+            </div>
+            <dl>
+              {note.facts.map((fact) => (
+                <div key={fact.label}>
+                  <dt>{fact.label}</dt>
+                  <dd className="note-fact-ledger__value">{fact.value}</dd>
+                  <dd className="note-fact-ledger__detail">{fact.detail}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        ) : null}
+
         <div className="reading-column">
+          {note.steps ? (
+            <section className="note-workflow" aria-labelledby="note-workflow-title">
+              <div className="section-heading">
+                <h2 id="note-workflow-title">실무 순서</h2>
+                <p className="utility-text">{note.steps.length}단계</p>
+              </div>
+              <ol>
+                {note.steps.map((step) => (
+                  <li key={`${step.marker}-${step.title}`}>
+                    <span aria-hidden="true">{step.marker}</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
           {note.sections.map((section) => (
             <section className="note-section" key={section.heading}>
               <h2>{section.heading}</h2>
               {section.paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
+              {section.bullets ? (
+                <ul className="note-bullets">
+                  {section.bullets.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {section.caution ? (
+                <aside className="note-caution">
+                  <strong>조건 확인</strong>
+                  <p>{section.caution}</p>
+                </aside>
+              ) : null}
             </section>
           ))}
+
+          {note.warnings ? (
+            <section className="note-warning-ledger" aria-labelledby="note-warning-title">
+              <div className="section-heading">
+                <h2 id="note-warning-title">이렇게 단정하지 않습니다</h2>
+                <p className="utility-text">RISK CHECK</p>
+              </div>
+              <ul>
+                {note.warnings.map((warning) => (
+                  <li key={warning}>{warning}</li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <section className="checklist-section" aria-labelledby="checklist-title">
             <div className="section-heading">
@@ -211,6 +296,48 @@ export default async function NoteDetailPage({ params }: NotePageProps) {
               ))}
             </ul>
           </section>
+
+          {note.sources ? (
+            <section className="note-source-register" aria-labelledby="note-sources-title">
+              <div className="section-heading">
+                <div>
+                  <h2 id="note-sources-title">공식 원문</h2>
+                  <p>각 문장이 어떤 공식 기준을 근거로 하는지 확인합니다.</p>
+                </div>
+                <p className="utility-text">{note.sources.length}건</p>
+              </div>
+              <ol>
+                {note.sources.map((source, index) => (
+                  <li key={source.url}>
+                    <span className="source-register__index" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <p className="source-register__meta">
+                        <span>{source.tier === "G1" ? "공식 규정" : "공식 안내"}</span>
+                        <span>{source.publisher}</span>
+                        <time dateTime={source.checkedAt}>
+                          확인 {formatEditorialDate(source.checkedAt)}
+                        </time>
+                      </p>
+                      <h3>
+                        <a href={source.url} target="_blank" rel="noreferrer">
+                          {source.label}
+                        </a>
+                      </h3>
+                      <p>{source.supports}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {note.reviewCadence ? (
+                <p className="source-register__cadence">
+                  <strong>재검수 주기</strong>
+                  <span>{note.reviewCadence}</span>
+                </p>
+              ) : null}
+            </section>
+          ) : null}
         </div>
       </article>
 

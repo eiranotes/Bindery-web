@@ -15,6 +15,8 @@ const primaryRoutes = [
   "/events/illustration-korea/2026-incheon",
   "/notes",
   "/notes/first-booth-checklist",
+  "/notes/simple-tax-start",
+  "/notes/overseas-shipping-customs",
   "/groupbuy",
   "/news",
   "/community",

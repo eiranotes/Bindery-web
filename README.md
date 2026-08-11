@@ -12,7 +12,10 @@ Community는 로컬 경험을 참고하는 보조 계층으로 연결됩니다. 
 
 제품 전략과 단계별 데이터·운영 계획은
 [`docs/SITE_STRATEGY_AND_ROADMAP.md`](docs/SITE_STRATEGY_AND_ROADMAP.md)를
-기준으로 합니다.
+기준으로 합니다. 행사 다음 단계의 문구작가 운영 정보 후보, 근거 계층, 수집 금지
+대상과 8주 최소 데이터셋은
+[`docs/STATIONERY_CREATOR_INFORMATION_COLLECTION.md`](docs/STATIONERY_CREATOR_INFORMATION_COLLECTION.md)에
+정리되어 있습니다.
 
 ## 제공 화면
 
@@ -22,7 +25,10 @@ Community는 로컬 경험을 참고하는 보조 계층으로 연결됩니다. 
 - `/events/archive` — 행사별 일정·장소·참가비·부스 수·선정 방식 회차 이력
 - `/events/calendar` — 신청 마감·행사 시작 달력
 - `/events/[slug]/[edition]` — 회차별 조건, 현장 정보, 지난 회차와 후기 공개 경계
-- `/notes`, `/news` — 날짜와 출처가 명시된 실무 정보
+- `/notes` — 제작·현장 노트와 공식 출처 19건을 연결한 개인사업자 세금·해외배송 통관 가이드
+- `/notes/simple-tax-start` — 일반/간이 부가세, 종합소득세, 월별 증빙 준비 가이드
+- `/notes/overseas-shipping-customs` — CN23·상업송장·수출신고·목적지 통관 분리 체크리스트
+- `/news` — 날짜와 원문이 명시된 업계 소식
 - `/community` — 작가 인증 게시판과 모두의 게시판을 나누는 커뮤니티 허브
 - `/community/artists` — 서버 세션과 작가 상태를 확인하고, 미연결·비회원·비작가 상태에서는 내용을 노출하지 않는 작가 전용 화면
 - `/community/general`, `/community/general/[slug]` — 권한 안전 검색·필터와 모두의 게시판 글 상세
