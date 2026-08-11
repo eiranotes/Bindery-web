@@ -1,5 +1,33 @@
 # Tasks
 
+## 2026-08-11 whole-site reset
+
+- [x] Obtain a deep WebGPT Pro review of concept, direction, collected data,
+  UI, UX, Binder, static deployment, monetization, and future scope.
+- [x] Separate editor-checked, decision-ready, source-reachable, and stale event
+  states with field coverage and source recheck dates.
+- [x] Refresh all registered official sources and generate a deterministic
+  changed/error recheck queue.
+- [x] Correct ended D-day states, time-zone rendering, empty comparison,
+  equivalent-option ranking, complete booth options, and real edition history.
+- [x] Connect Binder saves to compare, deadline/event ICS, and preparation work.
+- [x] Make GitHub Pages a dated read-only snapshot and remove runtime Google
+  Fonts requests.
+- [x] Remove public ad reservations, make News an event change record, and align
+  product/strategy/decision/status documentation.
+- [ ] Conduct at least five moderated target-user sessions across discovery,
+  comparison, official-source verification, saving, and preparation.
+- [ ] Raise the catalog to at least 15 decision-ready editions without
+  inventing missing deadline, fee, selection, document, or refund facts.
+- [ ] Add privacy-reviewed production analytics for list→detail, official-source
+  click, save→reopen, compare, ICS, and preparation transitions.
+- [ ] Resolve or replace the 14 changed/error sources in the current recheck
+  queue and record editor outcomes.
+- [ ] Provision Supabase, Turnstile, hosted runtime secrets, backup/restore, and
+  authenticated production E2E only after explicit external-operation approval.
+- [ ] Re-evaluate Creator OS, community growth, advertising, and paid placement
+  only after the user/data/repeat-use gates above pass.
+
 - [x] Reconcile all source documents and identify authority.
 - [x] Review competitors and Behance references.
 - [x] Establish product and design context.
@@ -115,7 +143,7 @@
 - [x] Review event-adjacent creator information with WebGPT Pro and live official-source samples.
 - [x] Rank 15 candidate information groups and limit the first expansion to a four-layer production decision chain.
 - [x] Define creator-specific source tiers, public/private boundaries, change handling, and an eight-week minimum dataset.
-- [ ] Approve the P0 scope before adding creator-operations schemas, routes, or collectors.
+- [ ] Reconsider the P0 scope only after the 2026-08-11 event user/data gates pass.
 - [ ] Implement source/snapshot/evidence, specification/alias, offering-version, shipping-rate, and calculation-version types.
 - [ ] Register the first G1/G2/V1 allowlist and add permitted HTML/PDF/API hash checks without collecting authenticated pages.
 - [ ] Build the print/finishing ontology and versioned provider-offering comparison without authenticated quote collection.
@@ -153,9 +181,9 @@
 - [x] Commit and push the event-first plus normalized international catalog to
   `main`; deploy feature commit `6464216` with successful Pages run
   `30984669102` and smoke-test the public Design Festa detail route.
-- [ ] Split `EventMaster`, `EventEdition`, and `SourceRecord` into explicit
+- [x] Split `EventMaster`, `EventEdition`, and `SourceRecord` into explicit
   domain types and canonical data collections.
-- [ ] Separate product-validation examples from verified public event records.
+- [x] Separate product-validation examples from official-source public event records.
 - [ ] Add the first verified batch of 20 real event masters and their available
   historical editions.
 - [ ] Resolve or replace the seven HTTP-error and five fetch-error candidate
@@ -163,12 +191,12 @@
   missing fees, deadlines, selection methods, or logistics.
 - [ ] Reach 50 event masters and 120 editions with official-source coverage and
   freshness tracking.
-- [ ] Add domain tests for archive deduplication, edition ordering, and compare
+- [x] Add domain tests for archive deduplication, edition ordering, and compare
   selection normalization.
 - [x] Add Playwright coverage for `/events/compare` and `/events/archive` at
   360px, 768px, and 1280px, including local table scrolling.
-- [ ] Add event-data status labels for example, verified, stale, superseded, and
-  archived records.
+- [x] Add separate editor-checked, decision-ready, source-reachable, stale, and
+  archived event semantics with field coverage and recheck dates.
 - [ ] Add operator source-review and correction workflows before automated
   event ingestion.
 - [ ] Add image provenance and rights metadata before publishing posters or

@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-08-11
+
+- Applied the whole-site WebGPT Pro reset: narrowed the external promise to
+  current creator-event opportunities while preserving the long-term edition
+  registry and four-role Riso identity.
+- Rebuilt generated event trust metadata around editor-checked, decision-ready,
+  source-reachable, and stale states; added six-field decision coverage,
+  source checked/recheck dates, complete booth options, and real master/edition
+  history links for all 70 generated editions.
+- Refreshed 11 maintained official records and all registered candidate sources.
+  The current audit has 104 accessible, seven HTTP-error, and five fetch-error
+  candidate URLs; two changed and 12 failed sources form a 14-item recheck queue.
+- Corrected past D-day handling, IANA-time-zone date rendering, comparison
+  defaults and ranking boundaries, real multi-edition archive grouping,
+  calendar semantics, selected-event/deadline ICS output, and completed-event
+  structured data.
+- Made equivalent booth-price ties explicit instead of naming the first event
+  as a false sole lowest-price leader.
+- Kept the 360px hero, long comparison selects, and semantic calendar table
+  inside the page while preserving local horizontal table scrolling.
+- Added visible data coverage to Home, Events, comparison, and detail routes;
+  exposed full booth ranges and kept business/selection facts on narrow screens;
+  compressed empty application and onsite sections.
+- Connected saved Binder events to explicit comparison, deadline/event ICS, and
+  preparation actions, with per-event work controls and two-to-three selection.
+- Removed public ad reservations, reframed News as event change history, removed
+  private Binder pages from sitemap, and added current-navigation semantics.
+- Converted GitHub Pages into a dated read-only snapshot with disabled dynamic
+  controls and explicit limitations. The exporter now produces 93 public
+  screens.
+- Replaced the runtime Google Fonts stylesheet request with a local/system font
+  stack that preserves the three typography roles without network dependency.
+- Recorded the Pro review, deferred Creator OS/monetization work behind user and
+  data gates, and aligned product, strategy, status, task, decision, and README
+  documentation.
+
 ## 2026-08-07
 
 - Added two source-traceable creator operation guides under Notes: Korean

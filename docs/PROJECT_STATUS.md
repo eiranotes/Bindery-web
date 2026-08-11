@@ -1,5 +1,39 @@
 # Project Status
 
+## 2026-08-11 reset checkpoint
+
+The current implementation now presents Bindery externally as a registry for
+finding creator events that can still be applied to, while preserving the
+long-term event-master/edition archive internally. A whole-site WebGPT Pro
+review was translated into code and operating gates rather than a visual
+reskin. The four-role Riso identity, linear ledgers, and official-source
+boundaries remain intact.
+
+The generated catalog has 70 editions: three editor-checked official editions,
+two additional decision-ready editions, and 65 source-reachable index editions.
+All carry source checked-at and recheck-due metadata. Core decision coverage is
+calculated across deadline, booth option, selection, business requirement,
+documents, and refund policy; expired records visibly require rechecking. The
+2026-08-11 live refresh retained all 11 maintained official records as
+accessible. Candidate audits found 104 accessible URLs, seven HTTP errors, and
+five fetch errors, and the deterministic recheck queue now contains two changed
+plus 12 failed sources.
+
+Home, list, comparison, detail, real multi-edition archive, calendar, ICS, and
+Binder now share the same time-zone-aware and trust-aware semantics. Comparison
+starts empty and does not rank past deadlines, unlike currencies, or different
+booth configurations. Binder saves lead to comparison, scoped calendar files,
+and preparation. Public ad reservations are removed, News is an event change
+record, and Pages is a dated 93-screen read-only snapshot with unavailable
+controls disabled. Fonts use a local/system stack instead of fetching a runtime
+stylesheet from Google.
+
+Code-addressable review findings are complete. Remaining product gates require
+external evidence: five target-user sessions, 15 decision-ready editions,
+repeat-use and transition metrics, and production Supabase/Turnstile/runtime
+provisioning. Creator OS, live community growth, advertising, and paid placement
+remain unapproved until those gates pass.
+
 ## Current state
 
 The GPT Sites vinext implementation now presents Bindery as an event-first
@@ -32,14 +66,15 @@ masters, 15 editions, and 16 reachable official sources across Japan, Taiwan,
 and mainland China, including Design Festa vol.64 as a broad creator-goods
 event rather than a stationery-only fair. The combined canonical collections
 now contain 73 EventMasters, 91 EventEditions, and 132 SourceRecords.
-Independent live checks found 120 accessible URLs, seven HTTP errors, and five
-fetch errors. Sixty-seven editions
-with a reachable S1/S2 primary-source chain and confirmed dates now enter public
-generation as visibly `source_checked`; 24 editions remain held. Together with
-the three editor-checked Illustration Korea editions, the generated catalog has
-70 editions. Country, city, IANA time zone, source language, and native ISO
-currency are preserved; unknown deadlines, fees, venues, and selection methods
-remain null, and unlike currencies are not directly ranked.
+The 2026-08-11 live checks found 120 accessible URLs, seven HTTP errors, and five
+fetch errors. Sixty-seven normalized candidates with a reachable S1/S2
+primary-source chain and confirmed dates enter generation while 24 editions
+remain held. Together with the three editor-checked Illustration Korea editions,
+the generated catalog has 70 editions: three editor-checked, two additional
+decision-ready, and 65 source-reachable index editions. Country, city, IANA time
+zone, source language, native ISO currency, field coverage, and source freshness
+are preserved; unknown deadlines, fees, venues, and selection methods remain
+null, and unlike booth configurations or currencies are not directly ranked.
 The persisted Sites project ID still returns `project not found`, the current Pro
 account's Sites dashboard lists no managed sites, and the existing owner-only URL
 still renders the five fixture events. The combined official catalog,
@@ -48,7 +83,9 @@ comparison/archive release, and static fallback are now public at
 successfully built and deployed feature commit `6464216`; the hosted Design
 Festa vol.64 route returns 200 and visibly contains its dates, 6,500-booth scale,
 and JPY 17,000 minimum booth fee. The hosted home, event list, comparison,
-archive, and ICS routes are included in the same 92-screen static artifact.
+archive, and ICS routes were included in that 92-screen published baseline. The
+current source exporter produces a dated 93-screen read-only artifact; its new
+main-branch Pages deployment must be verified after this release is pushed.
 
 A 2026-08-07 WebGPT Pro review and independent official-source sample pass now
 define the next possible information expansion:

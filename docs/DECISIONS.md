@@ -97,6 +97,8 @@ until their real service boundaries exist.
 
 ## D-015 — Catalog-driven reserved ad inventory
 
+**Superseded for public surfaces by D-039.**
+
 Reserve future ad inventory with one `AD_PLACEMENTS` catalog and one `AdSlot`
 component. Slots use the literal label `광고`, stable minimum heights, theme
 roles, and non-interactive placeholder copy. Place them only on Home, the
@@ -402,6 +404,8 @@ facts remain unknown rather than being inferred to satisfy the schema.
 
 ## D-033 — Source-checked editions may precede field-complete editor review
 
+**Status naming and public trust semantics are superseded by D-037.**
+
 The product owner's 2026-08-05 instruction supersedes D-032 only where it kept
 all normalized candidates out of public generation until full field review.
 Normalize the complete research bundle into canonical EventMaster, EventEdition,
@@ -448,6 +452,8 @@ first application of this rule.
 
 ## D-035 — Creator operations expand as four evidence-separated production layers
 
+**The four-layer direction remains a research asset; D-039 adds the product-validation gate that must precede implementation.**
+
 After event coverage, expand Notes and tools through one four-layer production
 decision chain: normalized print/finishing specifications, versioned provider
 claims for fully specified offerings, public packing/shipping rules, and
@@ -487,3 +493,64 @@ tax are separate layers. Country examples are dated watchlist entries, not a
 single global rule; terminology uses current Incoterms such as DAP/DDP rather
 than the obsolete DDU label. Changes to high-risk sources create review work and
 an expired check window must be visible as stale before the guide is reused.
+
+## D-037 — Event trust is a field-coverage and freshness contract
+
+The 2026-08-11 WebGPT Pro reset supersedes the single public `source_checked`
+label. A reachable official URL only proves that an edition can be indexed; it
+does not prove that a creator can decide whether to apply. Public event data now
+uses separate states for editor-checked official facts, decision-ready core
+fields, source-reachable indexing, and expired recheck windows.
+
+Decision coverage is calculated from application deadline, booth option,
+selection method, business requirement, required documents, and refund policy.
+Every edition retains its source checked-at and recheck-due date. An expired
+window becomes `재확인 필요` even if the URL still opens. Unknown values remain
+null, all booth configurations remain visible, and editor review is never
+inferred from a coverage percentage.
+
+Comparisons start with no selected events. Deadline and price leaders may only
+be shown for future deadlines and equivalent booth signatures with the same
+currency, size, VAT treatment, and option label. Otherwise the interface must
+state that a direct ranking was not performed.
+
+## D-038 — Dates, editions, and calendars preserve real temporal semantics
+
+All public date formatting and month grouping use the edition's IANA time zone.
+Past deadlines never render `D-DAY`; current and ended states are explicit.
+The calendar uses a semantic table inside its own keyboard-scrollable region,
+and ICS output may be scoped to selected event dates, application deadlines, or
+both.
+
+Edition history is a relationship between real public editions sharing one
+EventMaster. A generated single-row history is not an archive. The archive only
+lists series with at least two public editions and links each row to its real
+detail path.
+
+## D-039 — Deep event usefulness precedes surface expansion and monetization
+
+The public promise is narrowed to finding current creator-event opportunities;
+the broader operations archive remains the internal long-term data model. Before
+approving creator-vendor catalogs, calculators, live community expansion, ads,
+or paid placement, Bindery must validate the list-to-detail-to-official-source
+flow with at least five target users, reach 15 decision-ready editions, and
+measure save, reopen, compare, ICS, preparation, field-gap, and recheck behavior.
+
+News is therefore an event change record rather than an independent industry
+publication. Reserved ad components may remain dormant in source for future
+policy work, but no public route renders them. Paid placement must never affect
+editorial status, completeness, or default comparison order.
+
+## D-040 — GitHub Pages is a dated read-only review artifact
+
+The GitHub Pages build is not a fallback application runtime. Every generated
+screen displays the snapshot date and explicitly names unavailable operations.
+Executable application scripts are removed; form controls, locale selection,
+comparison selection, month navigation, login, Binder mutation, and writing are
+disabled or marked unavailable. Dynamic behavior must be evaluated on a server
+runtime, not inferred from the Pages artifact.
+
+The production UI uses a local/system font stack beginning with Hahmlet, IBM
+Plex Sans KR, and Space Mono, with platform fallbacks. It does not depend on a
+runtime request to Google Fonts or a framework font loader that fails in the
+vinext Cloudflare development runtime.
