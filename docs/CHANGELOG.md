@@ -35,6 +35,8 @@
 - Recorded the Pro review, deferred Creator OS/monetization work behind user and
   data gates, and aligned product, strategy, status, task, decision, and README
   documentation.
+- Published commit `d9363d6` through successful GitHub Pages run `31454439140`
+  and smoke-tested the hosted Home and empty comparison snapshot boundaries.
 
 ## 2026-08-07
 

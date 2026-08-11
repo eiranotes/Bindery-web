@@ -84,8 +84,11 @@ successfully built and deployed feature commit `6464216`; the hosted Design
 Festa vol.64 route returns 200 and visibly contains its dates, 6,500-booth scale,
 and JPY 17,000 minimum booth fee. The hosted home, event list, comparison,
 archive, and ICS routes were included in that 92-screen published baseline. The
-current source exporter produces a dated 93-screen read-only artifact; its new
-main-branch Pages deployment must be verified after this release is pushed.
+current source exporter produces a dated 93-screen read-only artifact. GitHub
+Pages run `31454439140` successfully built and deployed commit `d9363d6`; the
+hosted Home and empty comparison routes expose the 2026-08-11 snapshot banner,
+disabled dynamic controls, new opportunity copy, and no public ad or external
+Google Fonts request.
 
 A 2026-08-07 WebGPT Pro review and independent official-source sample pass now
 define the next possible information expansion:
